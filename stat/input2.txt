@@ -1,0 +1,64 @@
+# Declaraciones de variables
+Int varInt;
+Bool varBool;
+String varString;
+(&Int, [String], ([String: Bool])) handler = (&varInt, ["Hola"], (["Adios": true]));
+TipoCoche coche;
+
+# Definición de tipos
+type MiStruct = struct [ nombre: String, edad: Int];
+MiStruct persona;
+
+# Asignación de variables
+Int varInt2 = 17;
+varBool = true and not false or true;
+varString = "Holamajo" ++ "hey";
+varInt = 10*15 + 9000 - 1000 mod 10 - 80 - 16;
+persona.nombre = "Hola";
+^persona.handler[2]["Nombre"] = 10;
+
+# Expresiones
+miNum = miStruct.subCampo.subSubCampo.unaLista[1] * 100;
+miLista = [1,2,3];
+miMatriz = [[1,2,3],[4,5,6],[7,8,9]];
+miTupla = (1,"yellow",[true,false]);
+miDict = ["lunes": 1, "martes": 2];
+miPuntero = &miVar;
+miNumNormalizado = miNum / 100;
+
+# Llamada a funciones
+print(miNum);
+malloc(&punt, size);
+retVal = binomialCoef(10, 7)*p*(1-p);
+
+# Definicion de funciones
+fun Null printTwice(str: String) = {
+	print(str);
+	print(str);
+};
+fun Int binomialPmf(n: Int, k: Int, p: Dec) = {
+	return binomialCoef(n,k) * pow(p,k) * pow(1-p,k);
+};
+
+# Control de flujo
+if 1 == fact(num) {
+	print("Num es 1 o 0");
+};
+
+if true {
+	print("This branch always runs");
+} else {
+	print("This branch " ++ "never runs");
+};
+
+repeat inf | i < 10 {
+	i = i + 1;
+};
+
+fun Int pow(base: Dec, exp: Int) = {
+	Dec res = 1;
+	repeat exp {
+		res = res * base;
+	};
+	return res;
+};

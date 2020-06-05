@@ -1,0 +1,343 @@
+package asint;
+
+import java_cup.runtime.*;
+import alex.AnalizadorLexicoTiny;
+import alex.UnidadLexica;
+import errors.GestionErroresTiny;
+import ast.*;
+import ast.tipos.*;
+import ast.exp.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+
+scan with {: return getScanner().next_token(); :};
+parser code {: 
+   private GestionErroresTiny errores;
+   public void syntax_error(Symbol unidadLexica) {
+     errores.errorSintactico((UnidadLexica)unidadLexica);
+   }
+:};
+init with {: 
+   errores = new GestionErroresTiny();
+   AnalizadorLexicoTiny alex = (AnalizadorLexicoTiny)getScanner();
+   alex.fijaGestionErrores(errores);
+:};
+
+
+terminal  	 COMA, PAP,
+             PCL, CAP, CCL, BAP, BCL, PCOMA, DOSPUNTOS,
+             VERT, IF, ELSE, CASE, THEN, NULL,
+             REPEAT, INF, FUN, RETURN, STRUCT, TYPE, TINT, TBOOL,
+             TSTRING, TDEC, TRUE, FALSE;
+
+terminal String IDENVARFUN, IDENTIPO, ENT, DEC, STRING;
+terminal Operator	MAS, MENOS, POR, DIV, MOD, IGUAL, PUNTO, REF, CONCAT,
+					AND, OR, NOT, DEREF, MAYOR, MENOR, ES_IGUAL, MAYIG, MENIG;
+
+non terminal NodoAst PROG, INST, BLOCK, IF_BLOCK, CASE_MATCH,
+              CASE_BLOCK, REPEAT_BLOCK, 
+              FUN_DEF, RETURN_VAL, TIPO_DEF, TIPO, TIPO_ARRAY,
+              TIPO_TUPLA, TIPO_DICT, TIPO_STRUCT,
+              CAMPO_STRUCT, TIPO_PUNT, FUN_CALL,
+              DEC_VAR, ASIG, EXP0, EXP1, EXP2, EXP3, EXP4, EXP5, EXP6,
+              EXP7, EXP8, EXP9, EXP10, CONST,
+              ASIG0, ASIG1, ASIG2;
+
+non terminal ArrayList<Tipo> TIPO_TUPLA_LISTA;
+non terminal ArrayList<CampoStruct> LISTA_STRUCT;
+non terminal ArrayList<Exp> PARAMS;
+non terminal ArrayList<Argumento> ARGS;
+non terminal ArrayList<CaseMatch> CASE_MATCH_LIST;
+non terminal Operator OP0, OP1, OP2, OP3;
+non terminal ArrayList<Exp> TUPLA, LISTA;
+non terminal ArrayList<DictPair> DICT;
+
+
+PROG ::= INST: i PCOMA PROG: p 
+		{:	RESULT = new Prog((Inst)i,(Prog)p);	:};
+PROG ::= {:	RESULT = new Prog();	:};
+
+//======== Instrucciones =================================================
+
+// Posibles instrucciones
+INST ::= ASIG: as
+	{:	RESULT = as;	:};
+INST ::= DEC_VAR: dec
+	{:	RESULT = dec;	:};
+INST ::= TIPO_DEF: def
+	{:	RESULT = def;	:};
+INST ::= FUN_CALL: fc
+	{:	RESULT = fc;	:};
+INST ::= RETURN_VAL: rt
+	{:	RESULT = rt;	:};
+INST ::= BLOCK: bk
+	{:	RESULT = bk;	:};
+INST ::= FUN_DEF: fd
+	{:	RESULT = fd;	:};
+INST ::= IF_BLOCK: ib
+	{:	RESULT = ib;	:};
+INST ::= CASE_BLOCK: cb
+	{:	RESULT = cb;	:};
+INST ::= REPEAT_BLOCK: rp
+	{:	RESULT = rp;	:};
+
+// Bloque de codigo
+BLOCK ::= BAP PROG: p BCL
+	{:	RESULT = new Block((Prog) p);	:};
+
+// Estructuras de control
+IF_BLOCK ::= IF EXP0: e BLOCK: b ELSE BLOCK: eb
+	{:	RESULT = new If((Exp) e, (Block) b, (Block) eb);	:};
+IF_BLOCK ::= IF EXP0: e BLOCK: b
+	{:	RESULT = new If((Exp) e, (Block) b);	:};
+
+CASE_BLOCK ::= CASE EXP0: e BAP CASE_MATCH_LIST: l BCL
+	{:	RESULT = new Case((Exp) e, l);	:};
+CASE_MATCH_LIST ::= CASE_MATCH: cm CASE_MATCH_LIST: l
+	{:	l.add(0, (CaseMatch) cm); RESULT = l;	:};
+CASE_MATCH_LIST ::= CASE_MATCH: cm
+	{:	RESULT = new ArrayList(Arrays.asList(new CaseMatch[] {(CaseMatch)cm}));	:};
+CASE_MATCH ::= EXP0: e THEN BLOCK: b
+	{:	RESULT = new CaseMatch((Exp) e, (Block) b);	:};
+
+// repeat a -> repite a veces
+// repeat a | b -> repite mientas b sea cierto, un máximo de a veces
+REPEAT_BLOCK ::= REPEAT EXP0: e BLOCK: b
+	{:	RESULT = new Repeat((Exp) e, (Block) b);	:};
+REPEAT_BLOCK ::= REPEAT EXP0: e1 VERT EXP0: e2 BLOCK: b
+	{:	RESULT = new Repeat((Exp) e1, (Exp) e2, (Block) b);	:};
+
+// Definición de funciones
+FUN_DEF ::= FUN TIPO: t IDENVARFUN: id PAP ARGS: args PCL IGUAL BLOCK: b
+	{:	RESULT = new DefFun((Tipo) t, new Iden(id), (Block) b, args);	:};
+FUN_DEF ::= FUN TIPO: t IDENVARFUN: id PAP PCL IGUAL BLOCK: b
+	{:	RESULT = new DefFun((Tipo) t, new Iden(id), (Block) b);	:};
+
+ARGS ::= IDENVARFUN: id DOSPUNTOS TIPO: t COMA ARGS: args
+	{:	args.add(0, new Argumento(new Iden(id), (Tipo) t)); RESULT = args;	:};
+ARGS ::= IDENVARFUN: id DOSPUNTOS TIPO: t
+	{:	RESULT = new ArrayList(Arrays.asList(
+				new Argumento[] {new Argumento(new Iden(id), (Tipo) t)}));	:};
+
+
+RETURN_VAL ::= RETURN EXP0: e
+	{:	RESULT = new Return((Exp) e);	:};
+
+
+// Llamada a funcion
+FUN_CALL ::= IDENVARFUN: id PAP PARAMS: par PCL
+	{:	RESULT = new FunCall(new Iden(id), par);	:};
+FUN_CALL ::= IDENVARFUN: id PAP PCL
+	{:	RESULT = new FunCall(new Iden(id));	:};
+PARAMS ::= EXP0: e COMA PARAMS: par
+	{:	par.add(0, (Exp) e); RESULT = par;	:};
+PARAMS ::= EXP0: e
+	{:	RESULT = new ArrayList(Arrays.asList(new Exp[] {(Exp)e}));	:};
+
+
+// Declaracion de variables
+DEC_VAR ::= TIPO: t IDENVARFUN: iden
+	{:	RESULT = new Dec((Tipo)t, new Iden(iden));	:};
+DEC_VAR ::= TIPO: t ASIG: as
+	{:	RESULT = new Dec((Tipo)t, (Asig) as);	:};
+
+
+// Definición de tipos con nombre
+TIPO_DEF ::= TYPE IDENTIPO: id IGUAL TIPO: t
+	{:	RESULT = new DefTipo((Tipo) t, new Iden(id));	:};
+
+//======== Tipos =========================================================
+
+TIPO ::= IDENTIPO: id
+	{:	RESULT = new TipoNombre(new Iden(id));	:};
+TIPO ::= TIPO_ARRAY: t
+	{:	RESULT = t;	:};
+TIPO ::= TIPO_TUPLA: t
+	{:	RESULT = t;	:};
+TIPO ::= TIPO_DICT: t
+	{:	RESULT = t;	:};
+TIPO ::= TIPO_STRUCT: t
+	{:	RESULT = t;	:};
+TIPO ::= TIPO_PUNT: t
+	{:	RESULT = t;	:};
+TIPO ::= TINT
+	{:	RESULT = new TipoInt();	:};
+TIPO ::= TBOOL
+	{:	RESULT = new TipoBool();	:};
+TIPO ::= TSTRING
+	{:	RESULT = new TipoString();	:};
+TIPO ::= TDEC
+	{:	RESULT = new TipoDec();	:};
+
+TIPO_ARRAY ::= CAP TIPO: t CCL 
+	{:	RESULT = new TipoArray((Tipo) t);	:};
+
+TIPO_TUPLA ::= PAP TIPO_TUPLA_LISTA: ls PCL
+	{:	RESULT = new TipoTupla(ls);	:};
+TIPO_TUPLA_LISTA ::= TIPO: t COMA TIPO_TUPLA_LISTA: ls
+	{:	ls.add(0, (Tipo) t); RESULT = ls;	:};
+TIPO_TUPLA_LISTA ::= TIPO: t
+	{:	RESULT = new ArrayList(Arrays.asList(new Tipo[] {(Tipo)t}));	:};
+
+TIPO_DICT ::= CAP TIPO: cv DOSPUNTOS TIPO: vl CCL
+	{:	RESULT = new TipoDict((Tipo) cv, (Tipo) vl);	:};
+
+TIPO_STRUCT ::= STRUCT CAP LISTA_STRUCT: ls CCL
+	{:	RESULT = new TipoStruct(ls);	:};
+LISTA_STRUCT ::= CAMPO_STRUCT: cp COMA LISTA_STRUCT: ls
+	{:	ls.add(0, (CampoStruct) cp); RESULT = ls;	:};
+LISTA_STRUCT ::= CAMPO_STRUCT: cp
+	{:	RESULT = new ArrayList(Arrays.asList(new CampoStruct[] {(CampoStruct) cp}));	:};
+CAMPO_STRUCT ::= IDENVARFUN: iden DOSPUNTOS TIPO: t
+	{:	RESULT = new CampoStruct(new Iden(iden), (Tipo) t);	:};
+
+TIPO_PUNT ::= REF TIPO: t
+	{:	RESULT = new TipoPunt((Tipo) t);	:};
+
+
+//======== Asignacion ====================================================
+
+ASIG ::= ASIG0: as IGUAL EXP0: e
+	{:	RESULT = new Asig((Asignable) as, (Exp) e);	:};
+
+ASIG0 ::= DEREF ASIG1: as // Punteros
+	{:	RESULT = new Asignable((Asignable) as);	:};
+ASIG0 ::= ASIG1: as
+	{:	RESULT = as;	:};
+ASIG1 ::= ASIG1: as1 PUNTO ASIG2: as2  // Structs
+	{:	RESULT = new Asignable((Asignable) as2, (Asignable) as1);	:};
+ASIG1 ::= ASIG2: as
+	{:	RESULT = as;	:};
+ASIG2 ::= ASIG2: as CAP EXP0: exp CCL // Arrays, diccionarios...
+	{:	RESULT = new Asignable((Exp) exp, (Asignable) as);	:};
+ASIG2 ::= IDENVARFUN: id
+	{:	RESULT = new Asignable(new Iden(id));	:};
+
+//======== Expresiones ===================================================
+
+/* La prioridad es:
+ * Booleanos y comparaciones: or < and < not < igual = mayor = menor < 
+ * Aritmetica y string: mas = menos = concat < por = div < mod <
+ * Accesores y punteros: ref = deref < punto < acceso a arrays, tuplas...
+ */
+EXP0 ::= EXP1: e1 OR EXP0: e2
+	{:	RESULT = new Exp(Operator.OR, (Exp) e1, (Exp) e2);	:};
+EXP0 ::= EXP1: e
+	{:	RESULT = e;	:};
+EXP1 ::= EXP1: e1 AND EXP2: e2
+	{:	RESULT = new Exp(Operator.AND, (Exp) e1, (Exp) e2);	:};
+EXP1 ::= EXP2: e
+	{:	RESULT = e;	:};
+EXP2 ::= NOT EXP3: e
+	{:	RESULT = new Exp(Operator.NOT, (Exp) e);	:};
+EXP2 ::= EXP3: e
+	{:	RESULT = e;	:};
+EXP3 ::= EXP4: e1 OP0: op EXP3: e2
+	{:	RESULT = new Exp(op, (Exp) e1, (Exp) e2);	:};
+EXP3 ::= EXP4: e
+	{:	RESULT = e;	:};
+EXP4 ::= EXP5: e1 OP1: op EXP4: e2
+	{:	RESULT = new Exp(op, (Exp) e1, (Exp) e2);	:};
+EXP4 ::= EXP5: e
+	{:	RESULT = e;	:};
+EXP5 ::= EXP6: e1 OP2: op EXP5: e2
+	{:	RESULT = new Exp(op, (Exp) e1, (Exp) e2);	:};
+EXP5 ::= EXP6: e
+	{:	RESULT = e;	:};
+EXP6 ::= EXP7: e1 MOD EXP6: e2
+	{:	RESULT = new Exp(Operator.MOD, (Exp) e1, (Exp) e2);	:};
+EXP6 ::= EXP7: e
+	{:	RESULT = e;	:};
+EXP7 ::= OP3: op EXP7: e
+	{:	RESULT = new Exp(op, (Exp) e);	:};
+EXP7 ::= EXP8: e
+	{:	RESULT = e;	:};
+EXP7 ::= EXP10: e
+	{:	RESULT = e;	:};
+// Los accesores no pueden contener expresiones como
+// strings o enteros, sólo identificadores
+EXP8 ::= EXP8: e1 PUNTO EXP9: e2
+	{:	RESULT = new Exp(Operator.PUNTO, (Exp) e1, (Exp) e2);	:};
+EXP8 ::= EXP9: e
+	{:	RESULT = e;	:};
+EXP9 ::= EXP9: e1 CAP EXP0: e2 CCL
+	{:	RESULT = new Exp(Operator.ACCESO, (Exp) e1, (Exp) e2);	:};
+
+EXP9 ::= IDENVARFUN: id
+	{:	RESULT = new Variable(new Iden(id));	:};
+
+EXP10 ::= CONST: c
+	{:	RESULT = c;	:};
+
+EXP10 ::= FUN_CALL: fc
+	{:	RESULT = fc;	:};
+
+EXP10 ::= PAP EXP0: e PCL
+	{:	RESULT = e;	:};
+
+//======== Constantes ====================================================
+CONST ::= TRUE
+	{:	RESULT = new ConstBool("true");	:};
+CONST ::= FALSE
+	{:	RESULT = new ConstBool("false");	:};
+CONST ::= ENT: e
+	{:	RESULT = new ConstInt(e);	:};
+CONST ::= DEC: d
+	{:	RESULT = new ConstDec(d);	:};
+CONST ::= INF
+	{:	RESULT = new ConstInt("inf");	:};
+
+CONST ::= NULL
+	{:	RESULT = new ConstNull();	:};
+
+CONST ::= STRING: s
+	{:	RESULT = new ConstString(s);	:};
+
+// Constantes: listas, tuplas, diccionarios
+CONST ::= CAP LISTA: l CCL
+	{:	RESULT = new ConstArray(l);	:};
+CONST ::= PAP TUPLA: t PCL
+	{:	RESULT = new ConstTupla(t);	:};
+CONST ::= CAP DICT: d CCL
+	{:	RESULT = new ConstDict(d);	:};
+
+
+LISTA ::= EXP0: e COMA LISTA: l
+	{:	l.add(0, (Exp)e); RESULT = l;	:};
+LISTA ::= EXP0: e
+	{:	RESULT = new ArrayList(Arrays.asList(new Exp[] {(Exp)e}));	:};
+TUPLA ::= EXP0: e COMA LISTA: l
+	{:	l.add(0, (Exp)e); RESULT = l;	:};
+DICT ::= EXP0: e1 DOSPUNTOS EXP0: e2 COMA DICT: d
+	{:	d.add(0, new DictPair((Exp)e1, (Exp)e2)); RESULT = d;	:};
+
+DICT ::= EXP0: e1 DOSPUNTOS EXP0: e2
+	{:	RESULT = new ArrayList(Arrays.asList(
+			new DictPair[] {new DictPair((Exp)e1, (Exp)e2)}));	:};
+
+//======== Operadores =====================================================
+
+OP0 ::= ES_IGUAL
+	{:	RESULT = Operator.ES_IGUAL;	:};
+OP0 ::= MENOR
+	{:	RESULT = Operator.MENOR;	:};
+OP0 ::= MAYOR
+	{:	RESULT = Operator.MAYOR;	:};
+OP0 ::= MAYIG
+	{:	RESULT = Operator.MAYIG;	:};
+OP0 ::= MENIG
+	{:	RESULT = Operator.MENIG;	:};
+OP1 ::= MAS
+	{:	RESULT = Operator.MAS;	:};
+OP1 ::= MENOS
+	{:	RESULT = Operator.MENOS;	:};
+OP1 ::= CONCAT
+	{:	RESULT = Operator.CONCAT;	:};
+OP2 ::= POR
+	{:	RESULT = Operator.POR;	:};
+OP2 ::= DIV
+	{:	RESULT = Operator.DIV;	:};
+OP3 ::= REF
+	{:	RESULT = Operator.REF;	:};
+OP3 ::= DEREF
+	{:	RESULT = Operator.DEREF;	:};
