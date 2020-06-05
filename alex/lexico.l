@@ -11,15 +11,18 @@ import errors.GestionErroresTiny;
 %%
 %cup
 %line
+%char
 %class AnalizadorLexicoTiny
 %unicode
 %public
 
 %{
   private ALexOperations ops;
+  private int columna;
   private GestionErroresTiny errores;
   public String lexema() {return yytext();}
   public int fila() {return yyline+1;}
+  public int chr() {return yychar+1;}
   public void fijaGestionErrores(GestionErroresTiny errores) {
    this.errores = errores;
   }
@@ -31,6 +34,7 @@ import errors.GestionErroresTiny;
 
 %init{
   ops = new ALexOperations(this);
+  columna = 0;
 %init}
 
 letraMayus = [A-Z]
@@ -151,4 +155,4 @@ idenTipo = {letraMayus}({letra}|{digito})*
 {idenVarFun}			{return ops.unidadIdenVarFun();}
 {idenTipo}				{return ops.unidadIdenTipo();}
 
-[^]						{errores.errorLexico(fila(),lexema());}
+[^]						{errores.errorLexico(fila(),chr(),lexema());}
