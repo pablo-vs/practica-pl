@@ -18,11 +18,12 @@ import errors.GestionErroresTiny;
 
 %{
   private ALexOperations ops;
-  private int columna;
+  private int iniCol;
   private GestionErroresTiny errores;
   public String lexema() {return yytext();}
   public int fila() {return yyline+1;}
   public int chr() {return yychar+1;}
+  public int col() {return yychar-iniCol+1;}
   public void fijaGestionErrores(GestionErroresTiny errores) {
    this.errores = errores;
   }
@@ -34,7 +35,7 @@ import errors.GestionErroresTiny;
 
 %init{
   ops = new ALexOperations(this);
-  columna = 0;
+  iniCol = 0;
 %init}
 
 letraMayus = [A-Z]
@@ -44,7 +45,8 @@ digitoPositivo = [1-9]
 digito = ({digitoPositivo}|0)
 parteEntera = (({digitoPositivo}{digito}*)|0)
 parteDecimal = {digito}* {digitoPositivo}
-separador = [ \t\r\b\n]
+newline = \n
+separador = [ \t\r\b]|newline
 comentario = #[^\n]* 
 numEnt = [+-]?{parteEntera}
 numReal = [+-]?{parteEntera}\.{parteDecimal}
@@ -102,6 +104,7 @@ idenTipo = {letraMayus}({letra}|{digito})*
 
 
 %%
+{newline}				{iniCol = chr();}
 {separador}				{}
 {comentario}			{}
 {numEnt}				{return ops.unidadEnt();}
@@ -155,4 +158,4 @@ idenTipo = {letraMayus}({letra}|{digito})*
 {idenVarFun}			{return ops.unidadIdenVarFun();}
 {idenTipo}				{return ops.unidadIdenTipo();}
 
-[^]						{errores.errorLexico(fila(),chr(),lexema());}
+[^]						{errores.errorLexico(fila(),col(),lexema());}

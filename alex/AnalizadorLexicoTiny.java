@@ -19,10 +19,12 @@ public class AnalizadorLexicoTiny implements java_cup.runtime.Scanner {
 	private final int YY_EOF = 65537;
 
   private ALexOperations ops;
+  private int iniCol;
   private GestionErroresTiny errores;
   public String lexema() {return yytext();}
   public int fila() {return yyline+1;}
   public int chr() {return yychar+1;}
+  public int col() {return yychar-iniCol+1;}
   public void fijaGestionErrores(GestionErroresTiny errores) {
    this.errores = errores;
   }
@@ -65,6 +67,7 @@ public class AnalizadorLexicoTiny implements java_cup.runtime.Scanner {
 		yy_lexical_state = YYINITIAL;
 
   ops = new ALexOperations(this);
+  iniCol = 0;
 	}
 
 	private boolean yy_eof_done = false;
@@ -278,14 +281,14 @@ public class AnalizadorLexicoTiny implements java_cup.runtime.Scanner {
 		/* 52 */ YY_NO_ANCHOR,
 		/* 53 */ YY_NO_ANCHOR,
 		/* 54 */ YY_NO_ANCHOR,
-		/* 55 */ YY_NOT_ACCEPT,
-		/* 56 */ YY_NO_ANCHOR,
+		/* 55 */ YY_NO_ANCHOR,
+		/* 56 */ YY_NOT_ACCEPT,
 		/* 57 */ YY_NO_ANCHOR,
 		/* 58 */ YY_NO_ANCHOR,
 		/* 59 */ YY_NO_ANCHOR,
-		/* 60 */ YY_NOT_ACCEPT,
+		/* 60 */ YY_NO_ANCHOR,
 		/* 61 */ YY_NO_ANCHOR,
-		/* 62 */ YY_NO_ANCHOR,
+		/* 62 */ YY_NOT_ACCEPT,
 		/* 63 */ YY_NO_ANCHOR,
 		/* 64 */ YY_NO_ANCHOR,
 		/* 65 */ YY_NO_ANCHOR,
@@ -336,70 +339,92 @@ public class AnalizadorLexicoTiny implements java_cup.runtime.Scanner {
 		/* 110 */ YY_NO_ANCHOR,
 		/* 111 */ YY_NO_ANCHOR,
 		/* 112 */ YY_NO_ANCHOR,
-		/* 113 */ YY_NO_ANCHOR
+		/* 113 */ YY_NO_ANCHOR,
+		/* 114 */ YY_NO_ANCHOR,
+		/* 115 */ YY_NO_ANCHOR,
+		/* 116 */ YY_NO_ANCHOR,
+		/* 117 */ YY_NO_ANCHOR,
+		/* 118 */ YY_NO_ANCHOR,
+		/* 119 */ YY_NO_ANCHOR,
+		/* 120 */ YY_NO_ANCHOR
 	};
 	private int yy_cmap[] = unpackFromString(1,65538,
-"3:8,4:2,1,3:2,4,3:18,4,3,48,2,3:2,26,49,15,16,10,9,18,5,8,11,7,6:9,24,23,29" +
-",17,28,3:2,51,44,51,47,51:4,43,51:9,45,51:7,19,3,20,27,3:2,36,50,35,14,32,3" +
-"1,46,50,30,50:2,33,12,37,13,41,50,38,34,39,40,50:3,42,50,21,25,22,3:65410,0" +
-":2")[0];
+"9:8,2:2,1,9:2,2,9:18,2,9,49,8,9:2,31,50,20,21,15,14,23,10,13,16,12,11:9,29," +
+"28,34,22,33,9:2,52,45,52,48,52:4,44,52:9,46,52:7,24,9,25,32,9:2,38,51,37,19" +
+",4,35,47,51,7,51:2,6,17,3,18,42,51,39,36,40,41,51,5,51,43,51,26,30,27,9:654" +
+"10,0:2")[0];
 
-	private int yy_rmap[] = unpackFromString(1,114,
-"0,1:2,2,1,3,4,1,5,1:2,6,1:2,7,1:10,8,9,10,1,11,1,12,1:3,12,1,12:5,13:2,12:5" +
-",13,12:4,13,14:2,15,16,17,18:2,19,13,20,21,12,22,23,24,25,26,27,28,29,30,31" +
-",32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,12,51,52,53,54,55" +
-",56,57,58,59,60,61,13,62,63,64,65,66")[0];
+	private int yy_rmap[] = unpackFromString(1,121,
+"0,1:3,2,3,1,4,5,1,6,1:4,7,1:10,8,9,10,11,1,12,1,11,1:4,11:5,13:2,11:5,13,11" +
+":4,13,14,11,15,14,16,17,18,19,18,13,20,21,22,23,11,24,25,26,27,28,29,30,31," +
+"32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56," +
+"11,57,58,59,60,61,62,63,64,65,66,67,68,69,70,71,13")[0];
 
-	private int yy_nxt[][] = unpackFromString(67,52,
-"1,2,3,4,2,5,6,57,7,8,9,10,11,58,96,12,13,14,15,16,17,18,19,20,21,22,23,24,2" +
-"5,26,62,101,105,96,107,109,110,111,112,113,96:3,27,97,102,96,106,56,61,96,1" +
-"08,-1:54,3:50,-1:6,6,57,-1:20,28,-1:29,6:2,29,-1:49,6,57,-1,30,-1:48,96:2,-" +
-"1:4,96,64,96,-1:15,96:13,66:3,96,66,-1:2,96,66,-1:17,32,-1:51,33,-1:51,34,-" +
-"1:40,108:2,-1:4,108:3,-1:15,108:7,59,108:5,63:3,108,63,-1:2,108,63,-1:6,29:" +
-"2,-1:50,96:2,-1:4,96:3,-1:15,96:13,66:3,96,66,-1:2,96,66,-1:6,108:2,-1:4,10" +
-"8:3,-1:15,108:13,63:3,108,63,-1:2,108,63,-1,55:47,36,55:3,-1:8,29,-1:49,96:" +
-"2,-1:4,96:3,-1:15,96:8,31,96:4,66:3,96,66,-1:2,96,66,-1:6,108:2,-1:4,108:3," +
-"-1:15,108:9,42,108:3,63:3,108,63,-1:2,108,63,-1,60:48,36,60:2,-1:6,96:2,-1:" +
-"4,96:3,-1:15,96,35,96:5,68,96:5,66:3,96,66,-1:2,96,66,-1:6,96:2,-1:4,96:2,3" +
-"7,-1:15,96:13,66:3,96,66,-1:2,96,66,-1:6,108:2,-1:4,108,71,108,-1:15,108:13" +
-",63:3,108,63,-1:2,108,63,-1:6,108:2,-1:4,108:3,-1:15,108:8,73,108:4,63:3,10" +
-"8,63,-1:2,108,63,-1:6,96:2,-1:4,96:3,-1:15,96,38,96:11,66:3,96,66,-1:2,96,6" +
-"6,-1:6,108:2,-1:4,108:3,-1:15,108:5,43,108:7,63:3,108,63,-1:2,108,63,-1:6,9" +
-"6:2,-1:4,96:3,-1:15,96:3,103,96:9,66:3,96,66,-1:2,96,66,-1:6,108:2,-1:4,108" +
-":3,-1:15,108:3,49,108:9,63:3,108,63,-1:2,108,63,-1:6,96:2,-1:4,96:3,-1:15,9" +
-"6:7,39,96:5,66:3,96,66,-1:2,96,66,-1:6,108:2,-1:4,108:3,-1:15,75,108:12,63:" +
-"3,108,63,-1:2,108,63,-1:6,96:2,-1:4,96:3,-1:15,96:4,83,96:8,66:3,96,66,-1:2" +
-",96,66,-1:6,108:2,-1:4,108:3,-1:15,108:7,77,108:5,63:3,108,63,-1:2,108,63,-" +
-"1:6,96:2,-1:4,96:3,-1:15,96:8,100,96:4,66:3,96,66,-1:2,96,66,-1:6,108:2,-1:" +
-"4,108:3,-1:15,108:13,63:3,54,63,-1:2,108,63,-1:6,96:2,-1:4,96:2,40,-1:15,96" +
-":13,66:3,96,66,-1:2,96,66,-1:6,96:2,-1:4,96:3,-1:15,96:9,41,96:3,66:3,96,66" +
-",-1:2,96,66,-1:6,96:2,-1:4,96:3,-1:15,96:9,104,96,86,96,66:3,96,66,-1:2,96," +
-"66,-1:6,96:2,-1:4,96:3,-1:15,96:10,87,96:2,66:3,96,66,-1:2,96,66,-1:6,96:2," +
-"-1:4,96:3,-1:15,96:11,88,96,66:3,96,66,-1:2,96,66,-1:6,96:2,-1:4,96:3,-1:15" +
-",96:2,44,96:10,66:3,96,66,-1:2,96,66,-1:6,96:2,-1:4,96:3,-1:15,96:2,45,96:1" +
-"0,66:3,96,66,-1:2,96,66,-1:6,96:2,-1:4,96:3,-1:15,96:3,46,96:9,66:3,96,66,-" +
-"1:2,96,66,-1:6,96:2,-1:4,96:3,-1:15,96:2,92,96:10,66:3,96,66,-1:2,96,66,-1:" +
-"6,96:2,-1:4,96:3,-1:15,96:2,47,96:10,66:3,96,66,-1:2,96,66,-1:6,96:2,-1:4,9" +
-"6:3,-1:15,96:2,48,96:10,66:3,96,66,-1:2,96,66,-1:6,96:2,-1:4,96:3,-1:15,96:" +
-"2,50,96:10,66:3,96,66,-1:2,96,66,-1:6,96:2,-1:4,96:3,-1:15,96:5,93,96:7,66:" +
-"3,96,66,-1:2,96,66,-1:6,96:2,-1:4,96:3,-1:15,96:8,94,96:4,66:3,96,66,-1:2,9" +
-"6,66,-1:6,96:2,-1:4,96:3,-1:15,96:6,95,96:6,66:3,96,66,-1:2,96,66,-1:6,96:2" +
-",-1:4,96:3,-1:15,96:9,51,96:3,66:3,96,66,-1:2,96,66,-1:6,96:2,-1:4,96:3,-1:" +
-"15,96:7,52,96:5,66:3,96,66,-1:2,96,66,-1:6,96:2,-1:4,96:3,-1:15,96:9,53,96:" +
-"3,66:3,96,66,-1:2,96,66,-1:6,108:2,-1:4,108,65,108,-1:15,108:13,63:3,108,63" +
-",-1:2,108,63,-1:6,96:2,-1:4,96:3,-1:15,96:3,85,96:9,66:3,96,66,-1:2,96,66,-" +
-"1:6,96:2,-1:4,96:3,-1:15,96:4,84,96:8,66:3,96,66,-1:2,96,66,-1:6,96:2,-1:4," +
-"96:3,-1:15,96:10,90,96:2,66:3,96,66,-1:2,96,66,-1:6,96:2,-1:4,96:3,-1:15,96" +
-":6,70,96:3,72,96:2,66:3,96,66,-1:2,96,66,-1:6,108:2,-1:4,108:3,-1:15,108:9," +
-"67,108:3,63:3,108,63,-1:2,108,63,-1:6,96:2,-1:4,96:3,-1:15,96:4,89,96:8,66:" +
-"3,96,66,-1:2,96,66,-1:6,96:2,-1:4,96:3,-1:15,96:10,91,96:2,66:3,96,66,-1:2," +
-"96,66,-1:6,96:2,-1:4,96:3,-1:15,96:3,74,96:9,66:3,96,66,-1:2,96,66,-1:6,108" +
-":2,-1:4,108:3,-1:15,108:2,69,108:10,63:3,108,63,-1:2,108,63,-1:6,96:2,-1:4," +
-"96:3,-1:15,96:9,76,96:3,66:3,96,66,-1:2,96,66,-1:6,96:2,-1:4,96:3,-1:15,96:" +
-"6,99,96:6,66:3,96,66,-1:2,96,66,-1:6,96:2,-1:4,96:3,-1:15,96:7,78,96:5,66:3" +
-",96,66,-1:2,96,66,-1:6,96:2,-1:4,96,79,96,-1:15,96:10,98,96:2,66:3,96,66,-1" +
-":2,96,66,-1:6,96:2,-1:4,96:3,-1:15,96:2,80,96:10,66:3,96,66,-1:2,96,66,-1:6" +
-",96:2,-1:4,96:3,-1:15,96:8,81,96:3,82,66:3,96,66,-1:2,96,66");
+	private int yy_nxt[][] = unpackFromString(72,53,
+"1,2,3,4,98,104:2,58,5,6,7,8,60,9,10,11,12,109,63,104,13,14,15,16,17,18,19,2" +
+"0,21,22,23,24,25,26,27,111,112,113,114,115,116,104:3,28,99,105,104,110,59,6" +
+"4,104,120,-1:56,104,117,104:3,-1:3,104:2,-1:4,104,66,104,-1:15,104:6,68,104" +
+":2,70:3,104,70,-1:2,104,70,-1:2,5:51,-1:11,8,60,-1:20,30,-1:30,8:2,31,-1:50" +
+",8,60,-1,32,-1:60,34,-1:52,35,-1:52,36,-1:33,61,65:4,-1:3,120:2,-1:4,65:3,-" +
+"1:15,65:9,120:3,65,120,-1:2,65,120,-1:3,104:5,-1:3,104:2,-1:4,104:3,-1:15,1" +
+"04:9,70:3,104,70,-1:2,104,70,-1:11,31:2,-1:43,65:5,-1:3,120:2,-1:4,65:3,-1:" +
+"15,65:9,120:3,65,120,-1:2,65,120,-1,56:48,37,56:3,-1:3,73,104:4,-1:3,104:2," +
+"-1:4,104:3,-1:15,29,104:8,70:3,104,70,-1:2,104,70,-1:13,31,-1:42,65:5,-1:3," +
+"120:2,-1:4,65:3,-1:15,65:5,43,65:3,120:3,65,120,-1:2,65,120,-1,62:49,37,62:" +
+"2,-1:3,104:5,-1:3,104:2,-1:4,104:3,-1:15,104:4,33,104:4,70:3,104,70,-1:2,10" +
+"4,70,-1:3,104:5,-1:3,104:2,-1:4,104:3,-1:15,104:5,38,104:3,70:3,104,70,-1:2" +
+",104,70,-1:3,65:5,-1:3,120:2,-1:4,65:3,-1:15,65:2,44,65:6,120:3,65,120,-1:2" +
+",65,120,-1:3,104:3,81,104,-1:3,104:2,-1:4,104:3,-1:15,104:9,70:3,104,70,-1:" +
+"2,104,70,-1:3,65:3,50,65,-1:3,120:2,-1:4,65:3,-1:15,65:9,120:3,65,120,-1:2," +
+"65,120,-1:3,65:5,-1:3,120:2,-1:4,65:3,-1:15,65:9,120:3,55,120,-1:2,65,120,-" +
+"1:3,104:5,-1:3,104:2,-1:4,104:3,-1:15,104,82,104:7,70:3,104,70,-1:2,104,70," +
+"-1:3,104:5,-1:3,104:2,-1:4,104:3,-1:15,39,104:8,70:3,104,70,-1:2,104,70,-1:" +
+"3,104:5,-1:3,104:2,-1:4,104:2,40,-1:15,104:9,70:3,104,70,-1:2,104,70,-1:3,4" +
+"1,104:4,-1:3,104:2,-1:4,104:3,-1:15,104:9,70:3,104,70,-1:2,104,70,-1:3,104:" +
+"5,-1:3,104:2,-1:4,104:3,-1:15,104:4,103,104:4,70:3,104,70,-1:2,104,70,-1:3," +
+"104:5,-1:3,104:2,-1:4,104:2,42,-1:15,104:9,70:3,104,70,-1:2,104,70,-1:3,104" +
+":5,-1:3,104:2,-1:4,104:3,-1:15,104:5,108,104,85,104,70:3,104,70,-1:2,104,70" +
+",-1:3,104:5,-1:3,104:2,-1:4,104:3,-1:15,104:6,86,104:2,70:3,104,70,-1:2,104" +
+",70,-1:3,104:5,-1:3,104:2,-1:4,104:3,-1:15,104:7,87,104,70:3,104,70,-1:2,10" +
+"4,70,-1:3,104:3,45,104,-1:3,104:2,-1:4,104:3,-1:15,104:9,70:3,104,70,-1:2,1" +
+"04,70,-1:3,104,46,104:3,-1:3,104:2,-1:4,104:3,-1:15,104:9,70:3,104,70,-1:2," +
+"104,70,-1:3,104:5,-1:3,104:2,-1:4,104:3,-1:15,104,89,104:7,70:3,104,70,-1:2" +
+",104,70,-1:3,104,47,104:3,-1:3,104:2,-1:4,104:3,-1:15,104:9,70:3,104,70,-1:" +
+"2,104,70,-1:3,104,92,104:3,-1:3,104:2,-1:4,104:3,-1:15,104:9,70:3,104,70,-1" +
+":2,104,70,-1:3,104,48,104:3,-1:3,104:2,-1:4,104:3,-1:15,104:9,70:3,104,70,-" +
+"1:2,104,70,-1:3,104,49,104:3,-1:3,104:2,-1:4,104:3,-1:15,104:9,70:3,104,70," +
+"-1:2,104,70,-1:3,104:4,93,-1:3,104:2,-1:4,104:3,-1:15,104:9,70:3,104,70,-1:" +
+"2,104,70,-1:3,104,51,104:3,-1:3,104:2,-1:4,104:3,-1:15,104:9,70:3,104,70,-1" +
+":2,104,70,-1:3,104:5,-1:3,104:2,-1:4,104:3,-1:15,104:2,94,104:6,70:3,104,70" +
+",-1:2,104,70,-1:3,104:5,-1:3,104:2,-1:4,104:3,-1:15,104:4,95,104:4,70:3,104" +
+",70,-1:2,104,70,-1:3,104:5,-1:3,104:2,-1:4,104:3,-1:15,104:3,96,104:5,70:3," +
+"104,70,-1:2,104,70,-1:3,97,104:4,-1:3,104:2,-1:4,104:3,-1:15,104:9,70:3,104" +
+",70,-1:2,104,70,-1:3,104:5,-1:3,104:2,-1:4,104:3,-1:15,104:5,52,104:3,70:3," +
+"104,70,-1:2,104,70,-1:3,53,104:4,-1:3,104:2,-1:4,104:3,-1:15,104:9,70:3,104" +
+",70,-1:2,104,70,-1:3,104:5,-1:3,104:2,-1:4,104:3,-1:15,104:5,54,104:3,70:3," +
+"104,70,-1:2,104,70,-1:3,104,57,104:3,-1:3,104:2,-1:4,104:3,-1:15,104:9,70:3" +
+",104,70,-1:2,104,70,-1:3,104:3,72,104,-1:3,104:2,-1:4,104:3,-1:15,104:9,70:" +
+"3,104,70,-1:2,104,70,-1:3,65:5,-1:3,120:2,-1:4,65,100,65,-1:15,65:9,120:3,6" +
+"5,120,-1:2,65,120,-1:3,65:5,-1:3,120:2,-1:4,65,69,65,-1:15,65:9,120:3,65,12" +
+"0,-1:2,65,120,-1:3,104:3,83,104,-1:3,104:2,-1:4,104:3,-1:15,104:9,70:3,104," +
+"70,-1:2,104,70,-1:3,104:5,-1:3,104:2,-1:4,104:3,-1:15,104,84,104:7,70:3,104" +
+",70,-1:2,104,70,-1:3,104:5,-1:3,104:2,-1:4,104:3,-1:15,104:6,90,104:2,70:3," +
+"104,70,-1:2,104,70,-1:3,65:5,-1:3,120:2,-1:4,65:3,-1:15,65:5,119,65:3,120:3" +
+",65,120,-1:2,65,120,-1:3,71,65:4,-1:3,120:2,-1:4,65:3,-1:15,65:9,120:3,65,1" +
+"20,-1:2,65,120,-1:3,104:3,88,104,-1:3,104:2,-1:4,104:3,-1:15,104:9,70:3,104" +
+",70,-1:2,104,70,-1:3,104:5,-1:3,104:2,-1:4,104:3,-1:15,104:6,91,104:2,70:3," +
+"104,70,-1:2,104,70,-1:3,104:5,-1:3,104:2,-1:4,104,74,104,-1:15,104:9,70:3,1" +
+"04,70,-1:2,104,70,-1:3,65,67,65:3,-1:3,120:2,-1:4,65:3,-1:15,65:9,120:3,65," +
+"120,-1:2,65,120,-1:3,104:5,-1:3,104:2,-1:4,104:3,-1:15,104:3,101,104:2,75,1" +
+"04:2,70:3,104,70,-1:2,104,70,-1:3,104:5,-1:3,104:2,-1:4,104:3,-1:15,104:5,7" +
+"6,104:3,70:3,104,70,-1:2,104,70,-1:3,104:5,-1:3,104:2,-1:4,104:3,-1:15,104:" +
+"3,102,104:5,70:3,104,70,-1:2,104,70,-1:3,77,104:4,-1:3,104:2,-1:4,104:3,-1:" +
+"15,104:9,70:3,104,70,-1:2,104,70,-1:3,104,78,104:3,-1:3,104:2,-1:4,104:3,-1" +
+":15,104:9,70:3,104,70,-1:2,104,70,-1:3,104:5,-1:3,104:2,-1:4,104:3,-1:15,10" +
+"4:4,79,104:3,80,70:3,104,70,-1:2,104,70,-1:3,104:2,107,104:2,-1:3,104:2,-1:" +
+"4,104:3,-1:15,104:9,70:3,104,70,-1:2,104,70,-1:3,65:4,106,-1:3,120:2,-1:4,6" +
+"5:3,-1:15,65:9,120:3,65,120,-1:2,65,120,-1:3,65:5,-1:3,120:2,-1:4,65:3,-1:1" +
+"5,65:4,118,65:4,120:3,65,120,-1:2,65,120");
 
 	public java_cup.runtime.Symbol next_token ()
 		throws java.io.IOException {
@@ -451,7 +476,7 @@ public class AnalizadorLexicoTiny implements java_cup.runtime.Scanner {
 					case -2:
 						break;
 					case 2:
-						{}
+						{iniCol = chr();}
 					case -3:
 						break;
 					case 3:
@@ -459,215 +484,215 @@ public class AnalizadorLexicoTiny implements java_cup.runtime.Scanner {
 					case -4:
 						break;
 					case 4:
-						{errores.errorLexico(fila(),chr(),lexema());}
+						{return ops.unidadIdenVarFun();}
 					case -5:
 						break;
 					case 5:
-						{return ops.unidadResta();}
+						{}
 					case -6:
 						break;
 					case 6:
-						{return ops.unidadEnt();}
+						{errores.errorLexico(fila(),col(),lexema());}
 					case -7:
 						break;
 					case 7:
-						{return ops.unidadPunto();}
+						{return ops.unidadResta();}
 					case -8:
 						break;
 					case 8:
-						{return ops.unidadSuma();}
+						{return ops.unidadEnt();}
 					case -9:
 						break;
 					case 9:
-						{return ops.unidadMult();}
+						{return ops.unidadPunto();}
 					case -10:
 						break;
 					case 10:
-						{return ops.unidadDiv();}
+						{return ops.unidadSuma();}
 					case -11:
 						break;
 					case 11:
-						{return ops.unidadIdenVarFun();}
+						{return ops.unidadMult();}
 					case -12:
 						break;
 					case 12:
-						{return ops.unidadPap();}
+						{return ops.unidadDiv();}
 					case -13:
 						break;
 					case 13:
-						{return ops.unidadPcl();}
+						{return ops.unidadPap();}
 					case -14:
 						break;
 					case 14:
-						{return ops.unidadIgual();}
+						{return ops.unidadPcl();}
 					case -15:
 						break;
 					case 15:
-						{return ops.unidadComa();}
+						{return ops.unidadIgual();}
 					case -16:
 						break;
 					case 16:
-						{return ops.unidadCap();}
+						{return ops.unidadComa();}
 					case -17:
 						break;
 					case 17:
-						{return ops.unidadCcl();}
+						{return ops.unidadCap();}
 					case -18:
 						break;
 					case 18:
-						{return ops.unidadBap();}
+						{return ops.unidadCcl();}
 					case -19:
 						break;
 					case 19:
-						{return ops.unidadBcl();}
+						{return ops.unidadBap();}
 					case -20:
 						break;
 					case 20:
-						{return ops.unidadPcoma();}
+						{return ops.unidadBcl();}
 					case -21:
 						break;
 					case 21:
-						{return ops.unidadDosPuntos();}
+						{return ops.unidadPcoma();}
 					case -22:
 						break;
 					case 22:
-						{return ops.unidadVert();}
+						{return ops.unidadDosPuntos();}
 					case -23:
 						break;
 					case 23:
-						{return ops.unidadRef();}
+						{return ops.unidadVert();}
 					case -24:
 						break;
 					case 24:
-						{return ops.unidadDeref();}
+						{return ops.unidadRef();}
 					case -25:
 						break;
 					case 25:
-						{return ops.unidadMayor();}
+						{return ops.unidadDeref();}
 					case -26:
 						break;
 					case 26:
-						{return ops.unidadMenor();}
+						{return ops.unidadMayor();}
 					case -27:
 						break;
 					case 27:
-						{return ops.unidadIdenTipo();}
+						{return ops.unidadMenor();}
 					case -28:
 						break;
 					case 28:
-						{return ops.unidadThen();}
+						{return ops.unidadIdenTipo();}
 					case -29:
 						break;
 					case 29:
-						{return ops.unidadReal();}
+						{return ops.unidadIf();}
 					case -30:
 						break;
 					case 30:
-						{return ops.unidadConcat();}
+						{return ops.unidadThen();}
 					case -31:
 						break;
 					case 31:
-						{return ops.unidadOr();}
+						{return ops.unidadReal();}
 					case -32:
 						break;
 					case 32:
-						{return ops.unidadEsIgual();}
+						{return ops.unidadConcat();}
 					case -33:
 						break;
 					case 33:
-						{return ops.unidadMayig();}
+						{return ops.unidadOr();}
 					case -34:
 						break;
 					case 34:
-						{return ops.unidadMenig();}
+						{return ops.unidadEsIgual();}
 					case -35:
 						break;
 					case 35:
-						{return ops.unidadIf();}
+						{return ops.unidadMayig();}
 					case -36:
 						break;
 					case 36:
-						{return ops.unidadString();}
+						{return ops.unidadMenig();}
 					case -37:
 						break;
 					case 37:
-						{return ops.unidadMod();}
+						{return ops.unidadString();}
 					case -38:
 						break;
 					case 38:
-						{return ops.unidadInf();}
+						{return ops.unidadNot();}
 					case -39:
 						break;
 					case 39:
-						{return ops.unidadFun();}
+						{return ops.unidadInf();}
 					case -40:
 						break;
 					case 40:
-						{return ops.unidadAnd();}
+						{return ops.unidadMod();}
 					case -41:
 						break;
 					case 41:
-						{return ops.unidadNot();}
+						{return ops.unidadFun();}
 					case -42:
 						break;
 					case 42:
-						{return ops.unidadTipoInt();}
+						{return ops.unidadAnd();}
 					case -43:
 						break;
 					case 43:
-						{return ops.unidadTipoDec();}
+						{return ops.unidadTipoInt();}
 					case -44:
 						break;
 					case 44:
-						{return ops.unidadElse();}
+						{return ops.unidadTipoDec();}
 					case -45:
 						break;
 					case 45:
-						{return ops.unidadCase();}
+						{return ops.unidadNull();}
 					case -46:
 						break;
 					case 46:
-						{return ops.unidadNull();}
+						{return ops.unidadElse();}
 					case -47:
 						break;
 					case 47:
-						{return ops.unidadTrue();}
+						{return ops.unidadCase();}
 					case -48:
 						break;
 					case 48:
-						{return ops.unidadType();}
+						{return ops.unidadTrue();}
 					case -49:
 						break;
 					case 49:
-						{return ops.unidadTipoBool();}
+						{return ops.unidadType();}
 					case -50:
 						break;
 					case 50:
-						{return ops.unidadFalse();}
+						{return ops.unidadTipoBool();}
 					case -51:
 						break;
 					case 51:
-						{return ops.unidadStruct();}
+						{return ops.unidadFalse();}
 					case -52:
 						break;
 					case 52:
-						{return ops.unidadReturn();}
+						{return ops.unidadStruct();}
 					case -53:
 						break;
 					case 53:
-						{return ops.unidadRep();}
+						{return ops.unidadReturn();}
 					case -54:
 						break;
 					case 54:
-						{return ops.unidadTipoString();}
+						{return ops.unidadRep();}
 					case -55:
 						break;
-					case 56:
-						{errores.errorLexico(fila(),chr(),lexema());}
+					case 55:
+						{return ops.unidadTipoString();}
 					case -56:
 						break;
 					case 57:
-						{return ops.unidadEnt();}
+						{}
 					case -57:
 						break;
 					case 58:
@@ -675,23 +700,23 @@ public class AnalizadorLexicoTiny implements java_cup.runtime.Scanner {
 					case -58:
 						break;
 					case 59:
-						{return ops.unidadIdenTipo();}
+						{errores.errorLexico(fila(),col(),lexema());}
 					case -59:
 						break;
-					case 61:
-						{errores.errorLexico(fila(),chr(),lexema());}
+					case 60:
+						{return ops.unidadEnt();}
 					case -60:
 						break;
-					case 62:
-						{return ops.unidadIdenVarFun();}
+					case 61:
+						{return ops.unidadIdenTipo();}
 					case -61:
 						break;
 					case 63:
-						{return ops.unidadIdenTipo();}
+						{return ops.unidadIdenVarFun();}
 					case -62:
 						break;
 					case 64:
-						{return ops.unidadIdenVarFun();}
+						{errores.errorLexico(fila(),col(),lexema());}
 					case -63:
 						break;
 					case 65:
@@ -727,7 +752,7 @@ public class AnalizadorLexicoTiny implements java_cup.runtime.Scanner {
 					case -71:
 						break;
 					case 73:
-						{return ops.unidadIdenTipo();}
+						{return ops.unidadIdenVarFun();}
 					case -72:
 						break;
 					case 74:
@@ -735,7 +760,7 @@ public class AnalizadorLexicoTiny implements java_cup.runtime.Scanner {
 					case -73:
 						break;
 					case 75:
-						{return ops.unidadIdenTipo();}
+						{return ops.unidadIdenVarFun();}
 					case -74:
 						break;
 					case 76:
@@ -743,7 +768,7 @@ public class AnalizadorLexicoTiny implements java_cup.runtime.Scanner {
 					case -75:
 						break;
 					case 77:
-						{return ops.unidadIdenTipo();}
+						{return ops.unidadIdenVarFun();}
 					case -76:
 						break;
 					case 78:
@@ -823,7 +848,7 @@ public class AnalizadorLexicoTiny implements java_cup.runtime.Scanner {
 					case -95:
 						break;
 					case 97:
-						{return ops.unidadIdenTipo();}
+						{return ops.unidadIdenVarFun();}
 					case -96:
 						break;
 					case 98:
@@ -831,11 +856,11 @@ public class AnalizadorLexicoTiny implements java_cup.runtime.Scanner {
 					case -97:
 						break;
 					case 99:
-						{return ops.unidadIdenVarFun();}
+						{return ops.unidadIdenTipo();}
 					case -98:
 						break;
 					case 100:
-						{return ops.unidadIdenVarFun();}
+						{return ops.unidadIdenTipo();}
 					case -99:
 						break;
 					case 101:
@@ -843,7 +868,7 @@ public class AnalizadorLexicoTiny implements java_cup.runtime.Scanner {
 					case -100:
 						break;
 					case 102:
-						{return ops.unidadIdenTipo();}
+						{return ops.unidadIdenVarFun();}
 					case -101:
 						break;
 					case 103:
@@ -855,7 +880,7 @@ public class AnalizadorLexicoTiny implements java_cup.runtime.Scanner {
 					case -103:
 						break;
 					case 105:
-						{return ops.unidadIdenVarFun();}
+						{return ops.unidadIdenTipo();}
 					case -104:
 						break;
 					case 106:
@@ -867,7 +892,7 @@ public class AnalizadorLexicoTiny implements java_cup.runtime.Scanner {
 					case -106:
 						break;
 					case 108:
-						{return ops.unidadIdenTipo();}
+						{return ops.unidadIdenVarFun();}
 					case -107:
 						break;
 					case 109:
@@ -875,7 +900,7 @@ public class AnalizadorLexicoTiny implements java_cup.runtime.Scanner {
 					case -108:
 						break;
 					case 110:
-						{return ops.unidadIdenVarFun();}
+						{return ops.unidadIdenTipo();}
 					case -109:
 						break;
 					case 111:
@@ -889,6 +914,34 @@ public class AnalizadorLexicoTiny implements java_cup.runtime.Scanner {
 					case 113:
 						{return ops.unidadIdenVarFun();}
 					case -112:
+						break;
+					case 114:
+						{return ops.unidadIdenVarFun();}
+					case -113:
+						break;
+					case 115:
+						{return ops.unidadIdenVarFun();}
+					case -114:
+						break;
+					case 116:
+						{return ops.unidadIdenVarFun();}
+					case -115:
+						break;
+					case 117:
+						{return ops.unidadIdenVarFun();}
+					case -116:
+						break;
+					case 118:
+						{return ops.unidadIdenTipo();}
+					case -117:
+						break;
+					case 119:
+						{return ops.unidadIdenTipo();}
+					case -118:
+						break;
+					case 120:
+						{return ops.unidadIdenTipo();}
+					case -119:
 						break;
 					default:
 						yy_error(YY_E_INTERNAL,false);

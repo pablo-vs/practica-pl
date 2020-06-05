@@ -4,17 +4,25 @@ import alex.UnidadLexica;
 import stat.VincException;
 
 public class GestionErroresTiny {
-	public void errorLexico(int fila, int chr, String lexema) {
-		System.out.println("ERROR fila "+fila+", col "+chr+": Caracter inexperado: "+lexema); 
-		System.exit(1);
+	
+	private int numErrores = 0;
+
+	public void errorLexico(int fila, int col, String lexema) {
+		System.out.println("ERROR fila "+fila+", columna "+col+": Caracter inexperado: "+lexema); 
+		++numErrores;
+		//System.exit(1);
 	}  
 	public void errorSintactico(UnidadLexica unidadLexica) {
-		System.out.print("ERROR fila "+unidadLexica.fila()+": Elemento inexperado "+unidadLexica.value);
-		System.exit(1);
+		System.out.println("ERROR fila "+unidadLexica.fila()+", columna "+unidadLexica.col()+": Elemento inexperado "+unidadLexica.value);
+		++numErrores;
+		//System.exit(1);
 	}
 
 	public void errorVinculo(VincException e) {
 		// TODO mejorar esto
 		System.err.println("Error en " + e.iden + ": " + e.getMessage());
+		++numErrores;
 	}
+
+	public int numErrores() {return numErrores;}
 }

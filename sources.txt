@@ -30,6 +30,7 @@
 ./ast/tipos/TipoBool.java
 ./ast/tipos/TipoDict.java
 ./ast/Block.java
+./ast/SyntaxError.java
 ./ast/Dec.java
 ./ast/HojaAst.java
 ./ast/Argumento.java

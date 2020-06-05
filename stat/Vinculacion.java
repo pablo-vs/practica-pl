@@ -25,6 +25,8 @@ public class Vinculacion {
 		for(NodoAst n: p.getChildren()) {
 			Inst i = (Inst) n;
 			try {
+				if(i.getInst() == null)
+					continue;
 				switch(i.getInst()) {
 					case DEC:
 						vincular((Dec) i);
@@ -42,11 +44,19 @@ public class Vinculacion {
 
 	public void vincular(Dec d) throws VincException {
 		//vincular(d.tipo);
-		if(!tablaSimbolos.containsKey(d.getIden().getName())) {
-			tablaSimbolos.put(d.getIden().getName(), new Vinculo(Vinculo.Tipo.VAR, d));
+		String id;
+		if (d.getIden() != null)
+			// Si la declaracion no tiene asignación, tomamos directamente el id
+			id = d.getIden().getName();
+		else
+			// Si la declaracion tiene asignación, tomamos el id de la asignación
+			id = d.getAsig().getAsignable().getIden().getName();
+
+		if(!tablaSimbolos.containsKey(id)) {
+			tablaSimbolos.put(id, new Vinculo(Vinculo.Tipo.VAR, d));
 		} else {
 			// Error
-			throw new VincException(d.getIden().getName(), "Identificador ya existente");
+			throw new VincException(id, "Identificador ya existente");
 		}
 	}
 

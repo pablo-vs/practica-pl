@@ -16,6 +16,7 @@ parser code {:
    public void syntax_error(Symbol unidadLexica) {
      errores.errorSintactico((UnidadLexica)unidadLexica);
    }
+   public GestionErroresTiny getErrores() {return errores;}
 :};
 init with {: 
    errores = new GestionErroresTiny();
@@ -80,6 +81,8 @@ INST ::= CASE_BLOCK: cb
 	{:	RESULT = cb;	:};
 INST ::= REPEAT_BLOCK: rp
 	{:	RESULT = rp;	:};
+INST ::= error
+	{:	RESULT = new SyntaxError();	:};
 
 // Bloque de codigo
 BLOCK ::= BAP PROG: p BCL
