@@ -9,6 +9,8 @@ de prueba que demuestran las características del lenguaje:
 El archivo "sources.txt" contiene los nombres de todas las
 fuentes .java para facilitar la compilacion.
 
+La sintaxis está explicada [aquí](https://docs.google.com/document/d/1tiB-HO9mIKyB_R5_gvYdXtpKqpvApQXVxoce5xP-iac)
+
 
 ```
 java -cp '../jlex.jar:' JLex.Main lexico.l
