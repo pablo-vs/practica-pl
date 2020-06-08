@@ -1,5 +1,6 @@
 package ast;
 import ast.exp.*;
+import ast.tipos.Tipo;
 
 public class Asignable implements NodoAst {
 	
@@ -17,7 +18,6 @@ public class Asignable implements NodoAst {
 	private Asignable child;
 	private Asignable struct;
 	private Exp exp;
-
 
 	// Variable
 	public Asignable(Iden id) {

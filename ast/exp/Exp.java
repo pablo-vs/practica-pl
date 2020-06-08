@@ -1,10 +1,21 @@
 package ast.exp;
 import ast.NodoAst;
 import java.util.List;
+import ast.tipos.Tipo;
 
 public class Exp implements NodoAst {
 	private Operator op;
 	private Exp[] operands;
+
+	private Tipo tipo;
+
+	public void setTipo(Tipo t) {
+		tipo = t;
+	}
+
+	public Tipo getTipo() {
+		return tipo;
+	}
 
 	public Operator getOp() {return op;}
 	public Exp[] getOperands() {return operands;}

@@ -1,5 +1,6 @@
 package ast.exp;
 import ast.HojaAst;
+import ast.tipos.TipoBool;
 
 public class ConstBool extends Const implements HojaAst {
 
@@ -7,6 +8,7 @@ public class ConstBool extends Const implements HojaAst {
 
 	public ConstBool(String txt) {
 		super(txt);
+		setTipo(new TipoBool());
 		if (txt.equals("true")) {
 			value = true;
 		} else {

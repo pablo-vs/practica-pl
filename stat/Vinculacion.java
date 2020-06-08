@@ -3,6 +3,7 @@ package stat;
 import java.util.HashMap;
 
 import ast.*;
+import ast.exp.*;
 import errors.GestionErroresTiny;
 
 public class Vinculacion {
@@ -29,10 +30,10 @@ public class Vinculacion {
 					continue;
 				switch(i.getInst()) {
 					case DEC:
-						vincular((Dec) i);
+						vincularDec((Dec) i);
 						break;
 					case ASIG:
-						vincular((Asig) i);
+						vincularAsig((Asig) i);
 						break;
 					default:
 				}
@@ -42,7 +43,7 @@ public class Vinculacion {
 		}	
 	}
 
-	public void vincular(Dec d) throws VincException {
+	public void vincularDec(Dec d) throws VincException {
 		//vincular(d.tipo);
 		String id;
 		if (d.getIden() != null)
@@ -60,12 +61,28 @@ public class Vinculacion {
 		}
 	}
 
-	public void vincular(Asig a) throws VincException {
+	public void vincularAsig(Asig a) throws VincException {
+		vincularExp(a.getExp());
 		switch(a.getAsignable().tipo) {
 			case VAR:
-				a.setDec((Dec) vincular(a.getAsignable().getIden(), Vinculo.Tipo.VAR));
+				a.setDec((Dec) vincularIden(a.getAsignable().getIden(), Vinculo.Tipo.VAR));
 				break;
 			default:
+		}
+	}
+
+	public void vincularExp(Exp e) throws VincException {
+		if (e.getOp() == Operator.NONE) {
+			if (e instanceof Variable) {
+				Variable var = (Variable) e;
+				var.setDec((Dec) vincularIden(var.getIden() , Vinculo.Tipo.VAR));
+			}
+			else {
+				// TODO Constantes compuestas como listas
+			}
+		}
+		for(Exp op : e.getOperands()) {
+			vincularExp(op);
 		}
 	}
 
@@ -74,7 +91,7 @@ public class Vinculacion {
 	 * espera por el contexto.
 	 * Devuelve la declaracion.
 	 */
-	public NodoAst vincular(Iden id, Vinculo.Tipo contexto) throws VincException {
+	public NodoAst vincularIden(Iden id, Vinculo.Tipo contexto) throws VincException {
 		Vinculo v = tablaSimbolos.get(id.getName());
 		if (v == null) {
 			// Error no encontrado

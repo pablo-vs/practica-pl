@@ -1,5 +1,6 @@
 package ast.exp;
 import ast.HojaAst;
+import ast.tipos.TipoInt;
 
 public class ConstInt extends Const implements HojaAst {
 
@@ -8,6 +9,7 @@ public class ConstInt extends Const implements HojaAst {
 
 	public ConstInt(String txt) {
 		super(txt);
+		setTipo(new TipoInt());
 		if (txt.equals("inf")) {
 			inf = true;
 		} else {

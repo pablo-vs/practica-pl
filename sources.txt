@@ -1,5 +1,7 @@
+./stat/Comprobacion.java
 ./stat/Vinculacion.java
 ./stat/Vinculo.java
+./stat/CompException.java
 ./stat/VincException.java
 ./errors/GestionErroresTiny.java
 ./asint/AnalizadorSintacticoTiny.java
@@ -27,6 +29,7 @@
 ./ast/tipos/TipoDec.java
 ./ast/tipos/Tipo.java
 ./ast/tipos/TipoString.java
+./ast/tipos/TipoNull.java
 ./ast/tipos/TipoBool.java
 ./ast/tipos/TipoDict.java
 ./ast/Block.java

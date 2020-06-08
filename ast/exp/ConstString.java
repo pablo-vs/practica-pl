@@ -1,5 +1,6 @@
 package ast.exp;
 import ast.HojaAst;
+import ast.tipos.TipoString;
 
 public class ConstString extends Const implements HojaAst {
 
@@ -7,6 +8,7 @@ public class ConstString extends Const implements HojaAst {
 
 	public ConstString(String txt) {
 		super(txt);
+		setTipo(new TipoString());
 		value = txt;
 	}
 

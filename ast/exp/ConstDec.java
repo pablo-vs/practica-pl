@@ -1,5 +1,6 @@
 package ast.exp;
 import ast.HojaAst;
+import ast.tipos.TipoDec;
 
 public class ConstDec extends Const implements HojaAst {
 
@@ -8,6 +9,7 @@ public class ConstDec extends Const implements HojaAst {
 
 	public ConstDec(String txt) {
 		super(txt);
+		setTipo(new TipoDec());
 		if (txt.equals("inf")) {
 			inf = true;
 		} else {
