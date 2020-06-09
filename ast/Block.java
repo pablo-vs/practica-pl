@@ -9,5 +9,6 @@ public class Block implements NodoAst, Inst {
 	}
 
 	public String getName() {return "Block";}
+	public Prog getProg() {return prog;}
 	public NodoAst[] getChildren() {return prog.getChildren();}
 }
