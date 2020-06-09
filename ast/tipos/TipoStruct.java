@@ -20,4 +20,12 @@ public class TipoStruct implements NodoAst, Tipo {
 	public String getName() {return "TipoStruct";}
 	public NodoAst[] getChildren() {return campos;}
 	public CampoStruct[] getCampos() {return campos;}
+	@Override
+	public int getSize() {
+		int res = 0;
+		for(CampoStruct c : campos) {
+			res += c.getTipo().getSize();
+		}
+		return res;
+	}
 }

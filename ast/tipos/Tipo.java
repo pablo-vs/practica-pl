@@ -15,4 +15,6 @@ public interface Tipo extends NodoAst {
 		return EquivalenciaTipos.equivalentes(this, t,
 				EquivalenciaTipos.ClaseEquiv.IGUALES);
 	}
+
+	public int getSize();
 }

@@ -17,4 +17,4 @@ asint/AnalizadorSintacticoTiny.java: asint/sintaxis.cup
 
 clean:
 	rm -r build/
-	rm **/javac*
+	find . -iname 'javac*' -delete

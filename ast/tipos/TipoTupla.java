@@ -20,4 +20,12 @@ public class TipoTupla implements NodoAst, Tipo {
 	public String getName() {return "TipoTupla";}
 	public NodoAst[] getChildren() {return tiposElems;}
 	public Tipo[] getTiposElems() {return tiposElems;}
+	@Override
+	public int getSize() {
+		int res = 0;
+		for(Tipo t: tiposElems) {
+			res += t.getSize();
+		}
+		return res;
+	}
 }

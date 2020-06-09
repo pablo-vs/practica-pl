@@ -4,7 +4,7 @@ import ast.tipos.TipoBool;
 
 public class ConstBool extends Const implements HojaAst {
 
-	boolean value;
+	public final boolean value;
 
 	public ConstBool(String txt) {
 		super(txt);

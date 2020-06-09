@@ -5,13 +5,14 @@ import ast.tipos.TipoInt;
 public class ConstInt extends Const implements HojaAst {
 
 	private boolean inf;
-	private int value;
+	public final int value;
 
 	public ConstInt(String txt) {
 		super(txt);
 		setTipo(new TipoInt());
 		if (txt.equals("inf")) {
 			inf = true;
+			value = 0;
 		} else {
 			inf = false;
 			value = Integer.parseInt(txt);

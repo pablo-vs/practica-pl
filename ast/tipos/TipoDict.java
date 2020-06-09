@@ -14,4 +14,6 @@ public class TipoDict implements NodoAst, Tipo {
 	public NodoAst[] getChildren() {return new NodoAst[] {tipoClave, tipoValor};}
 	public Tipo getTipoClave() {return tipoClave;}
 	public Tipo getTipoValor() {return tipoValor;}
+	@Override
+	public int getSize() {return 1;}
 }

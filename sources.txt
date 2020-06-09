@@ -58,3 +58,4 @@
 ./ast/Inst.java
 ./ast/CaseMatch.java
 ./ast/NodoAst.java
+./gen/GeneracionCodigo.java

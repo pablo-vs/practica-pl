@@ -7,6 +7,8 @@ public class Dec implements NodoAst, Inst {
 	private Iden iden;
 	private Asig as;
 
+	private int direccion;
+
 	public Dec(Tipo tipo, Iden iden) {
 		this.tipo = tipo;
 		this.iden = iden;
@@ -29,4 +31,8 @@ public class Dec implements NodoAst, Inst {
 	public Tipo getTipo() {return tipo;}
 
 	public Asig getAsig() {return as;}
+
+	public void setDir(int d) {direccion = d;}
+
+	public int getDir() {return direccion;}
 }

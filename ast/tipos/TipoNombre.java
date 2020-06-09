@@ -11,4 +11,6 @@ public class TipoNombre implements HojaAst, Tipo {
 
 	public EnumTipo getTipo() {return EnumTipo.IDENTIPO;}
 	public String getName() {return "TipoNombre: " + valor.getName();}
+	@Override
+	public int getSize() {return -1;}
 }
