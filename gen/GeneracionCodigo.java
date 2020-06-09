@@ -34,6 +34,9 @@ public class GeneracionCodigo {
 				case ASIG:
 					generarAsig((Asig) i);
 					break;
+				case BLOCK:
+					generarBlock((Block) i);
+					break;
 				default:
 			}
 		}
@@ -198,7 +201,63 @@ public class GeneracionCodigo {
 		}
 	}
 	
-
+	
+	private void generarBlock(Block b) {
+		Prog prog = b.getProg();
+		asignarMemoria(p);
+		printInst("sep " + (extremePointer(p)));
+		generar(prog);
+		printInst("retp");
+	}
+	
+	private int extremePointer(Prog p) {
+		int max = 0;
+		for(NodoAst n: p.getChildren()) {
+			Exp e = (Exp) n;
+			int size = sizeExp(p)
+			if (max < size) max = size;
+		}
+		return max;
+	}
+	
+	private int sizeExp (Exp e){
+		int size = 0;
+		if(e.getOp() == Operator.NONE) {
+			if(e instanceof Variable) {
+				size += 1;
+			}
+			else if(e instanceof Const) {
+				if(e instanceof ConstInt) {
+					size += 1;
+				}
+				else if(e instanceof ConstBool) {
+					size += 1;
+				}
+				else if(e instanceof ConstDec) {
+					// TODO
+					throw new RuntimeException("Decimales no soportados");
+				}
+			}
+		}
+		else {
+			switch(e.getOp()) {
+				case MOD: {
+					size += 2*sizeExp(ops[0]) + 2*sizeExp(ops[1]);
+					break;
+				}
+				case NOT: {
+					size += sizeExp(ops[0]);
+					break;
+				}
+				default: {
+					size += sizeExp(ops[0]) + sizeExp(ops[1]);
+					break;
+				}
+			}
+		}
+		return size;
+	}
+	
 	private void printInst(String inst) {
 		output.format("{%s}  \t\t%s;\n", numInst, inst);
 		++numInst;
