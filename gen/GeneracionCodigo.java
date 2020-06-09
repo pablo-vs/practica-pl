@@ -43,31 +43,20 @@ public class GeneracionCodigo {
 	}
 
 	private void asignarMemoria(Prog p) {
-		int numVar = 0, tamTotal = 0;
+		int tamAct = 0;
 		for(NodoAst n: p.getChildren()) {
 			Inst i = (Inst) n;
 			if(i.getInst() == EnumInst.DEC) {
-				numVar++;
-				tamTotal += ((Dec) i).getTipo().getSize();
+				tamAct = generarDec((Dec) i, tamAct);
 			}
 		}
-	
-		int inicioVarLoc = numVar+5;
-
-		int contador = 0, tamAct = 0;
-		for(NodoAst n: p.getChildren()) {
-			Inst i = (Inst) n;
-			if(i.getInst() == EnumInst.DEC) {
-				tamAct = generarDec((Dec) i, contador, tamAct, inicioVarLoc);
-				++contador;
-			}
-		}
+		printInst("ssp " + (tamAct+5));
 	}
 
-	private int generarDec(Dec d, int contador, int tamAct, int inicioAlm) {
+	private int generarDec(Dec d, int tamAct) {
 		int size = d.getTipo().getSize();
 		if (size == 1) {
-			d.setDir(contador + 5);
+			d.setDir(tamAct + 5);
 		} else {
 			throw new RuntimeException("Unsupported");
 		}
@@ -113,13 +102,105 @@ public class GeneracionCodigo {
 				generarExp(ops[0]);
 				generarExp(ops[1]);
 				printInst("add");
+				break;
+			}
+			case MENOS: {
+				Exp[] ops = e.getOperands();
+				generarExp(ops[0]);
+				generarExp(ops[1]);
+				printInst("sub");
+				break;
+			}
+			case POR: {
+				Exp[] ops = e.getOperands();
+				generarExp(ops[0]);
+				generarExp(ops[1]);
+				printInst("mul");
+				break;
+			}
+			case DIV: {
+				Exp[] ops = e.getOperands();
+				generarExp(ops[0]);
+				generarExp(ops[1]);
+				printInst("div");
+				break;
+			}
+			case MOD: {
+				// Dividir, multiplicar el cociente por el divisor, y restar al dividendo
+				Exp[] ops = e.getOperands();
+				//dividendo
+				generarExp(ops[0]);
+				//divisor
+				generarExp(ops[1]);
+				generarExp(ops[0]);
+				generarExp(ops[1]);
+				printInst("div");
+				printInst("mul");
+				printInst("sub");				
+				break;
+			}
+			case AND: {
+				Exp[] ops = e.getOperands();
+				generarExp(ops[0]);
+				generarExp(ops[1]);
+				printInst("and");
+				break;
+			}
+			case OR: {
+				Exp[] ops = e.getOperands();
+				generarExp(ops[0]);
+				generarExp(ops[1]);
+				printInst("or");
+				break;
+			}
+			case NOT: {
+				Exp[] ops = e.getOperands();
+				generarExp(ops[0]);
+				printInst("not");
+				break;
+			}
+			case ES_IGUAL: {
+				// Igualdad por referencia en tipos compuestos
+				Exp[] ops = e.getOperands();
+				generarExp(ops[0]);
+				generarExp(ops[1]);
+				printInst("equ");
+				break;
+			}
+			case MENOR: {
+				Exp[] ops = e.getOperands();
+				generarExp(ops[0]);
+				generarExp(ops[1]);
+				printInst("les");
+				break;
+			}
+			case MAYOR: {
+				Exp[] ops = e.getOperands();
+				generarExp(ops[0]);
+				generarExp(ops[1]);
+				printInst("grt");
+				break;
+			}
+			case MENIG: {
+				Exp[] ops = e.getOperands();
+				generarExp(ops[0]);
+				generarExp(ops[1]);
+				printInst("leq");
+				break;
+			}
+			case MAYIG: {
+				Exp[] ops = e.getOperands();
+				generarExp(ops[0]);
+				generarExp(ops[1]);
+				printInst("geq");
+				break;
 			}
 		}
 	}
 	
 
 	private void printInst(String inst) {
-		output.format("{%s}	%s;\n", numInst, inst);
+		output.format("{%s}  \t\t%s;\n", numInst, inst);
 		++numInst;
 	}
 }
