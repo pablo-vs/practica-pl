@@ -35,6 +35,9 @@ public class Vinculacion {
 					case ASIG:
 						vincularAsig((Asig) i);
 						break;
+					case BLOCK:
+						vincularBlock((Block) i);
+						break;
 					default:
 				}
 			} catch (VincException e) {
@@ -85,6 +88,11 @@ public class Vinculacion {
 			vincularExp(op);
 		}
 	}
+	
+	public void vincularBlock(Block b) throws VincException {
+		Vinculacion v = new Vinculacion(this);
+		v.vincular(b.getProg());
+	}
 
 	/* Intenta vincular un identificador, el parámetro contexto es
 	 * la clase de identificador (variable, tipo, funcion) que se
@@ -103,14 +111,6 @@ public class Vinculacion {
 					+ ", pero se ha encontrado " + v.tipo.getVal());
 		}
 		return v.declaracion;
-	}
-
-	public Vinculacion abreBloque() {
-		return new Vinculacion(this);
-	}
-
-	public Vinculacion cierraBloque() {
-		return parent;
 	}
 
 }
