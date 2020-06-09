@@ -12,4 +12,6 @@ public class TipoDict implements NodoAst, Tipo {
 	public EnumTipo getTipo() {return EnumTipo.DICT;}
 	public String getName() {return "TipoDict";}
 	public NodoAst[] getChildren() {return new NodoAst[] {tipoClave, tipoValor};}
+	public Tipo getTipoClave() {return tipoClave;}
+	public Tipo getTipoValor() {return tipoValor;}
 }

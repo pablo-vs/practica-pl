@@ -11,4 +11,5 @@ public class TipoArray implements NodoAst, Tipo {
 	public EnumTipo getTipo() {return EnumTipo.ARRAY;}
 	public String getName() {return "TipoArray";}
 	public NodoAst[] getChildren() {return new NodoAst[] {tipoElems};}
+	public Tipo getTipoElem() {return tipoElems;}
 }

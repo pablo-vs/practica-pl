@@ -11,4 +11,5 @@ public class TipoPunt implements NodoAst, Tipo {
 	public EnumTipo getTipo() {return EnumTipo.PUNT;}
 	public String getName() {return "TipoPunt";}
 	public NodoAst[] getChildren() {return new NodoAst[] {tipoRef};}
+	public Tipo getTipoRef() {return tipoRef;}
 }

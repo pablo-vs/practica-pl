@@ -13,4 +13,6 @@ public class CampoStruct implements NodoAst {
 	
 	public String getName() {return "CampoStruct";}
 	public NodoAst[] getChildren() {return new NodoAst[] {name, tipo};}
+	public Iden getIden() {return name;}
+	public Tipo getTipo() {return tipo;}
 }

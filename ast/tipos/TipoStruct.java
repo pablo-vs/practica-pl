@@ -19,4 +19,5 @@ public class TipoStruct implements NodoAst, Tipo {
 	public EnumTipo getTipo() {return EnumTipo.STRUCT;}
 	public String getName() {return "TipoStruct";}
 	public NodoAst[] getChildren() {return campos;}
+	public CampoStruct[] getCampos() {return campos;}
 }

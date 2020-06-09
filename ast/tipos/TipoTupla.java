@@ -19,4 +19,5 @@ public class TipoTupla implements NodoAst, Tipo {
 	public EnumTipo getTipo() {return EnumTipo.TUPLA;}
 	public String getName() {return "TipoTupla";}
 	public NodoAst[] getChildren() {return tiposElems;}
+	public Tipo[] getTiposElems() {return tiposElems;}
 }

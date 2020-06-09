@@ -1,5 +1,6 @@
 ./stat/Comprobacion.java
 ./stat/Vinculacion.java
+./stat/EquivalenciaTipos.java
 ./stat/Vinculo.java
 ./stat/CompException.java
 ./stat/VincException.java
