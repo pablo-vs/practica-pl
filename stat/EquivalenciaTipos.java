@@ -78,9 +78,9 @@ public class EquivalenciaTipos {
 								c2 = t2.getMapaCampos();
 					if (c1.size() != c2.size() && equiv == ClaseEquiv.IGUALES)
 						return false;
-					for(String id1: c1.keySet()) {
-						if(!c2.containsKey(id1)
-								|| !equivalentes(c1.get(id1).getTipo(), c2.get(id1).getTipo(), ClaseEquiv.IGUALES))
+					for(String id1: c2.keySet()) {
+						if(!c1.containsKey(id1)
+								|| !equivalentes(c1.get(id1).getTipo(), c2.get(id1).getTipo(), equiv))
 							return false;
 					}
 					break;

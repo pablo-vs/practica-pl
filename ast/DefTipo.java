@@ -12,7 +12,7 @@ public class DefTipo implements NodoAst, Inst {
 	}
 
 	public Iden getIden() {return iden;}
-	public Iden getTipo() {return Tipo;}
+	public Tipo getTipo() {return tipo;}
 	@Override
 	public String getName() {return "DefTipo";}
 	@Override
