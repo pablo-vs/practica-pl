@@ -206,6 +206,7 @@ public class GeneracionCodigo {
 	
 	private void generarBlock(Block b) {
 		Prog prog = b.getProg();
+		printInst("mst 0");
 		asignarMemoria(p);
 		printInst("sep " + (extremePointer(p)));
 		generar(prog);
