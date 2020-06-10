@@ -36,6 +36,12 @@ public class Vinculacion {
 					case ASIG:
 						vincularAsig((Asig) i);
 						break;
+					case BLOCK:
+						vincularBlock((Block) i);
+						break;
+					case TIPO_DEF:
+						vincularDefTipo((DefTipo) i);
+						break;
 					default:
 				}
 			} catch (VincException e) {
@@ -142,12 +148,18 @@ public class Vinculacion {
 		return v.declaracion;
 	}
 
-	public Vinculacion abreBloque() {
-		return new Vinculacion(this);
+	public void vincularBlock(Block b) throws VincException {
+		Vinculacion v = new Vinculacion(this);
+		v.vincular(b.getProg());
 	}
-
-	public Vinculacion cierraBloque() {
-		return parent;
+	
+	public void vincularDefTipo(DefTipo d) throws VincException {
+		String id = d.getIden().getName();
+		if(!tablaSimbolos.containsKey(id)) {
+			tablaSimbolos.put(id, new Vinculo(Vinculo.Tipo.TIPO, d));
+		} else {
+			throw new VincException(id, "Identificador ya existente");
+		}
 	}
 
 }
