@@ -83,36 +83,33 @@ public class Asignable implements NodoAst {
 
 	public Asignable getStruct() {return struct;}
 
-	public Asignable getChild() {return struct;}
+	public Asignable getChild() {return child;}
 
 	// Devuelve el asignable de más alto nivel. Ej:
 	// ^(comunidad).familias[24].personas[7].edad -> comunidad
-	// Ve al objeto llamado comunidad
-	// allí accede a la dirección a la que apunta,
-	// allí accede al campo familias
-	// allí accede a la posición 24
-	// allí accede al campo personas
-	// allí accede a la posición 7
-	// allí accede al campo edad
 	public Asignable getTop() {
 		Asignable res;
 		switch(tipo) {
-			case VAR:
-				res = this;
-				break;
-			case PUNT:
-				res = child.getTop();
-				break;
 			case CAMPO:
 				res = struct.getTop();
 				break;
-			case ACCESOR:
-				res = child.getTop();
-				break;
 			default:
-				res = null;
+				res = this;
 		}
 		return res;
+	}
+
+	public Asignable getBottom() {
+		Asignable res;
+		switch(tipo) {
+			case ACCESOR:
+				res = child.getBottom();
+				break;
+			default:
+				res = this;
+		}
+		return res;
+
 	}
 
 	public void setDec(Dec d) {

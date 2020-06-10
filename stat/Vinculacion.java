@@ -97,6 +97,7 @@ public class Vinculacion {
 						vincularTipo(c.getTipo());
 					}
 				}
+				st.setMapaCampos(mapa);
 				break;
 			}	
 			default:
@@ -104,17 +105,21 @@ public class Vinculacion {
 	}
 
 	public void vincularExp(Exp e) throws VincException {
-		if (e.getOp() == Operator.NONE) {
-			if (e instanceof Variable) {
-				Variable var = (Variable) e;
-				var.setDec((Dec) vincularIden(var.getIden() , Vinculo.Tipo.VAR));
+		if (e.getOp() == Operator.PUNTO) {
+			vincularExp(e.getOperands()[0]);
+		} else {
+			if (e.getOp() == Operator.NONE) {
+				if (e instanceof Variable) {
+					Variable var = (Variable) e;
+					var.setDec((Dec) vincularIden(var.getIden() , Vinculo.Tipo.VAR));
+				}
+				else {
+					// TODO Constantes compuestas como listas
+				}
 			}
-			else {
-				// TODO Constantes compuestas como listas
+			for(Exp op : e.getOperands()) {
+				vincularExp(op);
 			}
-		}
-		for(Exp op : e.getOperands()) {
-			vincularExp(op);
 		}
 	}
 

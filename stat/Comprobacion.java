@@ -57,7 +57,7 @@ public class Comprobacion {
 				break;
 			}
 			case CAMPO: {
-				Iden id = a.getChild().getTop().getIden();
+				Iden id = a.getChild().getBottom().getIden();
 				CampoStruct cam = new CampoStruct(id, t);
 				HashMap<String, CampoStruct> map = new HashMap<>();
 				map.put(id.print(), cam);
@@ -80,10 +80,35 @@ public class Comprobacion {
 			else if(e instanceof Const) {
 				// Arrays, Dicts, Tuplas...
 			}
+		} else if(e.getOp() == Operator.PUNTO) {
+			Tipo tipoCampo = comprobarCampo(e);
+			e.setTipo(tipoCampo);
 		} else {
 			Tipo tipoOp = comprobarOp(e.getOp(), e.getOperands());
 			e.setTipo(tipoOp);
 		}
+	}
+
+	private Tipo comprobarCampo(Exp e) throws CompException {
+		Tipo result = null;
+		switch(e.getOp()) {
+			case NONE:
+				result = ((Variable)e).getDec().getTipo();
+				break;
+			case PUNTO:
+				Tipo t = comprobarCampo(e.getOperands()[0]);
+				if(!(t instanceof TipoStruct)) {
+					throw new CompException("Se esperaba struct, pero se obtuvo" + t);
+				}
+				TipoStruct ts = (TipoStruct) t;
+				Variable campo = (Variable) e.getOperands()[1].getArray();
+				if(ts.getMapaCampos().containsKey(campo.getIden().print())) {
+					result = ts.getMapaCampos().get(campo.getIden().print()).getTipo();
+				} else {
+					throw new CompException(ts.getMapaCampos() + " no tiene un campo " + campo.getIden().print());
+				}
+		}
+		return result;
 	}
 
 	// Tipos de los operadores

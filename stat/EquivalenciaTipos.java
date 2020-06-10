@@ -68,7 +68,7 @@ public class EquivalenciaTipos {
 						if (!equivalentes(ts1[i], ts2[i], equiv))
 							return false;
 					}
-					return true;
+					break;
 				}
 				case DICT: {
 					TipoDict t1 = (TipoDict) ti1;
@@ -88,6 +88,7 @@ public class EquivalenciaTipos {
 								|| !equivalentes(c1.get(id1).getTipo(), c2.get(id1).getTipo(), ClaseEquiv.IGUALES))
 							return false;
 					}
+					break;
 				}
 				case PUNT: {
 					TipoPunt t1 = (TipoPunt) ti1;
@@ -95,6 +96,6 @@ public class EquivalenciaTipos {
 					return equivalentes(t1.getTipoRef(), t2.getTipoRef(), equiv);
 				}
 			}
-		throw new RuntimeException("Reached unreachable statement");
+		return true;
 	}
 }

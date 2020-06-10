@@ -42,6 +42,17 @@ public class Exp implements NodoAst {
 		return op.print(operands);
 	}
 
+	public Exp getArray() {
+		if(op == Operator.ACCESO) {
+		   return operands[0];
+		} else if (op == Operator.NONE) {
+			return this;
+		} else {
+			throw new UnsupportedOperationException("Llamada a getArray en algo que no es un accesor");
+		}
+
+	}
+
 	@Override
 	public String getName() {return "Exp: " + op.getString();}
 	@Override
