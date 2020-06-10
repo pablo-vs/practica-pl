@@ -11,6 +11,8 @@ public class DefTipo implements NodoAst, Inst {
 		this.iden = iden;
 	}
 
+	public Iden getIden() {return iden;}
+	public Iden getTipo() {return Tipo;}
 	@Override
 	public String getName() {return "DefTipo";}
 	@Override

@@ -48,11 +48,6 @@ public class EquivalenciaTipos {
 			return false;
 		else
 			switch(ti1.getTipo()) {
-				case IDENTIPO: {
-						// TODO
-						System.err.println("Not implemented");
-						return false;
-					}
 				case ARRAY: {
 					TipoArray t1 = (TipoArray) ti1;
 					TipoArray t2 = (TipoArray) ti2;

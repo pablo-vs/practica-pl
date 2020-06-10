@@ -37,6 +37,8 @@ public class GeneracionCodigo {
 				case BLOCK:
 					generarBlock((Block) i);
 					break;
+				case TIPO_DEF:
+					break;
 				default:
 			}
 		}
