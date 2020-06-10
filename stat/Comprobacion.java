@@ -5,6 +5,8 @@ import ast.*;
 import ast.exp.*;
 import ast.tipos.*;
 
+import java.util.HashMap;
+
 public class Comprobacion {
 
 
@@ -35,16 +37,41 @@ public class Comprobacion {
 		}	
 	}
 
-	public void comprobarDec(Dec d) throws CompException {}
+	private void comprobarDec(Dec d) throws CompException {}
 
-	public void comprobarAsig(Asig a) throws CompException {
+
+	private void comprobarAsig(Asig a) throws CompException {
 		comprobarExp(a.getExp());
-		if (!a.getDec().getTipo().compatibleCon(a.getExp().getTipo())) {
-			throw new CompException("Se esperaba " + a.getDec().getTipo() + " pero se ha encontrado " + a.getExp().getTipo());
+		comprobarAsignable(a.getAsignable(), a.getExp().getTipo());
+	}
+
+	// Comprueba si un asignable puede aceptar el tipo dado
+	// En el caso de un struct, comprueba solo si el asignable
+	// es un struct y contiene los campos que hay en el struct
+	private void comprobarAsignable(Asignable a, Tipo t) throws CompException {
+		switch(a.tipo) {
+			case VAR: {
+				if (!a.getDec().getTipo().compatibleCon(t)) {
+					throw new CompException("Se esperaba " + a.getDec().getTipo() + " pero se ha encontrado " + t);
+				}
+				break;
+			}
+			case CAMPO: {
+				Iden id = a.getChild().getTop().getIden();
+				CampoStruct cam = new CampoStruct(id, t);
+				HashMap<String, CampoStruct> map = new HashMap<>();
+				map.put(id.print(), cam);
+				TipoStruct st = new TipoStruct();
+				st.setMapaCampos(map);
+
+				comprobarAsignable(a.getStruct(), st);
+				break;
+			}
+			default:
 		}
 	}
 
-	public void comprobarExp(Exp e) throws CompException {
+	private void comprobarExp(Exp e) throws CompException {
 		if(e.getOp() == Operator.NONE) {
 			if(e instanceof Variable) {
 				Variable var = (Variable) e;
@@ -60,7 +87,7 @@ public class Comprobacion {
 	}
 
 	// Tipos de los operadores
-	public Tipo comprobarOp(Operator op, Exp [] operands) throws CompException {
+	private Tipo comprobarOp(Operator op, Exp [] operands) throws CompException {
 		for (Exp e: operands) {
 			comprobarExp(e);
 		}

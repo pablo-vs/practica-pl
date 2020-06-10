@@ -1,7 +1,6 @@
 package stat;
 
-import java.util.List;
-import java.util.Arrays;
+import java.util.Map;
 
 import ast.tipos.*;
 
@@ -80,17 +79,13 @@ public class EquivalenciaTipos {
 				case STRUCT: {
 					TipoStruct t1 = (TipoStruct) ti1;
 					TipoStruct t2 = (TipoStruct) ti2;
-					List<CampoStruct> c1 = Arrays.asList(t1.getCampos()),
-								c2 = Arrays.asList(t2.getCampos());
-					if (c1.size() != c2.size())
+					Map<String, CampoStruct> c1 = t1.getMapaCampos(),
+								c2 = t2.getMapaCampos();
+					if (c1.size() != c2.size() && equiv == ClaseEquiv.IGUALES)
 						return false;
-					c1.sort((e1, e2) -> e1.getIden().print().compareTo(e2.getIden().print()));
-					c2.sort((e1, e2) -> e1.getIden().print().compareTo(e2.getIden().print()));
-					for(int i = 0; i < c1.size(); ++i) {
-						if(!c1.get(i).getIden().print().equals(
-									c2.get(i).getIden().print()))
-							return false;
-						if(!equivalentes(c1.get(i).getTipo(), c2.get(i).getTipo(), equiv))
+					for(String id1: c1.keySet()) {
+						if(!c2.containsKey(id1)
+								|| !equivalentes(c1.get(id1).getTipo(), c2.get(id1).getTipo(), ClaseEquiv.IGUALES))
 							return false;
 					}
 				}

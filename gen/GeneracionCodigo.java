@@ -65,15 +65,15 @@ public class GeneracionCodigo {
 	}
 
 	private void generarAsig(Asig a) {
-		generarAsignable(a.getDec());
+		generarAsignable(a.getAsignable());
 		generarExp(a.getExp());
 		printInst("sto");
 	}
 
-	private void generarAsignable(Dec d) {
+	private void generarAsignable(Asignable a) {
 		//printInst("ldc " + nivel);
 		// TODO determinar nivel
-		printInst("ldc " + d.getDir());
+		//printInst("ldc " + d.getDir());
 	}
 
 	private void generarExp(Exp e) {

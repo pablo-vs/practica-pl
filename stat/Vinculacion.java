@@ -4,6 +4,7 @@ import java.util.HashMap;
 
 import ast.*;
 import ast.exp.*;
+import ast.tipos.*;
 import errors.GestionErroresTiny;
 
 public class Vinculacion {
@@ -44,7 +45,7 @@ public class Vinculacion {
 	}
 
 	public void vincularDec(Dec d) throws VincException {
-		//vincular(d.tipo);
+		vincularTipo(d.getTipo());
 		String id;
 		if (d.getIden() != null)
 			// Si la declaracion no tiene asignación, tomamos directamente el id
@@ -63,10 +64,41 @@ public class Vinculacion {
 
 	public void vincularAsig(Asig a) throws VincException {
 		vincularExp(a.getExp());
-		switch(a.getAsignable().tipo) {
+		vincularAsignable(a.getAsignable());
+	}
+
+	public void vincularAsignable(Asignable a) throws VincException{
+		switch(a.tipo) {
 			case VAR:
-				a.setDec((Dec) vincularIden(a.getAsignable().getIden(), Vinculo.Tipo.VAR));
+				a.setDec((Dec) vincularIden(a.getIden(), Vinculo.Tipo.VAR));
 				break;
+			case CAMPO: {
+				vincularAsignable(a.getStruct());
+				break;
+			}
+			default:
+		}
+	}
+
+	public void vincularTipo(Tipo t) throws VincException {
+		switch(t.getTipo()) {
+			case IDENTIPO: {
+				// TOOD
+				break;
+			}
+			case STRUCT: {
+				TipoStruct st = (TipoStruct) t;
+				HashMap<String, CampoStruct> mapa = new HashMap<>();
+				for(CampoStruct c: st.getCampos()) {
+					if (mapa.containsKey(c.getIden().print())) {
+						throw new VincException(c.getIden().print(), "Campo duplicado");
+					} else {
+						mapa.put(c.getIden().print(), c);
+						vincularTipo(c.getTipo());
+					}
+				}
+				break;
+			}	
 			default:
 		}
 	}

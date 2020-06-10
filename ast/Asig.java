@@ -7,9 +7,6 @@ public class Asig implements NodoAst, Inst {
 	private Asignable asig;
 	private Exp exp;
 
-	// Declaracion
-	private Dec dec;
-
 	public Asig(Asignable as, Exp exp) {
 		this.asig = as;
 		this.exp = exp;
@@ -21,8 +18,4 @@ public class Asig implements NodoAst, Inst {
 	public Asignable getAsignable() {return asig;}
 
 	public Exp getExp() {return exp;}
-
-	public void setDec(Dec d) {dec = d;}
-
-	public Dec getDec() {return dec;}
 }

@@ -19,6 +19,8 @@ public class Asignable implements NodoAst {
 	private Asignable struct;
 	private Exp exp;
 
+	private Dec declaracion;
+
 	// Variable
 	public Asignable(Iden id) {
 		iden = id;
@@ -78,4 +80,46 @@ public class Asignable implements NodoAst {
 	}
 
 	public Iden getIden() {return iden;}
+
+	public Asignable getStruct() {return struct;}
+
+	public Asignable getChild() {return struct;}
+
+	// Devuelve el asignable de más alto nivel. Ej:
+	// ^(comunidad).familias[24].personas[7].edad -> comunidad
+	// Ve al objeto llamado comunidad
+	// allí accede a la dirección a la que apunta,
+	// allí accede al campo familias
+	// allí accede a la posición 24
+	// allí accede al campo personas
+	// allí accede a la posición 7
+	// allí accede al campo edad
+	public Asignable getTop() {
+		Asignable res;
+		switch(tipo) {
+			case VAR:
+				res = this;
+				break;
+			case PUNT:
+				res = child.getTop();
+				break;
+			case CAMPO:
+				res = struct.getTop();
+				break;
+			case ACCESOR:
+				res = child.getTop();
+				break;
+			default:
+				res = null;
+		}
+		return res;
+	}
+
+	public void setDec(Dec d) {
+		declaracion = d;
+	}
+	
+	public Dec getDec() {
+		return declaracion;
+	}
 }
