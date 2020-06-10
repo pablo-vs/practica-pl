@@ -29,6 +29,7 @@ public class Dec implements NodoAst, Inst {
 	public Iden getIden() {return iden;}
 
 	public Tipo getTipo() {return tipo;}
+	public void setTipo(Tipo t) {tipo = t;}
 
 	public Asig getAsig() {return as;}
 

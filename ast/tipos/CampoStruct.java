@@ -17,6 +17,7 @@ public class CampoStruct implements NodoAst {
 	public NodoAst[] getChildren() {return new NodoAst[] {name, tipo};}
 	public Iden getIden() {return name;}
 	public Tipo getTipo() {return tipo;}
+	public void setTipo(Tipo t) {tipo = t;}
 	public int getOffset() {return offset;}
 	public void setOffset(int o) {offset = o;}
 }

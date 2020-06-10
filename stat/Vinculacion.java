@@ -47,11 +47,11 @@ public class Vinculacion {
 			} catch (VincException e) {
 				err.errorVinculo(e);
 			}
-		}	
+		}
 	}
 
-	public void vincularDec(Dec d) throws VincException {
-		vincularTipo(d.getTipo());
+	private void vincularDec(Dec d) throws VincException {
+		d.setTipo(vincularTipo(d.getTipo()));
 		String id;
 		if (d.getIden() != null)
 			// Si la declaracion no tiene asignación, tomamos directamente el id
@@ -60,20 +60,15 @@ public class Vinculacion {
 			// Si la declaracion tiene asignación, tomamos el id de la asignación
 			id = d.getAsig().getAsignable().getIden().getName();
 
-		if(!tablaSimbolos.containsKey(id)) {
-			tablaSimbolos.put(id, new Vinculo(Vinculo.Tipo.VAR, d));
-		} else {
-			// Error
-			throw new VincException(id, "Identificador ya existente");
-		}
+		addDeclaracion(id, new Vinculo(Vinculo.Tipo.VAR, d));
 	}
 
-	public void vincularAsig(Asig a) throws VincException {
+	private void vincularAsig(Asig a) throws VincException {
 		vincularExp(a.getExp());
 		vincularAsignable(a.getAsignable());
 	}
 
-	public void vincularAsignable(Asignable a) throws VincException{
+	private void vincularAsignable(Asignable a) throws VincException{
 		switch(a.tipo) {
 			case VAR:
 				a.setDec((Dec) vincularIden(a.getIden(), Vinculo.Tipo.VAR));
@@ -86,10 +81,16 @@ public class Vinculacion {
 		}
 	}
 
-	public void vincularTipo(Tipo t) throws VincException {
+	// Devuelve el tipo dado salvo para referencias de tipo. En
+	// ese caso devuelve el tipo refereciado
+	private Tipo vincularTipo(Tipo t) throws VincException {
+		Tipo result = t;
 		switch(t.getTipo()) {
 			case IDENTIPO: {
-				// TOOD
+				TipoNombre tn = (TipoNombre) t;
+				DefTipo d = (DefTipo) vincularIden(tn.getValor(), Vinculo.Tipo.TIPO);
+				tn.setDef(d);
+				result = d.getTipo();
 				break;
 			}
 			case STRUCT: {
@@ -100,7 +101,7 @@ public class Vinculacion {
 						throw new VincException(c.getIden().print(), "Campo duplicado");
 					} else {
 						mapa.put(c.getIden().print(), c);
-						vincularTipo(c.getTipo());
+						c.setTipo(vincularTipo(c.getTipo()));
 					}
 				}
 				st.setMapaCampos(mapa);
@@ -108,9 +109,10 @@ public class Vinculacion {
 			}	
 			default:
 		}
+		return result;
 	}
 
-	public void vincularExp(Exp e) throws VincException {
+	private void vincularExp(Exp e) throws VincException {
 		if (e.getOp() == Operator.PUNTO) {
 			vincularExp(e.getOperands()[0]);
 		} else {
@@ -129,37 +131,49 @@ public class Vinculacion {
 		}
 	}
 
+
+	private void vincularBlock(Block b) throws VincException {
+		Vinculacion v = new Vinculacion(this);
+		v.vincular(b.getProg());
+	}
+	
+	private void vincularDefTipo(DefTipo d) throws VincException {
+		vincularTipo(d.getTipo());
+		String id = d.getIden().getName();
+		addDeclaracion(id, new Vinculo(Vinculo.Tipo.TIPO, d));
+	}
+
 	/* Intenta vincular un identificador, el parámetro contexto es
 	 * la clase de identificador (variable, tipo, funcion) que se
 	 * espera por el contexto.
 	 * Devuelve la declaracion.
 	 */
-	public NodoAst vincularIden(Iden id, Vinculo.Tipo contexto) throws VincException {
+	private NodoAst vincularIden(Iden id, Vinculo.Tipo contexto) throws VincException {
 		Vinculo v = tablaSimbolos.get(id.getName());
-		if (v == null) {
-			// Error no encontrado
-			throw new VincException(id.getName(), "Identificador no encontrado");
+		NodoAst res = null;
+		if (v == null ) {
+			if(parent == null) {
+				// Error no encontrado
+				throw new VincException(id.getName(), "Identificador no encontrado");
+			} else {
+				res = parent.vincularIden(id, contexto);
+			}
+		} else {
+			res = v.declaracion;
 		}
 		if (v.tipo != contexto) {
 			// Error clase inesperada
 			throw new VincException(id.getName(), "Se esperaba " + contexto.getVal()
 					+ ", pero se ha encontrado " + v.tipo.getVal());
 		}
-		return v.declaracion;
+		return res;
 	}
 
-	public void vincularBlock(Block b) throws VincException {
-		Vinculacion v = new Vinculacion(this);
-		v.vincular(b.getProg());
-	}
-	
-	public void vincularDefTipo(DefTipo d) throws VincException {
-		String id = d.getIden().getName();
-		if(!tablaSimbolos.containsKey(id)) {
-			tablaSimbolos.put(id, new Vinculo(Vinculo.Tipo.TIPO, d));
+	private void addDeclaracion(String iden, Vinculo v) throws VincException {
+		if(!tablaSimbolos.containsKey(iden)) {
+			tablaSimbolos.put(iden, v);
 		} else {
-			throw new VincException(id, "Identificador ya existente");
+			throw new VincException(iden, "Identificador ya existente");
 		}
 	}
-
 }
