@@ -18,6 +18,9 @@ public class Repeat implements NodoAst, Inst {
 		cond = c;
 	}
 
+	public Exp getLimit() {return limit;}
+	public Exp getCond() {return cond;}
+	public Block getBlock() {return block;}
 	@Override
 	public String getName() {return "Repeat";}
 	@Override
