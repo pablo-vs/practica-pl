@@ -18,6 +18,9 @@ public class If implements NodoAst, Inst {
 		blockElse = elseB;
 	}
 
+	public Exp getCond() {return condIf;}
+	public Block getBlock() {return block;}
+	public Block getBlockElse() {return blockElse;}
 	@Override
 	public String getName() {return "If";}
 	@Override

@@ -38,6 +38,12 @@ public class GeneracionCodigo {
 				case BLOCK:
 					generarBlock((Block) i);
 					break;
+				case IF:
+					generarIf((If) i);
+					break;
+				case REPEAT:
+					generarRepeat((Repeat) i);
+					break;
 				case TIPO_DEF:
 					break;
 				default:
@@ -265,7 +271,6 @@ public class GeneracionCodigo {
 		return res;
 	}
 	
-	
 	private void generarBlock(Block b) {
 		Prog prog = b.getProg();
 		printInst("mst 0");
@@ -324,11 +329,114 @@ public class GeneracionCodigo {
 				}
 				default: {
 					size += sizeExp(ops[0]) + sizeExp(ops[1]);
-					break;
 				}
 			}
 		}
 		return size;
+	}
+	
+	private void generarIf(If i) {
+		generarExp(i.getCond());
+		int count = countBlock(i.getBlock());
+		printInst("fjp " + numInst + count);
+		generarBlock(i.getBlock()));
+		if (i.getBlockElse() != null) {
+			count = countBlock(i.getBlockElse());
+			printInst("ujp " + numInst + count);
+			generarBlock(i.getBlockElse());
+		}
+	}
+	
+	private void generarRepeat(Repeat r) {
+		int ini = numInst;
+		Exp limit = r.getLimit();
+		Exp e = new Exp(Operator.MENOR, new ConstInt("0"), limit);
+		if (r.getCond() != null) e = new Exp(Operator.OR, e, r.getCond());
+		generarExp(e);
+		int count = countBlock(i.getBlock());
+		printInst("fjp " + numInst + count);
+		generarBlock(i.getBlock());
+		generarExp(new Exp(Operator.MENOS, limit, new ConstInt("1")););
+		printInst("ujp " + ini);
+	}
+	
+	public int countBlock(Prog p) {
+		int count = 1;
+		for(NodoAst n: p.getChildren()) {
+			Inst i = (Inst) n;
+			if(i.getInst() == null)
+				continue;
+			switch(i.getInst()) {
+				case DEC:
+					Asig a = ((Dec) i)).getAsig();
+					if (a != null){
+						count += 1 + countAsignable(a.getAsignable()) + countExp(a.getExp());
+					}
+					break;
+				case ASIG:
+					count += 1 + countAsignable(((Asig) i).getAsignable()) + countExp(((Asig) i).getExp());
+					break;
+				case BLOCK:
+					count += countBlock((Block) i);
+					break;
+				case IF:
+					count += countExp(((If) i).getCond()) + countBlock(((If) i).getBlock());
+					if (((If) i).getBlockElse() != null) count += countBlock(((If) i).getBlockElse());
+					break;
+				case REPEAT:
+					count += 5 + 2*countExp(((Repeat) i).getLimit()) + countBlock(((Repeat) i).getBlock());
+					if (((Repeat) i).getCond() != null) count += 1 + countExp(((Repeat) i).getCond())
+					break;
+				default:
+			}
+		}
+		return count;
+	}
+	
+	private int countAsignable(Asig a) {
+		int count = 1;
+		switch(a.tipo) {
+			case CAMPO: {
+				count += 1 + countAsignable(a.getStruct());
+				break;
+			}
+		}
+		return count;
+	}
+	
+	private int countExp (Exp e){
+		int count = 1;
+		if(e.getOp() == Operator.PUNTO || e.getOp() == Operator.ACCESO ||
+				(e instanceof Variable)) {
+			count += countExpAsignable(e);
+		} else if(e.getOp() != Operator.NONE) {
+			Exp[] ops = e.getOperands();
+			switch(e.getOp()) {
+				case MOD: {
+					count += 2 + 2*countExp(ops[0]) + 2*countExp(ops[1]);		
+					break;
+				}
+				case NOT: {
+					count += countExp(ops[0]);
+					break;
+				}
+				default: {
+					count += countExp(ops[0]) + countExp(ops[1]);
+				}
+			}
+		}
+		return count;
+	}
+	
+	private int countExpAsignable(Exp e){
+		count = 1;
+		switch(e.getOp()) {
+			case PUNTO: {
+				count += 1 + countExpAsignable(e.getOperands()[0]);
+				break;
+			}
+		}
+		return count;
 	}
 	
 	private void printInst(String inst) {
