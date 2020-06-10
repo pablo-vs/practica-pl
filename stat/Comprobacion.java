@@ -37,7 +37,11 @@ public class Comprobacion {
 		}	
 	}
 
-	private void comprobarDec(Dec d) throws CompException {}
+	private void comprobarDec(Dec d) throws CompException {
+		if (d.getAsig() != null) {
+			comprobarAsig(d.getAsig());
+		}
+	}
 
 
 	private void comprobarAsig(Asig a) throws CompException {

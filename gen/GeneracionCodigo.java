@@ -30,6 +30,7 @@ public class GeneracionCodigo {
 				continue;
 			switch(i.getInst()) {
 				case DEC:
+					generarDec((Dec) i);
 					break;
 				case ASIG:
 					generarAsig((Asig) i);
@@ -83,6 +84,11 @@ public class GeneracionCodigo {
 			}
 			default:
 		}
+	}
+
+	private void generarDec(Dec d) {
+		if (d.getAsig() != null)
+			generarAsig(d.getAsig());
 	}
 
 	private void generarAsig(Asig a) {

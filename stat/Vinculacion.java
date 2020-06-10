@@ -53,14 +53,16 @@ public class Vinculacion {
 	private void vincularDec(Dec d) throws VincException {
 		d.setTipo(vincularTipo(d.getTipo()));
 		String id;
-		if (d.getIden() != null)
+		if (d.getAsig() == null) {
 			// Si la declaracion no tiene asignación, tomamos directamente el id
 			id = d.getIden().getName();
-		else
+			addDeclaracion(id, new Vinculo(Vinculo.Tipo.VAR, d));
+		} else {
 			// Si la declaracion tiene asignación, tomamos el id de la asignación
 			id = d.getAsig().getAsignable().getIden().getName();
-
-		addDeclaracion(id, new Vinculo(Vinculo.Tipo.VAR, d));
+			addDeclaracion(id, new Vinculo(Vinculo.Tipo.VAR, d));
+			vincularAsig(d.getAsig());
+		}
 	}
 
 	private void vincularAsig(Asig a) throws VincException {
