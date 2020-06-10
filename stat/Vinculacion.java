@@ -79,7 +79,12 @@ public class Vinculacion {
 				vincularAsignable(a.getStruct());
 				break;
 			}
-			default:
+			case ACCESO: {
+				
+			}
+			case PUNT: {
+				vincularAsignable(a.getChild());
+			}
 		}
 	}
 
@@ -109,6 +114,8 @@ public class Vinculacion {
 				st.setMapaCampos(mapa);
 				break;
 			}	
+			case PUNT:
+
 			default:
 		}
 		return result;
