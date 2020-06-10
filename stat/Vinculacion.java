@@ -42,6 +42,12 @@ public class Vinculacion {
 					case TIPO_DEF:
 						vincularDefTipo((DefTipo) i);
 						break;
+					case IF:
+						vincularIf((If) i);
+						break;
+					case REPEAT:
+						vincularRepeat((Repeat) i);
+						break;
 					default:
 				}
 			} catch (VincException e) {
@@ -145,6 +151,18 @@ public class Vinculacion {
 		addDeclaracion(id, new Vinculo(Vinculo.Tipo.TIPO, d));
 	}
 
+	public void vincularIf(If i) throws VincException {
+		vincularExp(i.getCond());
+		vincularBlock(i.getBlock());
+		if (i.getBlockElse() != null) vincularBlock(i.getBlockElse());
+	}
+	
+	public void vincularRepeat(Repeat r) throws VincException {
+		vincularExp(r.getLimit());
+		if (r.getCond() != null) vincularExp(r.getCond());
+		vincularBlock(r.getBlock());
+	}
+	
 	/* Intenta vincular un identificador, el parámetro contexto es
 	 * la clase de identificador (variable, tipo, funcion) que se
 	 * espera por el contexto.
