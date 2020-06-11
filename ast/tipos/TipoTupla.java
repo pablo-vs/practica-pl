@@ -28,4 +28,18 @@ public class TipoTupla extends Tipo {
 		}
 		return res;
 	}
+
+	@Override
+	public String print() {
+		StringBuilder sb = new StringBuilder();
+		sb.append("(");
+		boolean first = true;
+	   	for(Tipo t : tiposElems) {
+			if(first) first = false;
+			else sb.append(",");
+			sb.append(t.print());
+		}
+		sb.append(")");
+		return sb.toString();
+	}
 }

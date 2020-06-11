@@ -15,4 +15,6 @@ public class TipoArray extends Tipo {
 	public void setTipoElem(Tipo t) {tipoElems = t;}
 	@Override
 	public int getSize() {return 1;}
+	@Override
+	public String print() {return "[" + tipoElems.print() + "]";}
 }

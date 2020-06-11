@@ -1,0 +1,7 @@
+Int varI;
+varI = 10;
+
+Bool varB;
+varB = false;
+
+Int varI2 = varI;

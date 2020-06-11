@@ -1,12 +1,13 @@
 package ast;
 import ast.tipos.Tipo;
 
-public class Argumento implements NodoAst {
+public class Argumento extends NodoAst {
 	
 	private Iden iden;
 	private Tipo tipo;
 	
 	public Argumento(Iden id, Tipo tp) {
+		super(id.fila, id.col);
 		iden = id;
 		tipo = tp;
 	}

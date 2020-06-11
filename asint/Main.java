@@ -9,9 +9,18 @@ import stat.Vinculacion;
 import stat.Comprobacion;
 import gen.GeneracionCodigo;
 import errors.GestionErroresTiny;
+import java.util.Arrays;
 
 public class Main {
 	public static void main(String[] args) throws Exception {
+	
+		boolean printAst = true;
+		if(args.length > 0) {
+			if(Arrays.asList(args).contains("-noast"))
+				printAst = false;
+		}
+	
+
 		Reader input = new InputStreamReader(new FileInputStream("input.txt"));
 		AnalizadorLexicoTiny alex = new AnalizadorLexicoTiny(input);
 		AnalizadorSintacticoTiny asint = new AnalizadorSintacticoTiny(alex);
@@ -21,8 +30,10 @@ public class Main {
 		   
 		try {
 			p = (Prog)asint.parse().value;
-			p.printAst(ast, "");
-			System.out.println(ast.toString());
+			if(printAst) {
+				p.printAst(ast, "");
+				System.out.println(ast.toString());
+			}
 				
 			int syntErr = asint.getErrores().numErrores();
 			

@@ -20,4 +20,5 @@ public class CampoStruct extends NodoAst {
 	public void setTipo(Tipo t) {tipo = t;}
 	public int getOffset() {return offset;}
 	public void setOffset(int o) {offset = o;}
+	public String print() {return name.print() + ":" + tipo.print();}
 }

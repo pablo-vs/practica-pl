@@ -212,21 +212,21 @@ public class Vinculacion {
 		String id = d.getIden().getName();
 		addDeclaracion(id, new Vinculo(Vinculo.Tipo.FUN, d));
 		Vinculacion v = new Vinculacion(this);
-		v.vincular(d.getBlock().getProg());
 		Argumento[] args = d.getArgs();
 		for(int i = 0; i < args.length; ++i)
-			v.vincular(args[i]); 
+			v.vincularArg(args[i]); 
+		v.vincular(d.getBlock().getProg());
 	}
 	
 	private void vincularArg(Argumento a) throws VincException {
 		Tipo tipo = vincularTipo(a.getTipo());
-		String id = d.getIden().getName();
+		String id = a.getIden().getName();
 		addDeclaracion(id, new Vinculo(Vinculo.Tipo.VAR, new Dec(tipo, a.getIden())));
 	}
 	
 	public void vincularFunCall(FunCall f) throws VincException {
 		Vinculo v = vincularIden(f.getIden(), Vinculo.Tipo.FUN);
-		f.setDef((FunDef) v.declaracion);
+		f.setDef((DefFun) v.declaracion);
 		Exp[] args = f.getArgs();
 		for(int i = 0; i < args.length; ++i)
 			vincularExp(args[i]); 

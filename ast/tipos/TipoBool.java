@@ -5,4 +5,6 @@ public class TipoBool extends TipoBasico {
 	public String getName() {return "TipoBool";}
 	@Override
 	public int getSize() {return 1;}
+	@Override
+	public String print() {return "Bool";}
 }

@@ -10,6 +10,8 @@ public class CaseMatch extends NodoAst {
 		block = b;
 	}
 
+	public Exp getValue() {return value;}
+	public Block getBlock() {return block;}
 	@Override
 	public String getName() {return "CaseMatch";}
 	@Override

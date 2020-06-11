@@ -25,6 +25,8 @@ public class Case extends Inst {
 		this(e,branches,-1);
 	}
 
+	public Exp getCond() {return cond;}
+	public CaseMatch[] getBranches() {return branches;}
 	@Override
 	public String getName() {return "Case";}
 	@Override

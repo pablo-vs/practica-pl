@@ -40,4 +40,17 @@ public class TipoStruct extends  Tipo {
 	public void setMapaCampos(Map<String, CampoStruct> m) {
 		mapaCampos = new HashMap<>(m);
 	}
+	@Override
+	public String print() {
+		StringBuilder sb = new StringBuilder();
+		sb.append("struct [");
+		boolean first = true;
+	   	for(CampoStruct c: campos) {
+			if(first) first = false;
+			else sb.append(",");
+			sb.append(c.print());
+		}
+		sb.append("]");
+		return sb.toString();
+	}
 }

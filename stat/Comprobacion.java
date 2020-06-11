@@ -45,7 +45,7 @@ public class Comprobacion {
 						comprobarBlock(((DefFun) i).getBlock());
 						break;
 					case FUN_CALL:
-						combrobarFunCall((FunCall) i);
+						comprobarFunCall((FunCall) i);
 					default:
 				}
 			} catch (CompException e) {
@@ -65,7 +65,7 @@ public class Comprobacion {
 		comprobarExp(a.getExp());
 		comprobarAsignable(a.getAsignable());
 		if (!a.getAsignable().getTipo().compatibleCon(a.getExp().getTipo())) {
-			throw new CompException("Se esperaba " + a.getAsignable().getTipo() + " pero se ha encontrado " + a.getExp().getTipo(), a.fila, a.col);
+			throw new CompException("Se esperaba " + a.getAsignable().getTipo().print() + " pero se ha encontrado " + a.getExp().getTipo().print(), a.fila, a.col);
 		}
 	}
 
@@ -116,8 +116,8 @@ public class Comprobacion {
 					TipoDict td = (TipoDict) t;
 					if(!te.igual(td.getTipoClave())) {
 						throw new CompException("El índice " + a.getExp().print()
-								+ " tiene tipo " + te + ", se esperaba " +
-								td.getTipoClave(), a.getExp().fila, a.getExp().col);
+								+ " tiene tipo " + te.print() + ", se esperaba " +
+								td.getTipoClave().print(), a.getExp().fila, a.getExp().col);
 					}
 					res = td.getTipoValor();
 				} else {
@@ -166,67 +166,67 @@ public class Comprobacion {
 				result = new TipoBool();
 				for (Exp e: operands)
 					if(!e.getTipo().compatibleCon(result))
-						throw new CompException("and: Se esperaba " + result
-								+ " pero se ha encontrado " + e.getTipo(), e.fila, e.col);
+						throw new CompException("and: Se esperaba " + result.print()
+								+ " pero se ha encontrado " + e.getTipo().print(), e.fila, e.col);
 				break;
 			case OR:
 				result = new TipoBool();
 				for (Exp e: operands)
 					if(!e.getTipo().compatibleCon(result))
-						throw new CompException("or: Se esperaba " + result
-								+ " pero se ha encontrado " + e.getTipo(), e.fila, e.col);
+						throw new CompException("or: Se esperaba " + result.print()
+								+ " pero se ha encontrado " + e.getTipo().print(), e.fila, e.col);
 				break;
 			case NOT:
 				result = new TipoBool();
 				for (Exp e: operands)
 					if(!e.getTipo().compatibleCon(result))
-						throw new CompException("not: Se esperaba " + result
-								+ " pero se ha encontrado " + e.getTipo(), e.fila, e.col);
+						throw new CompException("not: Se esperaba " + result.print()
+								+ " pero se ha encontrado " + e.getTipo().print(), e.fila, e.col);
 				break;
 			case ES_IGUAL:
 				result = new TipoBool();
 				tipoOp = operands[0].getTipo();
 				for (Exp e: operands)
 					if(!e.getTipo().compatibleCon(tipoOp))
-						throw new CompException("==: Tipos incompatibles " + tipoOp
-								+ ", " + e.getTipo(), e.fila, e.col);
+						throw new CompException("==: Tipos incompatibles " + tipoOp.print()
+								+ ", " + e.getTipo().print(), e.fila, e.col);
 				break;
 			case MENOR:
 				result = new TipoBool();
 				tipoOp = new TipoDec();
 				for (Exp e: operands)
 					if(!e.getTipo().compatibleCon(tipoOp))
-						throw new CompException("<: Tipos incompatibles " + tipoOp
-								+ ", " + e.getTipo(), e.fila, e.col);
+						throw new CompException("<: Tipos incompatibles " + tipoOp.print()
+								+ ", " + e.getTipo().print(), e.fila, e.col);
 				break;
 			case MAYOR:
 				result = new TipoBool();
 				tipoOp = new TipoDec();
 				for (Exp e: operands)
 					if(!e.getTipo().compatibleCon(tipoOp))
-						throw new CompException(">: Tipos incompatibles " + tipoOp
-								+ ", " + e.getTipo(), e.fila, e.col);
+						throw new CompException(">: Tipos incompatibles " + tipoOp.print()
+								+ ", " + e.getTipo().print(), e.fila, e.col);
 				break;
 			case MENIG:
 				result = new TipoBool();
 				tipoOp = new TipoDec();
 				for (Exp e: operands)
 					if(!e.getTipo().compatibleCon(tipoOp))
-						throw new CompException("<=: Tipos incompatibles " + tipoOp
-								+ ", " + e.getTipo(), e.fila, e.col);
+						throw new CompException("<=: Tipos incompatibles " + tipoOp.print()
+								+ ", " + e.getTipo().print(), e.fila, e.col);
 				break;
 			case MAYIG:
 				result = new TipoBool();
 				tipoOp = new TipoDec();
 				for (Exp e: operands)
 					if(!e.getTipo().compatibleCon(tipoOp))
-						throw new CompException(">=: Tipos incompatibles " + tipoOp
-								+ ", " + e.getTipo(), e.fila, e.col);
+						throw new CompException(">=: Tipos incompatibles " + tipoOp.print()
+								+ ", " + e.getTipo().print(), e.fila, e.col);
 				break;
 			case MAS: {
 				tipoOp = operands[0].getTipo();
 				if (!tipoOp.compatibleCon(new TipoDec()))
-						throw new CompException("+: Tipo incompatible " + tipoOp
+						throw new CompException("+: Tipo incompatible " + tipoOp.print()
 								, operands[0].fila, operands[0].col);
 				boolean isDec = false;
 				result = new TipoInt();
@@ -234,8 +234,8 @@ public class Comprobacion {
 					if(e.getTipo().igual(new TipoDec()))
 						isDec = true;
 					if(!e.getTipo().compatibleCon(result))
-						throw new CompException("+: Tipos incompatibles " + tipoOp
-								+ ", " + e.getTipo(), e.fila, e.col);
+						throw new CompException("+: Tipos incompatibles " + tipoOp.print()
+								+ ", " + e.getTipo().print(), e.fila, e.col);
 				}
 				if (isDec)
 					result = new TipoDec();
@@ -244,7 +244,7 @@ public class Comprobacion {
 			case MENOS: {
 				tipoOp = operands[0].getTipo();
 				if (!tipoOp.compatibleCon(new TipoDec()))
-						throw new CompException("+: Tipo incompatible " + tipoOp
+						throw new CompException("+: Tipo incompatible " + tipoOp.print()
 								, operands[0].fila, operands[0].col);
 				boolean isDec = false;
 				result = new TipoInt();
@@ -252,8 +252,8 @@ public class Comprobacion {
 					if(e.getTipo().igual(new TipoDec()))
 						isDec = true;
 					if(!e.getTipo().compatibleCon(result))
-						throw new CompException("-: Tipos incompatibles " + tipoOp
-								+ ", " + e.getTipo(), e.fila, e.col);
+						throw new CompException("-: Tipos incompatibles " + tipoOp.print()
+								+ ", " + e.getTipo().print(), e.fila, e.col);
 				}
 				if (isDec)
 					result = new TipoDec();
@@ -262,7 +262,7 @@ public class Comprobacion {
 			case POR: {
 				tipoOp = operands[0].getTipo();
 				if (!tipoOp.compatibleCon(new TipoDec()))
-						throw new CompException("+: Tipo incompatible " + tipoOp
+						throw new CompException("+: Tipo incompatible " + tipoOp.print()
 								, operands[0].fila, operands[0].col);
 				boolean isDec = false;
 				result = new TipoInt();
@@ -270,8 +270,8 @@ public class Comprobacion {
 					if(e.getTipo().igual(new TipoDec()))
 						isDec = true;
 					if(!e.getTipo().compatibleCon(result))
-						throw new CompException("*: Tipos incompatibles " + tipoOp
-								+ ", " + e.getTipo(), e.fila, e.col);
+						throw new CompException("*: Tipos incompatibles " + tipoOp.print()
+								+ ", " + e.getTipo().print(), e.fila, e.col);
 				}
 				if (isDec)
 					result = new TipoDec();
@@ -280,7 +280,7 @@ public class Comprobacion {
 			case DIV: {
 				tipoOp = operands[0].getTipo();
 				if (!tipoOp.compatibleCon(new TipoDec()))
-						throw new CompException("+: Tipo incompatible " + tipoOp
+						throw new CompException("+: Tipo incompatible " + tipoOp.print()
 								, operands[0].fila, operands[0].col);
 				boolean isDec = false;
 				result = new TipoInt();
@@ -288,8 +288,8 @@ public class Comprobacion {
 					if(e.getTipo().igual(new TipoDec()))
 						isDec = true;
 					if(!e.getTipo().compatibleCon(result))
-						throw new CompException("/: Tipos incompatibles " + tipoOp
-								+ ", " + e.getTipo(), e.fila, e.col);
+						throw new CompException("/: Tipos incompatibles " + tipoOp.print()
+								+ ", " + e.getTipo().print(), e.fila, e.col);
 				}
 				if (isDec)
 					result = new TipoDec();
@@ -298,20 +298,20 @@ public class Comprobacion {
 			case CONCAT:
 				tipoOp = operands[0].getTipo();
 				if(!(tipoOp.getTipo() == EnumTipo.ARRAY))
-						throw new CompException("+: Tipo incompatible " + tipoOp
+						throw new CompException("+: Tipo incompatible " + tipoOp.print()
 								, operands[0].fila, operands[0].col);
 				result = tipoOp;
 				for (Exp e: operands)
 					if(!e.getTipo().compatibleCon(result))
-						throw new CompException("++: Tipos incompatibles " + tipoOp
-								+ ", " + e.getTipo(), e.fila, e.col);
+						throw new CompException("++: Tipos incompatibles " + tipoOp.print()
+								+ ", " + e.getTipo().print(), e.fila, e.col);
 				break;
 			case MOD:
 				result = new TipoInt();
 				for (Exp e: operands)
 					if(!e.getTipo().igual(result))
-						throw new CompException("%: Tipos incompatibles " + result
-								+ ", " + e.getTipo(), e.fila, e.col);
+						throw new CompException("%: Tipos incompatibles " + result.print()
+								+ ", " + e.getTipo().print(), e.fila, e.col);
 				break;
 			case REF:
 				if(!(operands[0] instanceof ExpAsig))
@@ -333,7 +333,7 @@ public class Comprobacion {
 	private void comprobarIf(If i) throws CompException {
 		comprobarExp(i.getCond());
 		if(i.getCond().getTipo().getTipo() != EnumTipo.TBOOL)
-			throw new CompException("If requiere una condición booleana, pero se obtuvo " + i.getCond().getTipo(), i.getCond().fila, i.getCond().col);
+			throw new CompException("If requiere una condición booleana, pero se obtuvo " + i.getCond().getTipo().print(), i.getCond().fila, i.getCond().col);
 		comprobarBlock(i.getBlock());
 		if(i.getBlockElse() != null)
 			comprobarBlock(i.getBlockElse());
@@ -342,11 +342,11 @@ public class Comprobacion {
 	private void comprobarRepeat(Repeat r) throws CompException {
 		comprobarExp(r.getLimit());
 		if(r.getLimit().getTipo().getTipo() != EnumTipo.TINT)
-			throw new CompException("Repeat requiere un límite booleano, pero se obtuvo " + r.getLimit().getTipo(), r.getLimit().fila, r.getLimit().col);
+			throw new CompException("Repeat requiere un límite booleano, pero se obtuvo " + r.getLimit().getTipo().print(), r.getLimit().fila, r.getLimit().col);
 		if(r.getCond() != null) {
 			comprobarExp(r.getCond());
 			if(r.getCond().getTipo().getTipo() != EnumTipo.TBOOL)
-				throw new CompException("Repeat requiere una condición booleana, pero se obtuvo " + r.getCond().getTipo(), r.getCond().fila, r.getCond().col);
+				throw new CompException("Repeat requiere una condición booleana, pero se obtuvo " + r.getCond().getTipo().print(), r.getCond().fila, r.getCond().col);
 		}
 		comprobarBlock(r.getBlock());
 	}
@@ -356,21 +356,21 @@ public class Comprobacion {
 		Tipo tipo = c.getCond().getTipo();
 		CaseMatch[] branches = c.getBranches();
 		for(int i = 0; i < branches.length; ++i){
-			if(branches[i].getValue().getTipo().getTipo() != tipo.getTipo())
-				throw new CompException("Los valores de cada rama de Case deben ser " + tipo.getTipo() + ", pero se obtuvo " + branches[i].getValue().getTipo().getTipo());
+			if(!branches[i].getValue().getTipo().compatibleCon(tipo))
+				throw new CompException("Los valores de cada rama de Case deben ser " + tipo.print() + ", pero se obtuvo " + branches[i].getValue().getTipo().print(), branches[i].fila, branches[i].col);
 			comprobarBlock(branches[i].getBlock());
 		}
 	}
 	
 	private void comprobarFunCall(FunCall f) throws CompException {
 		Exp[] args = f.getArgs();
-		Argumento[] argsTipos = f.getDef.getArgs();
+		Argumento[] argsTipos = f.getDef().getArgs();
 		if(args.length != argsTipos.length)
-				throw new CompException("El número de argumentos de la función debería ser " + argsTipos.length + ", pero en la llamada hay " + args.length + " argumentos");
+				throw new CompException("El número de argumentos de la función debería ser " + argsTipos.length + ", pero en la llamada hay " + args.length + " argumentos", f.fila, f.col);
 		for(int i = 0; i < args.length; ++i){
 			comprobarExp(args[i]);
-			if(args[i].getTipo().getTipo() != argsTipos.getTipo().getTipo())
-				throw new CompException("El argumento " + i + "de la función debería ser " + argsTipos.getTipo().getTipo() + ", pero se obtuvo " + args[i].getTipo().getTipo());
+			if(!args[i].getTipo().compatibleCon(argsTipos[i].getTipo()))
+				throw new CompException("El argumento " + i + "de la función debería ser " + argsTipos[i].getTipo().print() + ", pero se obtuvo " + args[i].getTipo().print(), args[i].fila, args[i].col);
 		}
 	}
 }

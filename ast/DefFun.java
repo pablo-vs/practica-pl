@@ -2,7 +2,7 @@ package ast;
 import ast.tipos.Tipo;
 import java.util.List;
 
-public class DefFun  implements NodoAst, Inst {
+public class DefFun extends Inst {
 	public EnumInst getInst() {return EnumInst.FUN_DEF;}
 	private Tipo tipo;
 	private Iden iden;
@@ -20,7 +20,8 @@ public class DefFun  implements NodoAst, Inst {
 			this.args[i] = args[i];
 	}
 
-	public DefFun(Tipo t, Iden id, Block b, List<Argumento> args) {
+	public DefFun(Tipo t, Iden id, Block b, List<Argumento> args, int fila) {
+		super(fila, 0);
 		tipo = t;
 		iden = id;
 		block = b;
@@ -28,11 +29,20 @@ public class DefFun  implements NodoAst, Inst {
 		this.args = args.toArray(this.args);
 	}
 
-	public DefFun(Tipo t,Iden id, Block b) {
+	public DefFun(Tipo t, Iden id, Block b, List<Argumento> args) {
+		this(t, id, b, args, -1);
+	}
+
+	public DefFun(Tipo t,Iden id, Block b, int fila) {
+		super(fila, 0);
 		tipo = t;
 		iden = id;
 		block = b;
 		this.args = new Argumento[0];
+	}
+
+	public DefFun(Tipo t,Iden id, Block b) {
+		this(t, id, b, -1);
 	}
 
 	public Tipo getTipo() {return tipo;}

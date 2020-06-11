@@ -18,4 +18,6 @@ public class TipoNombre extends TipoBasico {
 	public Iden getValor() {return valor;}
 	public DefTipo getDef() {return def;}
 	public void setDef(DefTipo d) {def = d;}
+	@Override
+	public String print() {return def == null ? valor.print() : def.getTipo().print();}
 }

@@ -1,0 +1,34 @@
+#!/bin/bash
+
+if [[ ! -x ./pmachine ]]
+then
+	echo "No se ha encontrado el ejecutable pmachine"
+	echo "Puede compilarse mediante ghc a partir del codigo fuente de la maquina-P"
+else
+	for file in $(ls inputs/)
+	do
+		output="Todos los tests completados con éxito"
+		cp inputs/$file ../build/input.txt
+		cd ../build
+		java -cp '../cup.jar:../jlex.jar:' asint.Main -noast
+		cd ../tests
+		./pmachine ../build/programa.txt > outputs/$file.out
+		if [[ -n $(grep 'error' outputs/$file.out) ]]
+		then
+			echo $file : Error de ejecución
+			output="Ha habido tests fallidos"
+		fi
+		while IFS= read -r line
+		do
+			if [[ -z $(grep "$line" outputs/$file.out) ]]
+			then
+				echo $file : Error, salida incorrecta
+				echo Se esperaba $line
+				store=$(echo $line | grep -o '(.*,')
+				echo Se ha obtenido $(grep "$store"  outputs/$file.out)
+				output="Ha habido tests fallidos"
+			fi
+		done < outputs/$file
+	done
+	echo $output
+fi

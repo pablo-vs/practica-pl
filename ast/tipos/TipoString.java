@@ -5,4 +5,6 @@ public class TipoString extends TipoBasico {
 	public String getName() {return "TipoString";}
 	@Override
 	public int getSize() {return 1;}
+	@Override
+	public String print() {return "String";}
 }

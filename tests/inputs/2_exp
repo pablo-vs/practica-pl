@@ -1,0 +1,8 @@
+Int varI1 = 10 * 2 + 5 / 5;
+Int varI2 = (10 * 2 + 5) / 5;
+Int varI3 = (-13 * 100) mod 57;
+Int varI4 = (0 - 12)*(-12);
+Bool varB1 = false and false or true;
+Bool varB2 = false and (false or true);
+Bool varB3 = not false and not (varI1 == varI2 or true);
+

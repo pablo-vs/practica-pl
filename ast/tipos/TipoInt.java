@@ -7,4 +7,6 @@ public class TipoInt extends TipoBasico {
 	public String getName() {return "TipoInt";}
 	@Override
 	public int getSize() {return 1;}
+	@Override
+	public String print() {return "Int";}
 }

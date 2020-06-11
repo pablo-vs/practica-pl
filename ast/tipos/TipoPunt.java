@@ -15,4 +15,6 @@ public class TipoPunt extends Tipo {
 	public void setTipoRef(Tipo t) {tipoRef = t;}
 	@Override
 	public int getSize() {return 1;}
+	@Override
+	public String print() {return "&" + tipoRef.print();}
 }

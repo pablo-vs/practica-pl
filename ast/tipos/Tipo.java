@@ -17,4 +17,5 @@ public abstract class Tipo extends NodoAst {
 	}
 
 	abstract public int getSize();
+	abstract public String print();
 }
