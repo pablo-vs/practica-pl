@@ -7,7 +7,7 @@ import alex.AnalizadorLexicoTiny;
 import ast.Prog;
 import stat.Vinculacion;
 import stat.Comprobacion;
-//import gen.GeneracionCodigo;
+import gen.GeneracionCodigo;
 import errors.GestionErroresTiny;
 
 public class Main {
@@ -43,10 +43,10 @@ public class Main {
 				} else if(syntErr > 0) {
 					System.out.println(syntErr + " errores encontrados.");
 				} else {
-			/*		
+				
 					GeneracionCodigo gen = new GeneracionCodigo("programa.txt");
 					gen.generarCodigo(p);
-					*/
+					
 				}
 			}
 		} catch(Exception e) {

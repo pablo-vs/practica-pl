@@ -118,20 +118,19 @@ public class GeneracionCodigo {
 		Tipo res = null;
 		switch(a.tipoAs) {
 			case VAR: {
-				res = a.getDec().getTipo();
+				res = a.getTipo();
 				int dir = a.getDec().getDir();
 				int difProf = profundidad + 1 - a.getDec().getProf();
 				printInst("lda " + difProf  + " " + dir);
 				break;
 			}
 			case CAMPO: {
-				TipoStruct t = (TipoStruct) generarAsignable(a.getStruct());
-				String idcampo = a.getChild().getBottom().getIden().print();
+				TipoStruct t = (TipoStruct) generarAsignable(a.getChild());
+				String idcampo = a.getIden().print();
 				int offset = t.getMapaCampos().get(idcampo).getOffset();
 				printInst("ldc " + offset);
 				printInst("add");
-				Tipo tAsig = t.getMapaCampos().get(idcampo).getTipo();
-				res = tAsig;
+				res = t.getMapaCampos().get(idcampo).getTipo();
 				break;
 			}
 		}
@@ -139,9 +138,8 @@ public class GeneracionCodigo {
 	}
 
 	private void generarExp(Exp e) {
-		if(e.getOp() == Operator.PUNTO || e.getOp() == Operator.ACCESO ||
-				(e instanceof Variable)) {
-			generarExpAsignable(e);
+		if(e instanceof ExpAsig) {
+			generarExpAsignable((ExpAsig)e);
 		} else if(e.getOp() == Operator.NONE) {
 			if(e instanceof Const) {
 				if(e instanceof ConstInt) {
@@ -261,28 +259,9 @@ public class GeneracionCodigo {
 		}
 	}
 
-	private Tipo generarExpAsignable(Exp e) {
-		Tipo res = null;
-		switch(e.getOp()) {
-			case NONE: {
-				Variable v = (Variable) e;
-				int dir = v.getDec().getDir();
-				int difProf = profundidad + 1 - v.getDec().getProf();
-				printInst("lod " + difProf  + " " + dir);
-				res = v.getDec().getTipo();
-				break;
-			}
-			case PUNTO: {
-				TipoStruct t = (TipoStruct) generarExpAsignable(e.getOperands()[0]);
-				String idCampo = ((Variable)e.getOperands()[1].getArray()).getIden().print();
-				int offset = t.getMapaCampos().get(idCampo).getOffset();
-				printInst("ldc " + offset);
-				printInst("add");
-				res = t.getMapaCampos().get(idCampo).getTipo();
-				break;
-			}
-		}
-		return res;
+	private void generarExpAsignable(ExpAsig e) {
+		generarAsignable(e.getAsignable());
+		printInst("ind");
 	}
 	
 	private void generarBlock(Block b) {
@@ -331,9 +310,8 @@ public class GeneracionCodigo {
 	
 	private int sizeExp (Exp e){
 		int size = 0;
-		if(e.getOp() == Operator.PUNTO || e.getOp() == Operator.ACCESO ||
-				(e instanceof Variable)) {
-			sizeExpAsignable(e);
+		if(e instanceof ExpAsig) {
+			sizeExpAsignable((ExpAsig)e);
 		} else if(e.getOp() == Operator.NONE) {
 			if(e instanceof Const) {
 				if(e instanceof ConstInt) {
@@ -374,21 +352,14 @@ public class GeneracionCodigo {
 				size = 1;
 				break;
 			case CAMPO:
-				size = 1 + sizeAsignable(a.getStruct());
+				size = 1 + sizeAsignable(a.getChild());
 				break;
 		}
 		return size;
 	}
 
-	private int sizeExpAsignable(Exp e) {
-		int size = 1;
-		switch(e.getOp()) {
-			case PUNTO: {
-				size += 1 + sizeExpAsignable(e.getOperands()[0]);
-				break;
-			}
-		}
-		return size;
+	private int sizeExpAsignable(ExpAsig e) {
+		return sizeAsignable(e.getAsignable())+1;
 	}
 	
 	private void generarIf(If i) {
@@ -456,7 +427,7 @@ public class GeneracionCodigo {
 		int count = 1;
 		switch(a.tipoAs) {
 			case CAMPO: {
-				count += 1 + countAsignable(a.getStruct());
+				count += 1 + countAsignable(a.getChild());
 				break;
 			}
 		}
@@ -465,9 +436,8 @@ public class GeneracionCodigo {
 	
 	private int countExp (Exp e){
 		int count = 1;
-		if(e.getOp() == Operator.PUNTO || e.getOp() == Operator.ACCESO ||
-				(e instanceof Variable)) {
-			count = countExpAsignable(e);
+		if(e instanceof ExpAsig) {
+			count = countExpAsignable((ExpAsig)e);
 		} else if(e.getOp() != Operator.NONE) {
 			Exp[] ops = e.getOperands();
 			switch(e.getOp()) {
@@ -487,15 +457,8 @@ public class GeneracionCodigo {
 		return count;
 	}
 	
-	private int countExpAsignable(Exp e){
-		int count = 1;
-		switch(e.getOp()) {
-			case PUNTO: {
-				count += 1 + countExpAsignable(e.getOperands()[0]);
-				break;
-			}
-		}
-		return count;
+	private int countExpAsignable(ExpAsig e){
+		return countAsignable(e.getAsignable())+1;
 	}
 	
 	private void printInst(String inst) {

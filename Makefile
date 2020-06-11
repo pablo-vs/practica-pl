@@ -5,8 +5,8 @@ all: build
 build: sources.txt 
 	javac -cp 'jlex.jar:cup.jar:' @sources.txt  -d build
 
-sources.txt: alex/AnalizadorLexicoTiny.java asint/AnalizadorSintacticoTiny.java ast asint alex errors stat
-	find ast asint alex errors stat -iname '*.java' > sources.txt
+sources.txt: alex/AnalizadorLexicoTiny.java asint/AnalizadorSintacticoTiny.java ast asint alex errors stat gen
+	find . -iname '*.java' > sources.txt
 
 alex/AnalizadorLexicoTiny.java: alex/lexico.l
 	cd alex; java -cp '../jlex.jar:' JLex.Main lexico.l
