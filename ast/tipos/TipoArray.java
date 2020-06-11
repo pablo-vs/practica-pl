@@ -12,6 +12,7 @@ public class TipoArray implements NodoAst, Tipo {
 	public String getName() {return "TipoArray";}
 	public NodoAst[] getChildren() {return new NodoAst[] {tipoElems};}
 	public Tipo getTipoElem() {return tipoElems;}
+	public void setTipoElem(Tipo t) {tipoElems = t;}
 	@Override
 	public int getSize() {return 1;}
 }

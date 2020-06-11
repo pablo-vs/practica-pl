@@ -41,7 +41,7 @@ public class Exp implements NodoAst {
 	public String print() {
 		return op.print(operands);
 	}
-
+/*
 	public Exp getArray() {
 		if(op == Operator.ACCESO) {
 		   return operands[0];
@@ -52,7 +52,7 @@ public class Exp implements NodoAst {
 		}
 
 	}
-
+*/
 	@Override
 	public String getName() {return "Exp: " + op.getString();}
 	@Override

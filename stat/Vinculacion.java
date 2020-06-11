@@ -86,11 +86,12 @@ public class Vinculacion {
 				a.setDec((Dec) v.declaracion);
 				break;
 			case CAMPO: {
-				vincularAsignable(a.getStruct());
+				vincularAsignable(a.getChild());
 				break;
 			}
 			case ACCESOR: {
-				
+				vincularAsignable(a.getChild());
+				vincularExp(a.getExp());
 			}
 			case PUNT: {
 				vincularAsignable(a.getChild());
@@ -98,8 +99,8 @@ public class Vinculacion {
 		}
 	}
 
-	// Devuelve el tipo dado salvo para referencias de tipo. En
-	// ese caso devuelve el tipo refereciado
+	// Devuelve el tipo dado, sustituyendo cada identificador de tipo por
+	// el tipo que le corresponde
 	private Tipo vincularTipo(Tipo t) throws VincException {
 		Tipo result = t;
 		switch(t.getTipo()) {
@@ -125,26 +126,27 @@ public class Vinculacion {
 				st.setMapaCampos(mapa);
 				break;
 			}	
-			case PUNT:
-
+			case PUNT: {
+				TipoPunt tp = (TipoPunt) t;
+				tp.setTipoRef(vincularTipo(tp.getTipoRef()));
+				break;
+			}
+			case ARRAY: {
+				TipoArray ta = (TipoArray) t;
+				ta.setTipoElem(vincularTipo(ta.getTipoElem()));
+				break;
+			}
 			default:
 		}
 		return result;
 	}
 
 	private void vincularExp(Exp e) throws VincException {
-		if (e.getOp() == Operator.PUNTO) {
-			vincularExp(e.getOperands()[0]);
+		if (e instanceof ExpAsig) {
+			vincularAsignable(((ExpAsig)e).getAsignable());
 		} else {
 			if (e.getOp() == Operator.NONE) {
-				if (e instanceof Variable) {
-					Variable va = (Variable) e;
-					Vinculo v = vincularIden(va.getIden() , Vinculo.Tipo.VAR);
-					va.setDec((Dec) v.declaracion);
-				}
-				else {
-					// TODO Constantes compuestas como listas
-				}
+				// TODO Constantes compuestas como listas
 			}
 			for(Exp op : e.getOperands()) {
 				vincularExp(op);

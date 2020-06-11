@@ -2,7 +2,7 @@ package errors;
 
 import alex.UnidadLexica;
 import stat.VincException;
-import stat.CompException;
+//import stat.CompException;
 
 public class GestionErroresTiny {
 	
@@ -24,12 +24,12 @@ public class GestionErroresTiny {
 		System.err.println("Error en " + e.iden + ": " + e.getMessage());
 		++numErrores;
 	}
-
+/*
 	public void errorComprob(CompException e) {
 		// TODO mejorar esto
 		System.err.println("Error de tipo: " + e.getMessage());
 		++numErrores;
 	}
-
+*/
 	public int numErrores() {return numErrores;}
 }

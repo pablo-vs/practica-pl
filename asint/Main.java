@@ -6,8 +6,8 @@ import java.io.Reader;
 import alex.AnalizadorLexicoTiny;
 import ast.Prog;
 import stat.Vinculacion;
-import stat.Comprobacion;
-import gen.GeneracionCodigo;
+//import stat.Comprobacion;
+//import gen.GeneracionCodigo;
 import errors.GestionErroresTiny;
 
 public class Main {
@@ -24,7 +24,7 @@ public class Main {
 
 		Vinculacion vinc = new Vinculacion(new GestionErroresTiny());
 		vinc.vincular(p);
-
+/*
 		Comprobacion comp = new Comprobacion(new GestionErroresTiny());
 		comp.comprobar(p);
 
@@ -32,6 +32,7 @@ public class Main {
 		
 		GeneracionCodigo gen = new GeneracionCodigo("programa.txt");
 		gen.generarCodigo(p);
+		*/
 	}
 }   
    

@@ -16,7 +16,6 @@ public class Asignable implements NodoAst {
 	public final TipoAs tipo;
 	private Iden iden;
 	private Asignable child;
-	private Asignable struct;
 	private Exp exp;
 
 	private Dec declaracion;
@@ -35,9 +34,9 @@ public class Asignable implements NodoAst {
 	}
 
 	// Campo de un struct
-	public Asignable(Asignable campo, Asignable struct) {
-		child = campo;
-		this.struct = struct;
+	public Asignable(Asignable struct, Iden campo) {
+		child = struct;
+		iden = campo;
 		tipo = TipoAs.CAMPO;
 	}
 
@@ -64,6 +63,21 @@ public class Asignable implements NodoAst {
 		}
 	}
 
+	public String print() {
+		switch(tipo) {
+			case VAR:
+				return iden.print();
+			case PUNT:
+				return "^(" + child.print() + ")";
+			case CAMPO:
+				return child.print() + "." + iden.print();
+			case ACCESOR:
+				return child.print() + "[" + exp.print() + "]";
+			default:
+				return "Asignable";
+		}
+	}
+
 	@Override
 	public NodoAst[] getChildren() {
 		switch(tipo) {
@@ -72,7 +86,7 @@ public class Asignable implements NodoAst {
 			case PUNT:
 				return new NodoAst[] {child};
 			case CAMPO:
-				return new NodoAst[] {struct, child};
+				return new NodoAst[] {iden, child};
 			case ACCESOR:
 				return new NodoAst[] {child, exp};
 			default:
@@ -82,35 +96,17 @@ public class Asignable implements NodoAst {
 
 	public Iden getIden() {return iden;}
 
-	public Asignable getStruct() {return struct;}
+	//public Asignable getStruct() {return struct;}
 
 	public Asignable getChild() {return child;}
-
-	// Devuelve el asignable de más alto nivel. Ej:
-	// ^(comunidad).familias[24].personas[7].edad -> comunidad
-	public Asignable getTop() {
-		Asignable res;
-		switch(tipo) {
-			case CAMPO:
-				res = struct.getTop();
-				break;
-			default:
-				res = this;
-		}
-		return res;
-	}
+	public Exp getExp() {return exp;}
 
 	public Asignable getBottom() {
 		Asignable res;
-		switch(tipo) {
-			case ACCESOR:
-				res = child.getBottom();
-				break;
-			default:
-				res = this;
-		}
-		return res;
-
+		if(tipo == TipoAs.VAR)
+			return this;
+		else
+			return child.getBottom();
 	}
 
 	public void setDec(Dec d) {

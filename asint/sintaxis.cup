@@ -41,15 +41,15 @@ non terminal NodoAst PROG, INST, BLOCK, IF_BLOCK, CASE_MATCH,
               TIPO_TUPLA, TIPO_DICT, TIPO_STRUCT,
               CAMPO_STRUCT, TIPO_PUNT, FUN_CALL,
               DEC_VAR, ASIG, EXP0, EXP1, EXP2, EXP3, EXP4, EXP5, EXP6,
-              EXP7, EXP8, EXP9, EXP10, CONST,
-              ASIG0, ASIG1, ASIG2;
+              EXP7, EXP8, EXP9, CONST,
+              ASIG0, ASIG1;
 
 non terminal ArrayList<Tipo> TIPO_TUPLA_LISTA;
 non terminal ArrayList<CampoStruct> LISTA_STRUCT;
 non terminal ArrayList<Exp> PARAMS;
 non terminal ArrayList<Argumento> ARGS;
 non terminal ArrayList<CaseMatch> CASE_MATCH_LIST;
-non terminal Operator OP0, OP1, OP2, OP3;
+non terminal Operator OP0, OP1, OP2;
 non terminal ArrayList<Exp> TUPLA, LISTA;
 non terminal ArrayList<DictPair> DICT;
 
@@ -203,18 +203,18 @@ TIPO_PUNT ::= REF TIPO: t
 ASIG ::= ASIG0: as IGUAL EXP0: e
 	{:	RESULT = new Asig((Asignable) as, (Exp) e);	:};
 
+ASIG0 ::= ASIG0: as PUNTO IDENVARFUN: id  // Structs
+	{:	RESULT = new Asignable((Asignable) as, new Iden(id));	:};
+ASIG0 ::= ASIG0: as CAP EXP0: exp CCL // Arrays, diccionarios...
+	{:	RESULT = new Asignable((Exp) exp, (Asignable) as);	:};
 ASIG0 ::= DEREF ASIG1: as // Punteros
 	{:	RESULT = new Asignable((Asignable) as);	:};
-ASIG0 ::= ASIG1: as
-	{:	RESULT = as;	:};
-ASIG1 ::= ASIG1: as1 PUNTO ASIG2: as2  // Structs
-	{:	RESULT = new Asignable((Asignable) as2, (Asignable) as1);	:};
-ASIG1 ::= ASIG2: as
-	{:	RESULT = as;	:};
-ASIG2 ::= ASIG2: as CAP EXP0: exp CCL // Arrays, diccionarios...
-	{:	RESULT = new Asignable((Exp) exp, (Asignable) as);	:};
-ASIG2 ::= IDENVARFUN: id
+ASIG0 ::= IDENVARFUN: id
 	{:	RESULT = new Asignable(new Iden(id));	:};
+ASIG1 ::= IDENVARFUN: id
+	{:	RESULT = new Asignable(new Iden(id));	:};
+ASIG1 ::= PAP ASIG0: as PCL
+	{:	RESULT = as;	:};
 
 //======== Expresiones ===================================================
 
@@ -251,32 +251,26 @@ EXP6 ::= EXP7: e1 MOD EXP6: e2
 	{:	RESULT = new Exp(Operator.MOD, (Exp) e1, (Exp) e2);	:};
 EXP6 ::= EXP7: e
 	{:	RESULT = e;	:};
-EXP7 ::= OP3: op EXP7: e
-	{:	RESULT = new Exp(op, (Exp) e);	:};
 EXP7 ::= EXP8: e
 	{:	RESULT = e;	:};
-EXP7 ::= EXP10: e
+EXP7 ::= EXP9: e
 	{:	RESULT = e;	:};
-// Los accesores no pueden contener expresiones como
-// strings o enteros, sólo identificadores
-EXP8 ::= EXP8: e1 PUNTO EXP9: e2
-	{:	RESULT = new Exp(Operator.PUNTO, (Exp) e1, (Exp) e2);	:};
-EXP8 ::= EXP9: e
-	{:	RESULT = e;	:};
-EXP9 ::= EXP9: e1 CAP EXP0: e2 CCL
-	{:	RESULT = new Exp(Operator.ACCESO, (Exp) e1, (Exp) e2);	:};
 
-EXP9 ::= IDENVARFUN: id
-	{:	RESULT = new Variable(new Iden(id));	:};
-
-EXP10 ::= CONST: c
+// Expresiones constantes
+EXP8 ::= CONST: c
 	{:	RESULT = c;	:};
 
-EXP10 ::= FUN_CALL: fc
+EXP8 ::= FUN_CALL: fc
 	{:	RESULT = fc;	:};
 
-EXP10 ::= PAP EXP0: e PCL
+EXP8 ::= PAP EXP0: e PCL
 	{:	RESULT = e;	:};
+
+// Expresiones asignables
+EXP9 ::= REF EXP9: e
+	{:	RESULT = new Exp(Operator.REF, (Exp) e);	:};
+EXP9 ::= ASIG0: e
+	{:	RESULT = new ExpAsig((Asignable) e);	:};
 
 //======== Constantes ====================================================
 CONST ::= TRUE
@@ -340,7 +334,3 @@ OP2 ::= POR
 	{:	RESULT = Operator.POR;	:};
 OP2 ::= DIV
 	{:	RESULT = Operator.DIV;	:};
-OP3 ::= REF
-	{:	RESULT = Operator.REF;	:};
-OP3 ::= DEREF
-	{:	RESULT = Operator.DEREF;	:};

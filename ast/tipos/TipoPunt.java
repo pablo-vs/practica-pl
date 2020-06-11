@@ -12,6 +12,7 @@ public class TipoPunt implements NodoAst, Tipo {
 	public String getName() {return "TipoPunt";}
 	public NodoAst[] getChildren() {return new NodoAst[] {tipoRef};}
 	public Tipo getTipoRef() {return tipoRef;}
+	public void setTipoRef(Tipo t) {tipoRef = t;}
 	@Override
 	public int getSize() {return 1;}
 }
