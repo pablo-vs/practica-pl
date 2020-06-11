@@ -436,11 +436,11 @@ public class GeneracionCodigo {
 					count += 1 + countAsignable(((Asig) i).getAsignable()) + countExp(((Asig) i).getExp());
 					break;
 				case BLOCK:
-					count += countBlock(((Block) i).getProg());
+					count += countBlock(((Block) i).getProg()) + 4;
 					break;
 				case IF:
-					count += countExp(((If) i).getCond()) + countBlock(((If) i).getBlock().getProg());
-					if (((If) i).getBlockElse() != null) count += countBlock(((If) i).getBlockElse().getProg());
+					count += countExp(((If) i).getCond()) + countBlock(((If) i).getBlock().getProg()) + 5;
+					if (((If) i).getBlockElse() != null) count += countBlock(((If) i).getBlockElse().getProg()) + 5;
 					break;
 				case REPEAT:
 					count += 5 + 2*countExp(((Repeat) i).getLimit()) + countBlock(((Repeat) i).getBlock().getProg());
@@ -467,7 +467,7 @@ public class GeneracionCodigo {
 		int count = 1;
 		if(e.getOp() == Operator.PUNTO || e.getOp() == Operator.ACCESO ||
 				(e instanceof Variable)) {
-			count += countExpAsignable(e);
+			count = countExpAsignable(e);
 		} else if(e.getOp() != Operator.NONE) {
 			Exp[] ops = e.getOperands();
 			switch(e.getOp()) {
