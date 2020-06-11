@@ -11,7 +11,7 @@ public class GeneracionCodigo {
 
 	private String file;
 	private PrintWriter output;
-	private int numInst = 0;
+	private int numInst = 0, profundidad = -1;
 
 	public GeneracionCodigo(String file) {
 		this.file = file;
@@ -22,8 +22,19 @@ public class GeneracionCodigo {
 		}
 	}
 
-	public void generar(Prog p) {
-		asignarMemoria(p);
+	public void generarCodigo(Prog p) {
+		generar(p, true);
+		printInst("stp");
+		output.close();
+	}
+
+	public void generar(Prog p, boolean base) {
+		++profundidad;
+		int tamMarco = 5+ asignarMemoria(p);
+		if(!base) {
+		}
+		printInst("ssp " + tamMarco);
+		printInst("sep " + (extremePointer(p)));
 		for(NodoAst n: p.getChildren()) {
 			Inst i = (Inst) n;
 			if(i.getInst() == null)
@@ -49,12 +60,11 @@ public class GeneracionCodigo {
 				default:
 			}
 		}
-		printInst("stp");
-
-		output.close();
+		--profundidad;
 	}
 
-	private void asignarMemoria(Prog p) {
+	// Devuelve el tamaño ocupado por las variables locales
+	private int asignarMemoria(Prog p) {
 		int tamAct = 0;
 		for(NodoAst n: p.getChildren()) {
 			Inst i = (Inst) n;
@@ -62,7 +72,7 @@ public class GeneracionCodigo {
 				tamAct = asignarDec((Dec) i, tamAct);
 			}
 		}
-		printInst("ssp " + (tamAct+5));
+		return tamAct;
 	}
 
 	private int asignarDec(Dec d, int tamAct) {
@@ -93,6 +103,7 @@ public class GeneracionCodigo {
 	}
 
 	private void generarDec(Dec d) {
+		d.setProf(profundidad + 1);
 		if (d.getAsig() != null)
 			generarAsig(d.getAsig());
 	}
@@ -109,7 +120,8 @@ public class GeneracionCodigo {
 			case VAR: {
 				res = a.getDec().getTipo();
 				int dir = a.getDec().getDir();
-				printInst("ldc " + dir);
+				int difProf = profundidad + 1 - a.getDec().getProf();
+				printInst("lda " + difProf  + " " + dir);
 				break;
 			}
 			case CAMPO: {
@@ -130,7 +142,6 @@ public class GeneracionCodigo {
 		if(e.getOp() == Operator.PUNTO || e.getOp() == Operator.ACCESO ||
 				(e instanceof Variable)) {
 			generarExpAsignable(e);
-			printInst("ind");
 		} else if(e.getOp() == Operator.NONE) {
 			if(e instanceof Const) {
 				if(e instanceof ConstInt) {
@@ -254,8 +265,11 @@ public class GeneracionCodigo {
 		Tipo res = null;
 		switch(e.getOp()) {
 			case NONE: {
-				printInst("ldc " + ((Variable) e).getDec().getDir());
-				res = ((Variable)e).getDec().getTipo();
+				Variable v = (Variable) e;
+				int dir = v.getDec().getDir();
+				int difProf = profundidad + 1 - v.getDec().getProf();
+				printInst("lod " + difProf  + " " + dir);
+				res = v.getDec().getTipo();
 				break;
 			}
 			case PUNTO: {
@@ -274,9 +288,10 @@ public class GeneracionCodigo {
 	private void generarBlock(Block b) {
 		Prog prog = b.getProg();
 		printInst("mst 0");
-		asignarMemoria(prog);
-		printInst("sep " + (extremePointer(prog)));
-		generar(prog);
+		printInst("cup 0 " + (numInst + 2));
+		int count = countBlock(prog);
+		printInst("ujp " + (count + numInst + 2));
+		generar(prog, false);
 		printInst("retp");
 	}
 	
@@ -285,25 +300,42 @@ public class GeneracionCodigo {
 		for(NodoAst n: p.getChildren()) {
 			Inst i = (Inst) n;
 			Exp e = null;
+			int size = 0;
 			switch(i.getInst()) {
+				case DEC:
+					if(((Dec)i).getAsig() != null) {
+						e = ((Dec)i).getAsig().getExp();
+						size = sizeExp(e) + sizeAsignable(((Dec)i).getAsig().getAsignable());
+					}
+					break;
 				case ASIG:
 					e = ((Asig)i).getExp();
+					size = sizeExp(e) + sizeAsignable(((Asig)i).getAsignable());
+					break;
+				case IF:
+					e = ((If)i).getCond();
+					size = sizeExp(e);
+					break;
+				case REPEAT:
+					e = ((Repeat)i).getLimit();
+					size = sizeExp(e);
+					e = ((Repeat)i).getCond();
+					if(e != null)
+						size = Math.max(size, sizeExp(e));
+					break;
 			}
-			int size = 0;
-			if(e != null)
-				size = sizeExp(e);
-			if (max < size) max = size;
+			max = Math.max(max,size);
 		}
 		return max;
 	}
 	
 	private int sizeExp (Exp e){
 		int size = 0;
-		if(e.getOp() == Operator.NONE) {
-			if(e instanceof Variable) {
-				size += 1;
-			}
-			else if(e instanceof Const) {
+		if(e.getOp() == Operator.PUNTO || e.getOp() == Operator.ACCESO ||
+				(e instanceof Variable)) {
+			sizeExpAsignable(e);
+		} else if(e.getOp() == Operator.NONE) {
+			if(e instanceof Const) {
 				if(e instanceof ConstInt) {
 					size += 1;
 				}
@@ -334,15 +366,42 @@ public class GeneracionCodigo {
 		}
 		return size;
 	}
+
+	private int sizeAsignable(Asignable a) {
+		int size = 0;
+		switch(a.tipo) {
+			case VAR:
+				size = 1;
+				break;
+			case CAMPO:
+				size = 1 + sizeAsignable(a.getStruct());
+				break;
+		}
+		return size;
+	}
+
+	private int sizeExpAsignable(Exp e) {
+		int size = 1;
+		switch(e.getOp()) {
+			case PUNTO: {
+				size += 1 + sizeExpAsignable(e.getOperands()[0]);
+				break;
+			}
+		}
+		return size;
+	}
 	
 	private void generarIf(If i) {
 		generarExp(i.getCond());
-		int count = countBlock(i.getBlock());
-		printInst("fjp " + numInst + count);
-		generarBlock(i.getBlock()));
-		if (i.getBlockElse() != null) {
-			count = countBlock(i.getBlockElse());
-			printInst("ujp " + numInst + count);
+		int count = countBlock(i.getBlock().getProg());
+		if(i.getBlockElse() == null) {
+			printInst("fjp " + (numInst + count + 5));
+			generarBlock(i.getBlock());
+		} else {
+			printInst("fjp " + (numInst + count + 6));
+			generarBlock(i.getBlock());
+			count = countBlock(i.getBlockElse().getProg());
+			printInst("ujp " + (numInst + count + 5));
 			generarBlock(i.getBlockElse());
 		}
 	}
@@ -353,22 +412,22 @@ public class GeneracionCodigo {
 		Exp e = new Exp(Operator.MENOR, new ConstInt("0"), limit);
 		if (r.getCond() != null) e = new Exp(Operator.OR, e, r.getCond());
 		generarExp(e);
-		int count = countBlock(i.getBlock());
+		int count = countBlock(r.getBlock().getProg());
 		printInst("fjp " + numInst + count);
-		generarBlock(i.getBlock());
-		generarExp(new Exp(Operator.MENOS, limit, new ConstInt("1")););
+		generarBlock(r.getBlock());
+		generarExp(new Exp(Operator.MENOS, limit, new ConstInt("1")));
 		printInst("ujp " + ini);
 	}
 	
 	public int countBlock(Prog p) {
-		int count = 1;
+		int count = 2;
 		for(NodoAst n: p.getChildren()) {
 			Inst i = (Inst) n;
 			if(i.getInst() == null)
 				continue;
 			switch(i.getInst()) {
 				case DEC:
-					Asig a = ((Dec) i)).getAsig();
+					Asig a = ((Dec) i).getAsig();
 					if (a != null){
 						count += 1 + countAsignable(a.getAsignable()) + countExp(a.getExp());
 					}
@@ -377,15 +436,15 @@ public class GeneracionCodigo {
 					count += 1 + countAsignable(((Asig) i).getAsignable()) + countExp(((Asig) i).getExp());
 					break;
 				case BLOCK:
-					count += countBlock((Block) i);
+					count += countBlock(((Block) i).getProg());
 					break;
 				case IF:
-					count += countExp(((If) i).getCond()) + countBlock(((If) i).getBlock());
-					if (((If) i).getBlockElse() != null) count += countBlock(((If) i).getBlockElse());
+					count += countExp(((If) i).getCond()) + countBlock(((If) i).getBlock().getProg());
+					if (((If) i).getBlockElse() != null) count += countBlock(((If) i).getBlockElse().getProg());
 					break;
 				case REPEAT:
-					count += 5 + 2*countExp(((Repeat) i).getLimit()) + countBlock(((Repeat) i).getBlock());
-					if (((Repeat) i).getCond() != null) count += 1 + countExp(((Repeat) i).getCond())
+					count += 5 + 2*countExp(((Repeat) i).getLimit()) + countBlock(((Repeat) i).getBlock().getProg());
+					if (((Repeat) i).getCond() != null) count += 1 + countExp(((Repeat) i).getCond());
 					break;
 				default:
 			}
@@ -393,7 +452,7 @@ public class GeneracionCodigo {
 		return count;
 	}
 	
-	private int countAsignable(Asig a) {
+	private int countAsignable(Asignable a) {
 		int count = 1;
 		switch(a.tipo) {
 			case CAMPO: {
@@ -429,7 +488,7 @@ public class GeneracionCodigo {
 	}
 	
 	private int countExpAsignable(Exp e){
-		count = 1;
+		int count = 1;
 		switch(e.getOp()) {
 			case PUNTO: {
 				count += 1 + countExpAsignable(e.getOperands()[0]);

@@ -29,6 +29,15 @@ public class Comprobacion {
 					case ASIG:
 						comprobarAsig((Asig) i);
 						break;
+					case BLOCK:
+						comprobarBlock((Block) i);
+						break;
+					case IF:
+						comprobarIf((If) i);
+						break;
+					case REPEAT:
+						comprobarRepeat((Repeat) i);
+						break;
 					default:
 				}
 			} catch (CompException e) {
@@ -78,8 +87,8 @@ public class Comprobacion {
 	private void comprobarExp(Exp e) throws CompException {
 		if(e.getOp() == Operator.NONE) {
 			if(e instanceof Variable) {
-				Variable var = (Variable) e;
-				e.setTipo(var.getDec().getTipo());
+				Variable v = (Variable) e;
+				e.setTipo(v.getDec().getTipo());
 			}
 			else if(e instanceof Const) {
 				// Arrays, Dicts, Tuplas...
@@ -258,5 +267,30 @@ public class Comprobacion {
 				throw new CompException("Esto no debería ocurrir, operador obtenido " + op.name());
 		}
 		return result;
+	}
+
+	private void comprobarBlock(Block b) throws CompException {
+		comprobar(b.getProg());
+	}
+
+	private void comprobarIf(If i) throws CompException {
+		comprobarExp(i.getCond());
+		if(i.getCond().getTipo().getTipo() != EnumTipo.TBOOL)
+			throw new CompException("If requiere una condición booleana, pero se obtuvo " + i.getCond().getTipo());
+		comprobarBlock(i.getBlock());
+		if(i.getBlockElse() != null)
+			comprobarBlock(i.getBlockElse());
+	}
+
+	private void comprobarRepeat(Repeat r) throws CompException {
+		comprobarExp(r.getLimit());
+		if(r.getLimit().getTipo().getTipo() != EnumTipo.TINT)
+			throw new CompException("Repeat requiere un límite booleano, pero se obtuvo " + r.getLimit().getTipo());
+		if(r.getCond() != null) {
+			comprobarExp(r.getCond());
+			if(r.getCond().getTipo().getTipo() != EnumTipo.TBOOL)
+				throw new CompException("Repeat requiere una condición booleana, pero se obtuvo " + r.getCond().getTipo());
+		}
+		comprobarBlock(r.getBlock());
 	}
 }

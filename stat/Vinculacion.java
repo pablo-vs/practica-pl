@@ -10,17 +10,20 @@ import errors.GestionErroresTiny;
 public class Vinculacion {
 	
 	private HashMap<String, Vinculo> tablaSimbolos = new HashMap<>();
-	private Vinculacion parent;
-	private GestionErroresTiny err;
+	private final Vinculacion parent;
+	private final GestionErroresTiny err;
+	private final int profundidad;
 
 	public Vinculacion(GestionErroresTiny e) {
 		parent = null;
 		err = e;
+		profundidad = 0;
 	}
 
 	public Vinculacion(Vinculacion p) {
 		parent = p;
 		err = p.err;
+		profundidad = p.profundidad + 1;
 	}
 
 	public void vincular(Prog p) {
@@ -79,13 +82,14 @@ public class Vinculacion {
 	private void vincularAsignable(Asignable a) throws VincException{
 		switch(a.tipo) {
 			case VAR:
-				a.setDec((Dec) vincularIden(a.getIden(), Vinculo.Tipo.VAR));
+				Vinculo v = vincularIden(a.getIden(), Vinculo.Tipo.VAR);
+				a.setDec((Dec) v.declaracion);
 				break;
 			case CAMPO: {
 				vincularAsignable(a.getStruct());
 				break;
 			}
-			case ACCESO: {
+			case ACCESOR: {
 				
 			}
 			case PUNT: {
@@ -101,7 +105,8 @@ public class Vinculacion {
 		switch(t.getTipo()) {
 			case IDENTIPO: {
 				TipoNombre tn = (TipoNombre) t;
-				DefTipo d = (DefTipo) vincularIden(tn.getValor(), Vinculo.Tipo.TIPO);
+				Vinculo v = vincularIden(tn.getValor(), Vinculo.Tipo.TIPO);
+				DefTipo d = (DefTipo) v.declaracion;
 				tn.setDef(d);
 				result = d.getTipo();
 				break;
@@ -133,8 +138,9 @@ public class Vinculacion {
 		} else {
 			if (e.getOp() == Operator.NONE) {
 				if (e instanceof Variable) {
-					Variable var = (Variable) e;
-					var.setDec((Dec) vincularIden(var.getIden() , Vinculo.Tipo.VAR));
+					Variable va = (Variable) e;
+					Vinculo v = vincularIden(va.getIden() , Vinculo.Tipo.VAR);
+					va.setDec((Dec) v.declaracion);
 				}
 				else {
 					// TODO Constantes compuestas como listas
@@ -175,25 +181,22 @@ public class Vinculacion {
 	 * espera por el contexto.
 	 * Devuelve la declaracion.
 	 */
-	private NodoAst vincularIden(Iden id, Vinculo.Tipo contexto) throws VincException {
+	private Vinculo vincularIden(Iden id, Vinculo.Tipo contexto) throws VincException {
 		Vinculo v = tablaSimbolos.get(id.getName());
-		NodoAst res = null;
 		if (v == null ) {
 			if(parent == null) {
 				// Error no encontrado
 				throw new VincException(id.getName(), "Identificador no encontrado");
 			} else {
-				res = parent.vincularIden(id, contexto);
+				v = parent.vincularIden(id, contexto);
 			}
-		} else {
-			res = v.declaracion;
 		}
 		if (v.tipo != contexto) {
 			// Error clase inesperada
 			throw new VincException(id.getName(), "Se esperaba " + contexto.getVal()
 					+ ", pero se ha encontrado " + v.tipo.getVal());
 		}
-		return res;
+		return v;
 	}
 
 	private void addDeclaracion(String iden, Vinculo v) throws VincException {

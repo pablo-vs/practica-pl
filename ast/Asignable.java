@@ -20,6 +20,7 @@ public class Asignable implements NodoAst {
 	private Exp exp;
 
 	private Dec declaracion;
+	private int prof;
 
 	// Variable
 	public Asignable(Iden id) {
@@ -119,4 +120,7 @@ public class Asignable implements NodoAst {
 	public Dec getDec() {
 		return declaracion;
 	}
+
+	public void setProf(int p) {prof = p;}
+	public int getProf() {return prof;}
 }

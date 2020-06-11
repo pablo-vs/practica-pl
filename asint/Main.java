@@ -31,7 +31,7 @@ public class Main {
 		System.out.println(asint.getErrores().numErrores() + " errores encontrados.");
 		
 		GeneracionCodigo gen = new GeneracionCodigo("programa.txt");
-		gen.generar(p);
+		gen.generarCodigo(p);
 	}
 }   
    
