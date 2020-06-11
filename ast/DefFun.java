@@ -2,12 +2,14 @@ package ast;
 import ast.tipos.Tipo;
 import java.util.List;
 
-public class DefFun extends Inst {
+public class DefFun  implements NodoAst, Inst {
 	public EnumInst getInst() {return EnumInst.FUN_DEF;}
 	private Tipo tipo;
 	private Iden iden;
 	private Argumento[] args;
 	private Block block;
+	private int direccion;
+	private int profundidad;
 
 	public DefFun(Tipo t,Iden id, Block b, Argumento ... args) {
 		tipo = t;
@@ -18,8 +20,7 @@ public class DefFun extends Inst {
 			this.args[i] = args[i];
 	}
 
-	public DefFun(Tipo t, Iden id, Block b, List<Argumento> args, int fila) {
-		super(fila, 0);
+	public DefFun(Tipo t, Iden id, Block b, List<Argumento> args) {
 		tipo = t;
 		iden = id;
 		block = b;
@@ -27,22 +28,24 @@ public class DefFun extends Inst {
 		this.args = args.toArray(this.args);
 	}
 
-	public DefFun(Tipo t, Iden id, Block b, List<Argumento> args) {
-		this(t, id, b, args, -1);
-	}
-
-	public DefFun(Tipo t,Iden id, Block b, int fila) {
-		super(fila, 0);
+	public DefFun(Tipo t,Iden id, Block b) {
 		tipo = t;
 		iden = id;
 		block = b;
 		this.args = new Argumento[0];
 	}
 
-	public DefFun(Tipo t,Iden id, Block b) {
-		this(t, id, b, -1);
-	}
-
+	public Tipo getTipo() {return tipo;}
+	public Iden getIden() {return iden;}
+	public Argumento[] getArgs() {return args;}
+	public Block getBlock() {return block;}
+	
+	public void setDir(int d) {direccion = d;}
+	public int getDir() {return direccion;}
+	
+	public void setProf(int p) {profundidad = p;}
+	public int getProf() {return profundidad;}
+	
 	@Override
 	public String getName() {return "FunDef";}
 	@Override

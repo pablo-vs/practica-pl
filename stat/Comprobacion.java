@@ -38,6 +38,14 @@ public class Comprobacion {
 					case REPEAT:
 						comprobarRepeat((Repeat) i);
 						break;
+					case CASE:
+						comprobarCase((Case) i);
+						break;
+					case FUN_DEF:
+						comprobarBlock(((DefFun) i).getBlock());
+						break;
+					case FUN_CALL:
+						combrobarFunCall((FunCall) i);
 					default:
 				}
 			} catch (CompException e) {
@@ -341,5 +349,28 @@ public class Comprobacion {
 				throw new CompException("Repeat requiere una condición booleana, pero se obtuvo " + r.getCond().getTipo(), r.getCond().fila, r.getCond().col);
 		}
 		comprobarBlock(r.getBlock());
+	}
+
+	private void comprobarCase(Case c) throws CompException {
+		comprobarExp(c.getCond());
+		Tipo tipo = c.getCond().getTipo();
+		CaseMatch[] branches = c.getBranches();
+		for(int i = 0; i < branches.length; ++i){
+			if(branches[i].getValue().getTipo().getTipo() != tipo.getTipo())
+				throw new CompException("Los valores de cada rama de Case deben ser " + tipo.getTipo() + ", pero se obtuvo " + branches[i].getValue().getTipo().getTipo());
+			comprobarBlock(branches[i].getBlock());
+		}
+	}
+	
+	private void comprobarFunCall(FunCall f) throws CompException {
+		Exp[] args = f.getArgs();
+		Argumento[] argsTipos = f.getDef.getArgs();
+		if(args.length != argsTipos.length)
+				throw new CompException("El número de argumentos de la función debería ser " + argsTipos.length + ", pero en la llamada hay " + args.length + " argumentos");
+		for(int i = 0; i < args.length; ++i){
+			comprobarExp(args[i]);
+			if(args[i].getTipo().getTipo() != argsTipos.getTipo().getTipo())
+				throw new CompException("El argumento " + i + "de la función debería ser " + argsTipos.getTipo().getTipo() + ", pero se obtuvo " + args[i].getTipo().getTipo());
+		}
 	}
 }

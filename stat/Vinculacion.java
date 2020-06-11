@@ -51,6 +51,15 @@ public class Vinculacion {
 					case REPEAT:
 						vincularRepeat((Repeat) i);
 						break;
+					case CASE:
+						vincularCase((Case) i);
+						break;
+					case FUN_DEF:
+						vincularDefFun((DefFun) i);
+						break;
+					case FUN_CALL:
+						vincularFunCall((FunCall) i);
+						break;
 					default:
 				}
 			} catch (VincException e) {
@@ -184,6 +193,43 @@ public class Vinculacion {
 		vincularExp(r.getLimit());
 		if (r.getCond() != null) vincularExp(r.getCond());
 		vincularBlock(r.getBlock());
+	}
+
+	public void vincularCase(Case c) throws VincException {
+		vincularExp(c.getCond());
+		CaseMatch[] branches = c.getBranches();
+		for(int i = 0; i < branches.length; ++i)
+			vincularCaseMatch(branches[i]);
+	}
+	
+	public void vincularCaseMatch(CaseMatch c) throws VincException {
+		vincularExp(c.getValue());
+		vincularBlock(c.getBlock());
+	}
+	
+	public void vincularDefFun(DefFun d) throws VincException {
+		vincularTipo(d.getTipo());
+		String id = d.getIden().getName();
+		addDeclaracion(id, new Vinculo(Vinculo.Tipo.FUN, d));
+		Vinculacion v = new Vinculacion(this);
+		v.vincular(d.getBlock().getProg());
+		Argumento[] args = d.getArgs();
+		for(int i = 0; i < args.length; ++i)
+			v.vincular(args[i]); 
+	}
+	
+	private void vincularArg(Argumento a) throws VincException {
+		Tipo tipo = vincularTipo(a.getTipo());
+		String id = d.getIden().getName();
+		addDeclaracion(id, new Vinculo(Vinculo.Tipo.VAR, new Dec(tipo, a.getIden())));
+	}
+	
+	public void vincularFunCall(FunCall f) throws VincException {
+		Vinculo v = vincularIden(f.getIden(), Vinculo.Tipo.FUN);
+		f.setDef((FunDef) v.declaracion);
+		Exp[] args = f.getArgs();
+		for(int i = 0; i < args.length; ++i)
+			vincularExp(args[i]); 
 	}
 	
 	/* Intenta vincular un identificador, el parámetro contexto es

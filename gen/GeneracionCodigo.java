@@ -55,6 +55,15 @@ public class GeneracionCodigo {
 				case REPEAT:
 					generarRepeat((Repeat) i);
 					break;
+				case CASE:
+					generarCase((Case) i);
+					break;
+				case FUN_DEF:
+					generarDefFun((DefFun) i);
+					break;
+				case FUN_CALL:
+					generarFunCall((FunCall) i);
+					break;
 				case TIPO_DEF:
 					break;
 				default:
@@ -302,6 +311,27 @@ public class GeneracionCodigo {
 					if(e != null)
 						size = Math.max(size, sizeExp(e));
 					break;
+				case CASE:
+					CaseMatch[] branches = c.getBranches();
+					e = ((Case)i).getCond();
+					int sizeIni = sizeExp(e);
+					for(int i = 0; i < branches.length; ++i){
+						size = Math.max(size, sizeExp(branches[i].getValue()));
+					}
+					size += sizeIni;
+					break;
+				case BLOCK:
+					size = extremePointer(((Block)i).getProg());
+					break;
+				case FUN_DEF:
+					size = extremePointer(((FunDef)i).getBlock().getProg());
+					break;
+				case FUN_CALL:
+					Exp[] args = ((FunCall)i).getArgs();
+					for(int i = 0; i < args.length; ++i){
+						size = Math.max(size, sizeExp(args[i]));
+					}
+					break;
 			}
 			max = Math.max(max,size);
 		}
@@ -389,6 +419,23 @@ public class GeneracionCodigo {
 		generarExp(new Exp(Operator.MENOS, limit, new ConstInt("1")));
 		printInst("ujp " + ini);
 	}
+		
+	private void generarCase(Case c) {
+		int countBloque[], count = 0, countExpIni = countExp(c.getCond());
+		CaseMatch[] branches = c.getBranches();
+		for(int i = 0; i < branches.length; ++i){
+			Exp igual = new Exp(Operator.ES_IGUAL, c.getCond(), branches[i].getValue());
+			generarExp(igual);
+			printInst("fjp " + numInst + count + branches.length - i + 1);
+			count += countBlock(branches[i].getBlock());
+		}
+		int fin = numInst + count;
+		for(int i = 0; i < branches.length-1; ++i){
+			generarBlock(branches[i].getBlock());
+			printInst("ujp " + fin);
+		}
+		generarBlock(branches[branches.length-1].getBlock());
+	}
 	
 	public int countBlock(Prog p) {
 		int count = 2;
@@ -416,6 +463,22 @@ public class GeneracionCodigo {
 				case REPEAT:
 					count += 5 + 2*countExp(((Repeat) i).getLimit()) + countBlock(((Repeat) i).getBlock().getProg());
 					if (((Repeat) i).getCond() != null) count += 1 + countExp(((Repeat) i).getCond());
+					break;
+				case CASE:
+					CaseMatch[] branches = ((Case) i).getBranches();
+					int condIni = countExp((Case) i).getCond());
+					for(int i = 0; i < branches.length; ++i){
+						count += 3 + condIni + countExp(branches[i].getValue()) + countBlock(branches[i].getBlock().getProg());
+					}
+					count -= 3;
+					break;
+				case FUN_DEF:
+					count += countBlock(((FunDef) i).getProg()) + 4;
+					break;
+				case FUN_CALL:
+					Exp[] args = ((FunCall) i).getArgs();
+					for(int i = 0; i < args.length; ++i)
+						count += countExp(args[i]);
 					break;
 				default:
 			}
@@ -459,6 +522,29 @@ public class GeneracionCodigo {
 	
 	private int countExpAsignable(ExpAsig e){
 		return countAsignable(e.getAsignable())+1;
+	}
+	
+			
+	private void generarDefFun(DefFun d) {
+		d.setProf(profundidad + 1);
+		d.setDir(numInst + 5)
+		Prog prog = d.getBlock().getProg();
+		printInst("ssp 0");
+		printInst("sep " + extremePointer(prog));
+		int count = countBlock(prog);
+		printInst("ujp " + (count + numInst + 2));
+		generar(prog, false);
+		printInst("retp");
+	}
+	
+	private void generarFunCall(FunCall f) {
+		int difProf = profundidad + 1 - f.getDef().getProf();
+		printInst("mst " + difProf());
+		Exp[] args = f.getArgs();
+		int ini = numInst;
+		for(int i = 0; i < args.length; ++i)
+			generarExp(args[i]);
+		printInst("cup " + numInst - ini + " " + f.getDef().getDir());
 	}
 	
 	private void printInst(String inst) {
