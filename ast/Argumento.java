@@ -1,7 +1,7 @@
 package ast;
 import ast.tipos.Tipo;
 
-public class Argumento extends NodoAst {
+public class Argumento implements NodoAst {
 	
 	private Iden iden;
 	private Tipo tipo;
@@ -11,6 +11,8 @@ public class Argumento extends NodoAst {
 		tipo = tp;
 	}
 
+	public Iden getIden() {return iden;}
+	public Tipo getTipo() {return tipo;}
 	@Override
 	public String getName() {return "Argumento";}
 	@Override
