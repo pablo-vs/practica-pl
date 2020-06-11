@@ -16,6 +16,7 @@ ast/tipos/TipoInt.java
 ast/tipos/TipoArray.java
 ast/tipos/TipoDec.java
 ast/tipos/Tipo.java
+ast/tipos/TipoBasico.java
 ast/tipos/TipoString.java
 ast/tipos/TipoNull.java
 ast/tipos/TipoBool.java
@@ -28,11 +29,13 @@ ast/Argumento.java
 ast/Return.java
 ast/Case.java
 ast/Repeat.java
+ast/exp/ExpFun.java
 ast/exp/ConstDec.java
 ast/exp/ConstInt.java
 ast/exp/ConstBool.java
 ast/exp/ConstDict.java
 ast/exp/DictPair.java
+ast/exp/ConstHoja.java
 ast/exp/ConstNull.java
 ast/exp/Exp.java
 ast/exp/ConstString.java
@@ -48,6 +51,7 @@ ast/NodoAst.java
 asint/AnalizadorSintacticoTiny.java
 asint/ClaseLexica.java
 asint/Main.java
+alex/TokenValue.java
 alex/ALexOperations.java
 alex/UnidadLexica.java
 alex/AnalizadorLexicoTiny.java

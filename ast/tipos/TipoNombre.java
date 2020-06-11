@@ -1,9 +1,8 @@
 package ast.tipos;
-import ast.HojaAst;
 import ast.Iden;
 import ast.DefTipo;
 
-public class TipoNombre implements HojaAst, Tipo {
+public class TipoNombre extends TipoBasico {
 	private Iden valor;
 
 	private DefTipo def;

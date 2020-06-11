@@ -151,11 +151,8 @@ public class ALexOperations {
   public UnidadLexica unidadString() {
      return new UnidadLexica(alex.fila(),alex.col(),ClaseLexica.STRING,alex.lexema()); 
   } 
-  public UnidadLexica unidadIdenVarFun() {
-     return new UnidadLexica(alex.fila(),alex.col(),ClaseLexica.IDENVARFUN,alex.lexema()); 
-  } 
-  public UnidadLexica unidadIdenTipo() {
-     return new UnidadLexica(alex.fila(),alex.col(),ClaseLexica.IDENTIPO,alex.lexema()); 
+  public UnidadLexica unidadIden() {
+     return new UnidadLexica(alex.fila(),alex.col(),ClaseLexica.IDEN,alex.lexema()); 
   } 
   public UnidadLexica unidadEof() {
      return new UnidadLexica(alex.fila(),alex.col(),ClaseLexica.EOF,"<EOF>"); 

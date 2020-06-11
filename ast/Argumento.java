@@ -1,7 +1,7 @@
 package ast;
 import ast.tipos.Tipo;
 
-public class Argumento implements NodoAst {
+public class Argumento extends NodoAst {
 	
 	private Iden iden;
 	private Tipo tipo;

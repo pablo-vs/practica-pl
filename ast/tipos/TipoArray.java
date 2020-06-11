@@ -1,7 +1,7 @@
 package ast.tipos;
 import ast.NodoAst;
 
-public class TipoArray implements NodoAst, Tipo {
+public class TipoArray extends Tipo {
 	private Tipo tipoElems;
 
 	public TipoArray(Tipo t) {

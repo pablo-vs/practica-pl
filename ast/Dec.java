@@ -1,7 +1,7 @@
 package ast;
 import ast.tipos.*;
 
-public class Dec implements NodoAst, Inst {
+public class Dec extends Inst {
 	public EnumInst getInst() {return EnumInst.DEC;}
 	private Tipo tipo;
 	private Iden iden;
@@ -11,12 +11,14 @@ public class Dec implements NodoAst, Inst {
 	private int prof;
 
 	public Dec(Tipo tipo, Iden iden) {
+		super(tipo.fila, 0);
 		this.tipo = tipo;
 		this.iden = iden;
 		this.as = null;
 	}
 
 	public Dec(Tipo tipo, Asig as) {
+		super(tipo.fila, 0);
 		this.tipo = tipo;
 		this.iden = null;
 		this.as = as;

@@ -13,7 +13,7 @@ alex/AnalizadorLexicoTiny.java: alex/lexico.l
 	mv alex/lexico.l.java alex/AnalizadorLexicoTiny.java
 
 asint/AnalizadorSintacticoTiny.java: asint/sintaxis.cup
-	cd asint; java -cp '../cup.jar:' java_cup.Main -parser AnalizadorSintacticoTiny -symbols ClaseLexica -nopositions sintaxis.cup
+	cd asint; java -cp '../cup.jar:' java_cup.Main -parser AnalizadorSintacticoTiny -symbols ClaseLexica -nopositions -locations sintaxis.cup
 
 clean:
 	rm -r build/

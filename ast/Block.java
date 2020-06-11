@@ -1,6 +1,6 @@
 package ast;
 
-public class Block implements NodoAst, Inst {
+public class Block extends Inst {
 	public EnumInst getInst() {return EnumInst.BLOCK;}
 	private Prog prog;
 

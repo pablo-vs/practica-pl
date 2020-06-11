@@ -2,7 +2,7 @@ package ast.tipos;
 import ast.NodoAst;
 import ast.Iden;
 
-public class CampoStruct implements NodoAst {
+public class CampoStruct extends NodoAst {
 	private Iden name;
 	private Tipo tipo;
 

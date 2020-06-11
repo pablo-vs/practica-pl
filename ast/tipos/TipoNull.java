@@ -1,7 +1,6 @@
 package ast.tipos;
-import ast.HojaAst;
 
-public class TipoNull implements HojaAst, Tipo {
+public class TipoNull extends TipoBasico {
 	public EnumTipo getTipo() {return EnumTipo.TNULL;}
 	public String getName() {return "TipoNull";}
 	@Override

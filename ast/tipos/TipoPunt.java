@@ -1,7 +1,7 @@
 package ast.tipos;
 import ast.NodoAst;
 
-public class TipoPunt implements NodoAst, Tipo {
+public class TipoPunt extends Tipo {
 	private Tipo tipoRef;
 
 	public TipoPunt(Tipo t) {

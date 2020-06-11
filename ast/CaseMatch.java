@@ -1,7 +1,7 @@
 package ast;
 import ast.exp.Exp;
 
-public class CaseMatch implements NodoAst {
+public class CaseMatch extends NodoAst {
 	private Exp value;
 	private Block block;
 

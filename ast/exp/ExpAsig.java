@@ -2,7 +2,7 @@ package ast.exp;
 import ast.NodoAst;
 import ast.Asignable;
 
-public class ExpAsig extends Exp implements NodoAst {
+public class ExpAsig extends Exp  {
 	private Asignable asig;
 
 	public ExpAsig(Asignable a) {

@@ -281,14 +281,14 @@ public class AnalizadorLexicoTiny implements java_cup.runtime.Scanner {
 		/* 52 */ YY_NO_ANCHOR,
 		/* 53 */ YY_NO_ANCHOR,
 		/* 54 */ YY_NO_ANCHOR,
-		/* 55 */ YY_NO_ANCHOR,
-		/* 56 */ YY_NOT_ACCEPT,
+		/* 55 */ YY_NOT_ACCEPT,
+		/* 56 */ YY_NO_ANCHOR,
 		/* 57 */ YY_NO_ANCHOR,
 		/* 58 */ YY_NO_ANCHOR,
 		/* 59 */ YY_NO_ANCHOR,
-		/* 60 */ YY_NO_ANCHOR,
+		/* 60 */ YY_NOT_ACCEPT,
 		/* 61 */ YY_NO_ANCHOR,
-		/* 62 */ YY_NOT_ACCEPT,
+		/* 62 */ YY_NO_ANCHOR,
 		/* 63 */ YY_NO_ANCHOR,
 		/* 64 */ YY_NO_ANCHOR,
 		/* 65 */ YY_NO_ANCHOR,
@@ -344,87 +344,85 @@ public class AnalizadorLexicoTiny implements java_cup.runtime.Scanner {
 		/* 115 */ YY_NO_ANCHOR,
 		/* 116 */ YY_NO_ANCHOR,
 		/* 117 */ YY_NO_ANCHOR,
-		/* 118 */ YY_NO_ANCHOR,
-		/* 119 */ YY_NO_ANCHOR,
-		/* 120 */ YY_NO_ANCHOR
+		/* 118 */ YY_NO_ANCHOR
 	};
 	private int yy_cmap[] = unpackFromString(1,65538,
 "9:8,2:2,1,9:2,2,9:18,2,9,49,8,9:2,31,50,20,21,15,14,23,10,13,16,12,11:9,29," +
-"28,34,22,33,9:2,52,45,52,48,52:4,44,52:9,46,52:7,24,9,25,32,9:2,38,51,37,19" +
-",4,35,47,51,7,51:2,6,17,3,18,42,51,39,36,40,41,51,5,51,43,51,26,30,27,9:654" +
+"28,34,22,33,9:2,51,45,51,48,51:4,44,51:9,46,51:7,24,9,25,32,9:2,38,52,37,19" +
+",4,35,47,52,7,52:2,6,17,3,18,42,52,39,36,40,41,52,5,52,43,52,26,30,27,9:654" +
 "10,0:2")[0];
 
-	private int yy_rmap[] = unpackFromString(1,121,
-"0,1:3,2,3,1,4,5,1,6,1:4,7,1:10,8,9,10,11,1,12,1,11,1:4,11:5,13:2,11:5,13,11" +
-":4,13,14,11,15,14,16,17,18,19,18,13,20,21,22,23,11,24,25,26,27,28,29,30,31," +
-"32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56," +
-"11,57,58,59,60,61,62,63,64,65,66,67,68,69,70,71,13")[0];
+	private int yy_rmap[] = unpackFromString(1,119,
+"0,1:3,2,3,1,4,5,1,6,1:4,7,1:10,8,9,10,1,11,1,10,1:4,10:18,12,10,13,12,14,15" +
+",16,15,17,18,10,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38" +
+",39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,10,56,57,58,59,60,61,62" +
+",63,64,65,66,67,68,69,70")[0];
 
-	private int yy_nxt[][] = unpackFromString(72,53,
-"1,2,3,4,98,104:2,58,5,6,7,8,60,9,10,11,12,109,63,104,13,14,15,16,17,18,19,2" +
-"0,21,22,23,24,25,26,27,111,112,113,114,115,116,104:3,28,99,105,104,110,59,6" +
-"4,104,120,-1:56,104,117,104:3,-1:3,104:2,-1:4,104,66,104,-1:15,104:6,68,104" +
-":2,70:3,104,70,-1:2,104,70,-1:2,5:51,-1:11,8,60,-1:20,30,-1:30,8:2,31,-1:50" +
-",8,60,-1,32,-1:60,34,-1:52,35,-1:52,36,-1:33,61,65:4,-1:3,120:2,-1:4,65:3,-" +
-"1:15,65:9,120:3,65,120,-1:2,65,120,-1:3,104:5,-1:3,104:2,-1:4,104:3,-1:15,1" +
-"04:9,70:3,104,70,-1:2,104,70,-1:11,31:2,-1:43,65:5,-1:3,120:2,-1:4,65:3,-1:" +
-"15,65:9,120:3,65,120,-1:2,65,120,-1,56:48,37,56:3,-1:3,73,104:4,-1:3,104:2," +
-"-1:4,104:3,-1:15,29,104:8,70:3,104,70,-1:2,104,70,-1:13,31,-1:42,65:5,-1:3," +
-"120:2,-1:4,65:3,-1:15,65:5,43,65:3,120:3,65,120,-1:2,65,120,-1,62:49,37,62:" +
-"2,-1:3,104:5,-1:3,104:2,-1:4,104:3,-1:15,104:4,33,104:4,70:3,104,70,-1:2,10" +
-"4,70,-1:3,104:5,-1:3,104:2,-1:4,104:3,-1:15,104:5,38,104:3,70:3,104,70,-1:2" +
-",104,70,-1:3,65:5,-1:3,120:2,-1:4,65:3,-1:15,65:2,44,65:6,120:3,65,120,-1:2" +
-",65,120,-1:3,104:3,81,104,-1:3,104:2,-1:4,104:3,-1:15,104:9,70:3,104,70,-1:" +
-"2,104,70,-1:3,65:3,50,65,-1:3,120:2,-1:4,65:3,-1:15,65:9,120:3,65,120,-1:2," +
-"65,120,-1:3,65:5,-1:3,120:2,-1:4,65:3,-1:15,65:9,120:3,55,120,-1:2,65,120,-" +
-"1:3,104:5,-1:3,104:2,-1:4,104:3,-1:15,104,82,104:7,70:3,104,70,-1:2,104,70," +
-"-1:3,104:5,-1:3,104:2,-1:4,104:3,-1:15,39,104:8,70:3,104,70,-1:2,104,70,-1:" +
-"3,104:5,-1:3,104:2,-1:4,104:2,40,-1:15,104:9,70:3,104,70,-1:2,104,70,-1:3,4" +
-"1,104:4,-1:3,104:2,-1:4,104:3,-1:15,104:9,70:3,104,70,-1:2,104,70,-1:3,104:" +
-"5,-1:3,104:2,-1:4,104:3,-1:15,104:4,103,104:4,70:3,104,70,-1:2,104,70,-1:3," +
-"104:5,-1:3,104:2,-1:4,104:2,42,-1:15,104:9,70:3,104,70,-1:2,104,70,-1:3,104" +
-":5,-1:3,104:2,-1:4,104:3,-1:15,104:5,108,104,85,104,70:3,104,70,-1:2,104,70" +
-",-1:3,104:5,-1:3,104:2,-1:4,104:3,-1:15,104:6,86,104:2,70:3,104,70,-1:2,104" +
-",70,-1:3,104:5,-1:3,104:2,-1:4,104:3,-1:15,104:7,87,104,70:3,104,70,-1:2,10" +
-"4,70,-1:3,104:3,45,104,-1:3,104:2,-1:4,104:3,-1:15,104:9,70:3,104,70,-1:2,1" +
-"04,70,-1:3,104,46,104:3,-1:3,104:2,-1:4,104:3,-1:15,104:9,70:3,104,70,-1:2," +
-"104,70,-1:3,104:5,-1:3,104:2,-1:4,104:3,-1:15,104,89,104:7,70:3,104,70,-1:2" +
-",104,70,-1:3,104,47,104:3,-1:3,104:2,-1:4,104:3,-1:15,104:9,70:3,104,70,-1:" +
-"2,104,70,-1:3,104,92,104:3,-1:3,104:2,-1:4,104:3,-1:15,104:9,70:3,104,70,-1" +
-":2,104,70,-1:3,104,48,104:3,-1:3,104:2,-1:4,104:3,-1:15,104:9,70:3,104,70,-" +
-"1:2,104,70,-1:3,104,49,104:3,-1:3,104:2,-1:4,104:3,-1:15,104:9,70:3,104,70," +
-"-1:2,104,70,-1:3,104:4,93,-1:3,104:2,-1:4,104:3,-1:15,104:9,70:3,104,70,-1:" +
-"2,104,70,-1:3,104,51,104:3,-1:3,104:2,-1:4,104:3,-1:15,104:9,70:3,104,70,-1" +
-":2,104,70,-1:3,104:5,-1:3,104:2,-1:4,104:3,-1:15,104:2,94,104:6,70:3,104,70" +
-",-1:2,104,70,-1:3,104:5,-1:3,104:2,-1:4,104:3,-1:15,104:4,95,104:4,70:3,104" +
-",70,-1:2,104,70,-1:3,104:5,-1:3,104:2,-1:4,104:3,-1:15,104:3,96,104:5,70:3," +
-"104,70,-1:2,104,70,-1:3,97,104:4,-1:3,104:2,-1:4,104:3,-1:15,104:9,70:3,104" +
-",70,-1:2,104,70,-1:3,104:5,-1:3,104:2,-1:4,104:3,-1:15,104:5,52,104:3,70:3," +
-"104,70,-1:2,104,70,-1:3,53,104:4,-1:3,104:2,-1:4,104:3,-1:15,104:9,70:3,104" +
-",70,-1:2,104,70,-1:3,104:5,-1:3,104:2,-1:4,104:3,-1:15,104:5,54,104:3,70:3," +
-"104,70,-1:2,104,70,-1:3,104,57,104:3,-1:3,104:2,-1:4,104:3,-1:15,104:9,70:3" +
-",104,70,-1:2,104,70,-1:3,104:3,72,104,-1:3,104:2,-1:4,104:3,-1:15,104:9,70:" +
-"3,104,70,-1:2,104,70,-1:3,65:5,-1:3,120:2,-1:4,65,100,65,-1:15,65:9,120:3,6" +
-"5,120,-1:2,65,120,-1:3,65:5,-1:3,120:2,-1:4,65,69,65,-1:15,65:9,120:3,65,12" +
-"0,-1:2,65,120,-1:3,104:3,83,104,-1:3,104:2,-1:4,104:3,-1:15,104:9,70:3,104," +
-"70,-1:2,104,70,-1:3,104:5,-1:3,104:2,-1:4,104:3,-1:15,104,84,104:7,70:3,104" +
-",70,-1:2,104,70,-1:3,104:5,-1:3,104:2,-1:4,104:3,-1:15,104:6,90,104:2,70:3," +
-"104,70,-1:2,104,70,-1:3,65:5,-1:3,120:2,-1:4,65:3,-1:15,65:5,119,65:3,120:3" +
-",65,120,-1:2,65,120,-1:3,71,65:4,-1:3,120:2,-1:4,65:3,-1:15,65:9,120:3,65,1" +
-"20,-1:2,65,120,-1:3,104:3,88,104,-1:3,104:2,-1:4,104:3,-1:15,104:9,70:3,104" +
-",70,-1:2,104,70,-1:3,104:5,-1:3,104:2,-1:4,104:3,-1:15,104:6,91,104:2,70:3," +
-"104,70,-1:2,104,70,-1:3,104:5,-1:3,104:2,-1:4,104,74,104,-1:15,104:9,70:3,1" +
-"04,70,-1:2,104,70,-1:3,65,67,65:3,-1:3,120:2,-1:4,65:3,-1:15,65:9,120:3,65," +
-"120,-1:2,65,120,-1:3,104:5,-1:3,104:2,-1:4,104:3,-1:15,104:3,101,104:2,75,1" +
-"04:2,70:3,104,70,-1:2,104,70,-1:3,104:5,-1:3,104:2,-1:4,104:3,-1:15,104:5,7" +
-"6,104:3,70:3,104,70,-1:2,104,70,-1:3,104:5,-1:3,104:2,-1:4,104:3,-1:15,104:" +
-"3,102,104:5,70:3,104,70,-1:2,104,70,-1:3,77,104:4,-1:3,104:2,-1:4,104:3,-1:" +
-"15,104:9,70:3,104,70,-1:2,104,70,-1:3,104,78,104:3,-1:3,104:2,-1:4,104:3,-1" +
-":15,104:9,70:3,104,70,-1:2,104,70,-1:3,104:5,-1:3,104:2,-1:4,104:3,-1:15,10" +
-"4:4,79,104:3,80,70:3,104,70,-1:2,104,70,-1:3,104:2,107,104:2,-1:3,104:2,-1:" +
-"4,104:3,-1:15,104:9,70:3,104,70,-1:2,104,70,-1:3,65:4,106,-1:3,120:2,-1:4,6" +
-"5:3,-1:15,65:9,120:3,65,120,-1:2,65,120,-1:3,65:5,-1:3,120:2,-1:4,65:3,-1:1" +
-"5,65:4,118,65:4,120:3,65,120,-1:2,65,120");
+	private int yy_nxt[][] = unpackFromString(71,53,
+"1,2,3,4,97,103:2,57,5,6,7,8,59,9,10,11,12,106,61,103,13,14,15,16,17,18,19,2" +
+"0,21,22,23,24,25,26,27,107,108,109,110,111,112,103:3,113,114,115,103,116,58" +
+",62,103:2,-1:56,103,117,103:3,-1:3,103:2,-1:4,103,63,103,-1:15,103:6,64,103" +
+":2,65:3,103,65,-1:2,65,103,-1:2,5:51,-1:11,8,59,-1:20,29,-1:30,8:2,30,-1:50" +
+",8,59,-1,31,-1:60,33,-1:52,34,-1:52,35,-1:33,103:5,-1:3,103:2,-1:4,103:3,-1" +
+":15,103:9,65:3,103,65,-1:2,65,103,-1:11,30:2,-1:41,55:48,36,55:3,-1:3,67,10" +
+"3:4,-1:3,103:2,-1:4,103:3,-1:15,28,103:8,65:3,103,65,-1:2,65,103,-1:13,30,-" +
+"1:40,60:49,36,60:2,-1:3,103:5,-1:3,103:2,-1:4,103:3,-1:15,103:4,32,103:4,65" +
+":3,103,65,-1:2,65,103,-1:3,103:5,-1:3,103:2,-1:4,103:3,-1:15,103:5,37,103:3" +
+",65:3,103,65,-1:2,65,103,-1:3,103:3,78,103,-1:3,103:2,-1:4,103:3,-1:15,103:" +
+"9,65:3,103,65,-1:2,65,103,-1:3,103:5,-1:3,103:2,-1:4,103:3,-1:15,103,79,103" +
+":7,65:3,103,65,-1:2,65,103,-1:3,103:5,-1:3,103:2,-1:4,103:3,-1:15,38,103:8," +
+"65:3,103,65,-1:2,65,103,-1:3,103:5,-1:3,103:2,-1:4,103:2,39,-1:15,103:9,65:" +
+"3,103,65,-1:2,65,103,-1:3,40,103:4,-1:3,103:2,-1:4,103:3,-1:15,103:9,65:3,1" +
+"03,65,-1:2,65,103,-1:3,103:5,-1:3,103:2,-1:4,103:3,-1:15,103:4,101,103:4,65" +
+":3,103,65,-1:2,65,103,-1:3,103:5,-1:3,103:2,-1:4,103:2,41,-1:15,103:9,65:3," +
+"103,65,-1:2,65,103,-1:3,103:5,-1:3,103:2,-1:4,103:3,-1:15,103:5,105,103,82," +
+"103,65:3,103,65,-1:2,65,103,-1:3,103:5,-1:3,103:2,-1:4,103:3,-1:15,103:6,83" +
+",103:2,65:3,103,65,-1:2,65,103,-1:3,103:5,-1:3,103:2,-1:4,103:3,-1:15,103:7" +
+",84,103,65:3,103,65,-1:2,65,103,-1:3,103:5,-1:3,103:2,-1:4,103:3,-1:15,103:" +
+"5,42,103:3,65:3,103,65,-1:2,65,103,-1:3,103:5,-1:3,103:2,-1:4,103,85,103,-1" +
+":15,103:9,65:3,103,65,-1:2,65,103,-1:3,103:5,-1:3,103:2,-1:4,103:3,-1:15,10" +
+"3:2,43,103:6,65:3,103,65,-1:2,65,103,-1:3,103:3,44,103,-1:3,103:2,-1:4,103:" +
+"3,-1:15,103:9,65:3,103,65,-1:2,65,103,-1:3,103,45,103:3,-1:3,103:2,-1:4,103" +
+":3,-1:15,103:9,65:3,103,65,-1:2,65,103,-1:3,103:5,-1:3,103:2,-1:4,103:3,-1:" +
+"15,103,87,103:7,65:3,103,65,-1:2,65,103,-1:3,103,46,103:3,-1:3,103:2,-1:4,1" +
+"03:3,-1:15,103:9,65:3,103,65,-1:2,65,103,-1:3,103,90,103:3,-1:3,103:2,-1:4," +
+"103:3,-1:15,103:9,65:3,103,65,-1:2,65,103,-1:3,103,47,103:3,-1:3,103:2,-1:4" +
+",103:3,-1:15,103:9,65:3,103,65,-1:2,65,103,-1:3,103,48,103:3,-1:3,103:2,-1:" +
+"4,103:3,-1:15,103:9,65:3,103,65,-1:2,65,103,-1:3,103:3,49,103,-1:3,103:2,-1" +
+":4,103:3,-1:15,103:9,65:3,103,65,-1:2,65,103,-1:3,103:4,91,-1:3,103:2,-1:4," +
+"103:3,-1:15,103:9,65:3,103,65,-1:2,65,103,-1:3,103,50,103:3,-1:3,103:2,-1:4" +
+",103:3,-1:15,103:9,65:3,103,65,-1:2,65,103,-1:3,103:5,-1:3,103:2,-1:4,103:3" +
+",-1:15,103:2,92,103:6,65:3,103,65,-1:2,65,103,-1:3,103:5,-1:3,103:2,-1:4,10" +
+"3:3,-1:15,103:4,93,103:4,65:3,103,65,-1:2,65,103,-1:3,103:5,-1:3,103:2,-1:4" +
+",103:3,-1:15,103:3,94,103:5,65:3,103,65,-1:2,65,103,-1:3,95,103:4,-1:3,103:" +
+"2,-1:4,103:3,-1:15,103:9,65:3,103,65,-1:2,65,103,-1:3,103:5,-1:3,103:2,-1:4" +
+",103:3,-1:15,103:5,51,103:3,65:3,103,65,-1:2,65,103,-1:3,52,103:4,-1:3,103:" +
+"2,-1:4,103:3,-1:15,103:9,65:3,103,65,-1:2,65,103,-1:3,103:5,-1:3,103:2,-1:4" +
+",103:3,-1:15,103:5,53,103:3,65:3,103,65,-1:2,65,103,-1:3,103:5,-1:3,103:2,-" +
+"1:4,103:3,-1:15,103:9,65:3,54,65,-1:2,65,103,-1:3,103,56,103:3,-1:3,103:2,-" +
+"1:4,103:3,-1:15,103:9,65:3,103,65,-1:2,65,103,-1:3,103:3,66,103,-1:3,103:2," +
+"-1:4,103:3,-1:15,103:9,65:3,103,65,-1:2,65,103,-1:3,103:3,80,103,-1:3,103:2" +
+",-1:4,103:3,-1:15,103:9,65:3,103,65,-1:2,65,103,-1:3,103:5,-1:3,103:2,-1:4," +
+"103:3,-1:15,103,81,103:7,65:3,103,65,-1:2,65,103,-1:3,103:5,-1:3,103:2,-1:4" +
+",103:3,-1:15,103:4,86,103:4,65:3,103,65,-1:2,65,103,-1:3,103:5,-1:3,103:2,-" +
+"1:4,103:3,-1:15,103:6,88,103:2,65:3,103,65,-1:2,65,103,-1:3,96,103:4,-1:3,1" +
+"03:2,-1:4,103:3,-1:15,103:9,65:3,103,65,-1:2,65,103,-1:3,103:3,118,103,-1:3" +
+",103:2,-1:4,103:3,-1:15,103:9,65:3,103,65,-1:2,65,103,-1:3,103:5,-1:3,103:2" +
+",-1:4,103:3,-1:15,103:6,89,103:2,65:3,103,65,-1:2,65,103,-1:3,103:5,-1:3,10" +
+"3:2,-1:4,103,68,103,-1:15,103:9,65:3,103,65,-1:2,65,103,-1:3,103:5,-1:3,103" +
+":2,-1:4,103:3,-1:15,103:3,98,103:2,69,103:2,65:3,103,65,-1:2,65,103,-1:3,10" +
+"3:5,-1:3,103:2,-1:4,103:3,-1:15,103:5,70,103:3,65:3,103,65,-1:2,65,103,-1:3" +
+",103:5,-1:3,103:2,-1:4,103:3,-1:15,103:3,99,103:5,65:3,103,65,-1:2,65,103,-" +
+"1:3,71,103:4,-1:3,103:2,-1:4,103:3,-1:15,103:9,65:3,103,65,-1:2,65,103,-1:3" +
+",103,72,103:3,-1:3,103:2,-1:4,103:3,-1:15,103:9,65:3,103,65,-1:2,65,103,-1:" +
+"3,103:5,-1:3,103:2,-1:4,103:3,-1:15,103:4,73,103:3,74,65:3,103,65,-1:2,65,1" +
+"03,-1:3,75,103:4,-1:3,103:2,-1:4,103:3,-1:15,103:9,65:3,103,65,-1:2,65,103," +
+"-1:3,103:5,-1:3,103:2,-1:4,103,76,103,-1:15,103:9,65:3,103,65,-1:2,65,103,-" +
+"1:3,103:5,-1:3,103:2,-1:4,103:3,-1:15,103:5,100,103:3,65:3,103,65,-1:2,65,1" +
+"03,-1:3,103,77,103:3,-1:3,103:2,-1:4,103:3,-1:15,103:9,65:3,103,65,-1:2,65," +
+"103,-1:3,103:2,104,103:2,-1:3,103:2,-1:4,103:3,-1:15,103:9,65:3,103,65,-1:2" +
+",65,103,-1:3,103:4,102,-1:3,103:2,-1:4,103:3,-1:15,103:9,65:3,103,65,-1:2,6" +
+"5,103");
 
 	public java_cup.runtime.Symbol next_token ()
 		throws java.io.IOException {
@@ -484,7 +482,7 @@ public class AnalizadorLexicoTiny implements java_cup.runtime.Scanner {
 					case -4:
 						break;
 					case 4:
-						{return ops.unidadIdenVarFun();}
+						{return ops.unidadIden();}
 					case -5:
 						break;
 					case 5:
@@ -580,368 +578,360 @@ public class AnalizadorLexicoTiny implements java_cup.runtime.Scanner {
 					case -28:
 						break;
 					case 28:
-						{return ops.unidadIdenTipo();}
+						{return ops.unidadIf();}
 					case -29:
 						break;
 					case 29:
-						{return ops.unidadIf();}
+						{return ops.unidadThen();}
 					case -30:
 						break;
 					case 30:
-						{return ops.unidadThen();}
+						{return ops.unidadReal();}
 					case -31:
 						break;
 					case 31:
-						{return ops.unidadReal();}
+						{return ops.unidadConcat();}
 					case -32:
 						break;
 					case 32:
-						{return ops.unidadConcat();}
+						{return ops.unidadOr();}
 					case -33:
 						break;
 					case 33:
-						{return ops.unidadOr();}
+						{return ops.unidadEsIgual();}
 					case -34:
 						break;
 					case 34:
-						{return ops.unidadEsIgual();}
+						{return ops.unidadMayig();}
 					case -35:
 						break;
 					case 35:
-						{return ops.unidadMayig();}
+						{return ops.unidadMenig();}
 					case -36:
 						break;
 					case 36:
-						{return ops.unidadMenig();}
+						{return ops.unidadString();}
 					case -37:
 						break;
 					case 37:
-						{return ops.unidadString();}
+						{return ops.unidadNot();}
 					case -38:
 						break;
 					case 38:
-						{return ops.unidadNot();}
+						{return ops.unidadInf();}
 					case -39:
 						break;
 					case 39:
-						{return ops.unidadInf();}
+						{return ops.unidadMod();}
 					case -40:
 						break;
 					case 40:
-						{return ops.unidadMod();}
+						{return ops.unidadFun();}
 					case -41:
 						break;
 					case 41:
-						{return ops.unidadFun();}
+						{return ops.unidadAnd();}
 					case -42:
 						break;
 					case 42:
-						{return ops.unidadAnd();}
+						{return ops.unidadTipoInt();}
 					case -43:
 						break;
 					case 43:
-						{return ops.unidadTipoInt();}
+						{return ops.unidadTipoDec();}
 					case -44:
 						break;
 					case 44:
-						{return ops.unidadTipoDec();}
+						{return ops.unidadNull();}
 					case -45:
 						break;
 					case 45:
-						{return ops.unidadNull();}
+						{return ops.unidadElse();}
 					case -46:
 						break;
 					case 46:
-						{return ops.unidadElse();}
+						{return ops.unidadCase();}
 					case -47:
 						break;
 					case 47:
-						{return ops.unidadCase();}
+						{return ops.unidadTrue();}
 					case -48:
 						break;
 					case 48:
-						{return ops.unidadTrue();}
+						{return ops.unidadType();}
 					case -49:
 						break;
 					case 49:
-						{return ops.unidadType();}
+						{return ops.unidadTipoBool();}
 					case -50:
 						break;
 					case 50:
-						{return ops.unidadTipoBool();}
+						{return ops.unidadFalse();}
 					case -51:
 						break;
 					case 51:
-						{return ops.unidadFalse();}
+						{return ops.unidadStruct();}
 					case -52:
 						break;
 					case 52:
-						{return ops.unidadStruct();}
+						{return ops.unidadReturn();}
 					case -53:
 						break;
 					case 53:
-						{return ops.unidadReturn();}
+						{return ops.unidadRep();}
 					case -54:
 						break;
 					case 54:
-						{return ops.unidadRep();}
+						{return ops.unidadTipoString();}
 					case -55:
 						break;
-					case 55:
-						{return ops.unidadTipoString();}
+					case 56:
+						{}
 					case -56:
 						break;
 					case 57:
-						{}
+						{return ops.unidadIden();}
 					case -57:
 						break;
 					case 58:
-						{return ops.unidadIdenVarFun();}
+						{errores.errorLexico(fila(),col(),lexema());}
 					case -58:
 						break;
 					case 59:
-						{errores.errorLexico(fila(),col(),lexema());}
+						{return ops.unidadEnt();}
 					case -59:
 						break;
-					case 60:
-						{return ops.unidadEnt();}
+					case 61:
+						{return ops.unidadIden();}
 					case -60:
 						break;
-					case 61:
-						{return ops.unidadIdenTipo();}
+					case 62:
+						{errores.errorLexico(fila(),col(),lexema());}
 					case -61:
 						break;
 					case 63:
-						{return ops.unidadIdenVarFun();}
+						{return ops.unidadIden();}
 					case -62:
 						break;
 					case 64:
-						{errores.errorLexico(fila(),col(),lexema());}
+						{return ops.unidadIden();}
 					case -63:
 						break;
 					case 65:
-						{return ops.unidadIdenTipo();}
+						{return ops.unidadIden();}
 					case -64:
 						break;
 					case 66:
-						{return ops.unidadIdenVarFun();}
+						{return ops.unidadIden();}
 					case -65:
 						break;
 					case 67:
-						{return ops.unidadIdenTipo();}
+						{return ops.unidadIden();}
 					case -66:
 						break;
 					case 68:
-						{return ops.unidadIdenVarFun();}
+						{return ops.unidadIden();}
 					case -67:
 						break;
 					case 69:
-						{return ops.unidadIdenTipo();}
+						{return ops.unidadIden();}
 					case -68:
 						break;
 					case 70:
-						{return ops.unidadIdenVarFun();}
+						{return ops.unidadIden();}
 					case -69:
 						break;
 					case 71:
-						{return ops.unidadIdenTipo();}
+						{return ops.unidadIden();}
 					case -70:
 						break;
 					case 72:
-						{return ops.unidadIdenVarFun();}
+						{return ops.unidadIden();}
 					case -71:
 						break;
 					case 73:
-						{return ops.unidadIdenVarFun();}
+						{return ops.unidadIden();}
 					case -72:
 						break;
 					case 74:
-						{return ops.unidadIdenVarFun();}
+						{return ops.unidadIden();}
 					case -73:
 						break;
 					case 75:
-						{return ops.unidadIdenVarFun();}
+						{return ops.unidadIden();}
 					case -74:
 						break;
 					case 76:
-						{return ops.unidadIdenVarFun();}
+						{return ops.unidadIden();}
 					case -75:
 						break;
 					case 77:
-						{return ops.unidadIdenVarFun();}
+						{return ops.unidadIden();}
 					case -76:
 						break;
 					case 78:
-						{return ops.unidadIdenVarFun();}
+						{return ops.unidadIden();}
 					case -77:
 						break;
 					case 79:
-						{return ops.unidadIdenVarFun();}
+						{return ops.unidadIden();}
 					case -78:
 						break;
 					case 80:
-						{return ops.unidadIdenVarFun();}
+						{return ops.unidadIden();}
 					case -79:
 						break;
 					case 81:
-						{return ops.unidadIdenVarFun();}
+						{return ops.unidadIden();}
 					case -80:
 						break;
 					case 82:
-						{return ops.unidadIdenVarFun();}
+						{return ops.unidadIden();}
 					case -81:
 						break;
 					case 83:
-						{return ops.unidadIdenVarFun();}
+						{return ops.unidadIden();}
 					case -82:
 						break;
 					case 84:
-						{return ops.unidadIdenVarFun();}
+						{return ops.unidadIden();}
 					case -83:
 						break;
 					case 85:
-						{return ops.unidadIdenVarFun();}
+						{return ops.unidadIden();}
 					case -84:
 						break;
 					case 86:
-						{return ops.unidadIdenVarFun();}
+						{return ops.unidadIden();}
 					case -85:
 						break;
 					case 87:
-						{return ops.unidadIdenVarFun();}
+						{return ops.unidadIden();}
 					case -86:
 						break;
 					case 88:
-						{return ops.unidadIdenVarFun();}
+						{return ops.unidadIden();}
 					case -87:
 						break;
 					case 89:
-						{return ops.unidadIdenVarFun();}
+						{return ops.unidadIden();}
 					case -88:
 						break;
 					case 90:
-						{return ops.unidadIdenVarFun();}
+						{return ops.unidadIden();}
 					case -89:
 						break;
 					case 91:
-						{return ops.unidadIdenVarFun();}
+						{return ops.unidadIden();}
 					case -90:
 						break;
 					case 92:
-						{return ops.unidadIdenVarFun();}
+						{return ops.unidadIden();}
 					case -91:
 						break;
 					case 93:
-						{return ops.unidadIdenVarFun();}
+						{return ops.unidadIden();}
 					case -92:
 						break;
 					case 94:
-						{return ops.unidadIdenVarFun();}
+						{return ops.unidadIden();}
 					case -93:
 						break;
 					case 95:
-						{return ops.unidadIdenVarFun();}
+						{return ops.unidadIden();}
 					case -94:
 						break;
 					case 96:
-						{return ops.unidadIdenVarFun();}
+						{return ops.unidadIden();}
 					case -95:
 						break;
 					case 97:
-						{return ops.unidadIdenVarFun();}
+						{return ops.unidadIden();}
 					case -96:
 						break;
 					case 98:
-						{return ops.unidadIdenVarFun();}
+						{return ops.unidadIden();}
 					case -97:
 						break;
 					case 99:
-						{return ops.unidadIdenTipo();}
+						{return ops.unidadIden();}
 					case -98:
 						break;
 					case 100:
-						{return ops.unidadIdenTipo();}
+						{return ops.unidadIden();}
 					case -99:
 						break;
 					case 101:
-						{return ops.unidadIdenVarFun();}
+						{return ops.unidadIden();}
 					case -100:
 						break;
 					case 102:
-						{return ops.unidadIdenVarFun();}
+						{return ops.unidadIden();}
 					case -101:
 						break;
 					case 103:
-						{return ops.unidadIdenVarFun();}
+						{return ops.unidadIden();}
 					case -102:
 						break;
 					case 104:
-						{return ops.unidadIdenVarFun();}
+						{return ops.unidadIden();}
 					case -103:
 						break;
 					case 105:
-						{return ops.unidadIdenTipo();}
+						{return ops.unidadIden();}
 					case -104:
 						break;
 					case 106:
-						{return ops.unidadIdenTipo();}
+						{return ops.unidadIden();}
 					case -105:
 						break;
 					case 107:
-						{return ops.unidadIdenVarFun();}
+						{return ops.unidadIden();}
 					case -106:
 						break;
 					case 108:
-						{return ops.unidadIdenVarFun();}
+						{return ops.unidadIden();}
 					case -107:
 						break;
 					case 109:
-						{return ops.unidadIdenVarFun();}
+						{return ops.unidadIden();}
 					case -108:
 						break;
 					case 110:
-						{return ops.unidadIdenTipo();}
+						{return ops.unidadIden();}
 					case -109:
 						break;
 					case 111:
-						{return ops.unidadIdenVarFun();}
+						{return ops.unidadIden();}
 					case -110:
 						break;
 					case 112:
-						{return ops.unidadIdenVarFun();}
+						{return ops.unidadIden();}
 					case -111:
 						break;
 					case 113:
-						{return ops.unidadIdenVarFun();}
+						{return ops.unidadIden();}
 					case -112:
 						break;
 					case 114:
-						{return ops.unidadIdenVarFun();}
+						{return ops.unidadIden();}
 					case -113:
 						break;
 					case 115:
-						{return ops.unidadIdenVarFun();}
+						{return ops.unidadIden();}
 					case -114:
 						break;
 					case 116:
-						{return ops.unidadIdenVarFun();}
+						{return ops.unidadIden();}
 					case -115:
 						break;
 					case 117:
-						{return ops.unidadIdenVarFun();}
+						{return ops.unidadIden();}
 					case -116:
 						break;
 					case 118:
-						{return ops.unidadIdenTipo();}
+						{return ops.unidadIden();}
 					case -117:
-						break;
-					case 119:
-						{return ops.unidadIdenTipo();}
-					case -118:
-						break;
-					case 120:
-						{return ops.unidadIdenTipo();}
-					case -119:
 						break;
 					default:
 						yy_error(YY_E_INTERNAL,false);

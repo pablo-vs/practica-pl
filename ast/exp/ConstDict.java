@@ -2,20 +2,19 @@ package ast.exp;
 import ast.NodoAst;
 import java.util.List;
 
-public class ConstDict extends Const implements NodoAst {
+public class ConstDict extends Const {
 
 	private DictPair [] values;
 
 	public ConstDict(DictPair ... vls) {
-		super("");
 		values = new DictPair[vls.length];
 		for(int i = 0; i < vls.length; ++i) {
 			values[i] = vls[i];
 		}
 	}
 
-	public ConstDict(List<DictPair> vls) {
-		super("");
+	public ConstDict(List<DictPair> vls, int fila, int col) {
+		super(fila, col);
 		values = new DictPair[0];
 		values = vls.toArray(values);
 	}

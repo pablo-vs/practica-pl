@@ -2,7 +2,7 @@ package ast;
 import ast.exp.Exp;
 import java.util.List;
 
-public class Case implements NodoAst, Inst {
+public class Case extends Inst {
 	public EnumInst getInst() {return EnumInst.CASE;}
 	private Exp cond;
 	private CaseMatch[] branches;
@@ -14,10 +14,15 @@ public class Case implements NodoAst, Inst {
 			this.branches[i] = branches[i];
 	}
 
-	public Case(Exp e, List<CaseMatch> branches) {
+	public Case(Exp e, List<CaseMatch> branches, int fila) {
+		super(fila, 0);
 		cond = e;
 		this.branches = new CaseMatch[0];
 		this.branches = branches.toArray(this.branches);
+	}
+
+	public Case(Exp e, List<CaseMatch> branches) {
+		this(e,branches,-1);
 	}
 
 	@Override

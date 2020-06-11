@@ -2,20 +2,19 @@ package ast.exp;
 import ast.NodoAst;
 import java.util.List;
 
-public class ConstTupla extends Const implements NodoAst {
+public class ConstTupla extends Const {
 
 	private Exp [] values;
 
 	public ConstTupla(Exp ... vls) {
-		super("");
 		values = new Exp[vls.length];
 		for(int i = 0; i < vls.length; ++i) {
 			values[i] = vls[i];
 		}
 	}
 
-	public ConstTupla(List<Exp> vls) {
-		super("");
+	public ConstTupla(List<Exp> vls, int fila, int col) {
+		super(fila, col);
 		values = new Exp[0];
 		values = vls.toArray(values);
 	}

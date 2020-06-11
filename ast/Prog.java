@@ -1,6 +1,6 @@
 package ast;
 
-public class Prog implements NodoAst {
+public class Prog extends NodoAst {
 	private Inst[] children;
 	
 	public Prog() {

@@ -1,21 +1,28 @@
 package ast;
 import ast.exp.Exp;
 
-public class Repeat implements NodoAst, Inst {
+public class Repeat extends Inst {
 	public EnumInst getInst() {return EnumInst.REPEAT;}
 	private Exp limit;
 	private Exp cond;
 	private Block block;
 
-	public Repeat(Exp l, Block b) {
+	public Repeat(Exp l, Exp c, Block b, int fila) {
+		super(fila,0);
 		limit = l;
-		cond = null;
+		cond = c;
 		block = b;
 	}
 
 	public Repeat(Exp l, Exp c, Block b) {
-		this(l,b);
-		cond = c;
+		this(l,c,b,-1);
+	}
+
+	public Repeat(Exp l, Block b, int fila) {
+		this(l,null,b,fila);
+	}
+	public Repeat(Exp l, Block b) {
+		this(l,b,-1);
 	}
 
 	public Exp getLimit() {return limit;}

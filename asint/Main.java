@@ -17,22 +17,28 @@ public class Main {
 		AnalizadorSintacticoTiny asint = new AnalizadorSintacticoTiny(alex);
 
 		StringBuilder ast = new StringBuilder();
-		Prog p = (Prog)asint.parse().value;
+		Prog p;
+		   
+///		try {
+			p = (Prog)asint.parse().value;
+			p.printAst(ast, "");
+			System.out.println(ast.toString());
 
-		p.printAst(ast, "");
-		System.out.println(ast.toString());
+			Vinculacion vinc = new Vinculacion(new GestionErroresTiny());
+			vinc.vincular(p);
+	/*
+			Comprobacion comp = new Comprobacion(new GestionErroresTiny());
+			comp.comprobar(p);
 
-		Vinculacion vinc = new Vinculacion(new GestionErroresTiny());
-		vinc.vincular(p);
-/*
-		Comprobacion comp = new Comprobacion(new GestionErroresTiny());
-		comp.comprobar(p);
-
-		System.out.println(asint.getErrores().numErrores() + " errores encontrados.");
-		
-		GeneracionCodigo gen = new GeneracionCodigo("programa.txt");
-		gen.generarCodigo(p);
-		*/
+			System.out.println(asint.getErrores().numErrores() + " errores encontrados.");
+			
+			GeneracionCodigo gen = new GeneracionCodigo("programa.txt");
+			gen.generarCodigo(p);
+			*/
+	/*	} catch(Exception e) {
+			System.err.println("Imposible recuperarse de los errores sintácticos");
+		}
+*/
 	}
 }   
    

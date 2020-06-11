@@ -99,8 +99,7 @@ tipoDec = Dec
 string = (\"[^\"]*\")|('[^']*')
 
 
-idenVarFun = {letraMinus}({letra}|{digito})*
-idenTipo = {letraMayus}({letra}|{digito})*
+iden = {letra}({letra}|{digito})*
 
 
 %%
@@ -155,7 +154,6 @@ idenTipo = {letraMayus}({letra}|{digito})*
 {tipoString}			{return ops.unidadTipoString();}
 {tipoDec}				{return ops.unidadTipoDec();}
 {string}				{return ops.unidadString();}
-{idenVarFun}			{return ops.unidadIdenVarFun();}
-{idenTipo}				{return ops.unidadIdenTipo();}
+{iden}					{return ops.unidadIden();}
 
 [^]						{errores.errorLexico(fila(),col(),lexema());}

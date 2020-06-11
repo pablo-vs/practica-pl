@@ -2,7 +2,7 @@ package ast;
 import ast.exp.*;
 import ast.tipos.Tipo;
 
-public class Asignable implements NodoAst {
+public class Asignable extends NodoAst {
 	
 	public enum TipoAs {
 		VAR("var"), PUNT("punt"), CAMPO("campo"), ACCESOR("accesor");

@@ -2,7 +2,7 @@ package ast.tipos;
 import ast.NodoAst;
 import java.util.List;
 
-public class TipoTupla implements NodoAst, Tipo {
+public class TipoTupla extends Tipo {
 	private Tipo[] tiposElems;
 
 	public TipoTupla(Tipo ... tipos) {

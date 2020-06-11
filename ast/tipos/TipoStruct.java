@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.HashMap;
 import java.util.Map;
 
-public class TipoStruct implements NodoAst, Tipo {
+public class TipoStruct extends  Tipo {
 	private CampoStruct[] campos;
 
 	private HashMap<String, CampoStruct> mapaCampos;

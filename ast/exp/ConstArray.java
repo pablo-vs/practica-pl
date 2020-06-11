@@ -2,20 +2,19 @@ package ast.exp;
 import ast.NodoAst;
 import java.util.List;
 
-public class ConstArray extends Const implements NodoAst {
+public class ConstArray extends Const {
 
 	private Exp [] values;
 
 	public ConstArray(Exp ... vls) {
-		super("");
 		values = new Exp[vls.length];
 		for(int i = 0; i < vls.length; ++i) {
 			values[i] = vls[i];
 		}
 	}
 
-	public ConstArray(List<Exp> vls) {
-		super("");
+	public ConstArray(List<Exp> vls, int fila, int col) {
+		super(fila, col);
 		values = new Exp[0];
 		values = vls.toArray(values);
 	}

@@ -1,5 +1,7 @@
 package ast;
 
-public interface Inst extends NodoAst {
-	public EnumInst getInst();
+public abstract class Inst extends NodoAst {
+	abstract public EnumInst getInst();
+	public Inst(int f,int c) {super(f,c);}
+	public Inst() {}
 }

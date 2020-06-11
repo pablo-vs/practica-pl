@@ -1,7 +1,6 @@
 package ast.tipos;
-import ast.HojaAst;
 
-public class TipoDec implements HojaAst, Tipo {
+public class TipoDec extends TipoBasico {
 	public EnumTipo getTipo() {return EnumTipo.TDEC;}
 	public String getName() {return "TipoDec";}
 	@Override

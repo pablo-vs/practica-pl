@@ -1,7 +1,7 @@
 package ast.exp;
 import ast.NodoAst;
 
-public class DictPair implements NodoAst {
+public class DictPair extends NodoAst {
 	private Exp clave, valor;
 
 	public DictPair(Exp cv, Exp vl) {

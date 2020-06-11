@@ -3,6 +3,7 @@ package asint;
 import java_cup.runtime.*;
 import alex.AnalizadorLexicoTiny;
 import alex.UnidadLexica;
+import alex.TokenValue;
 import errors.GestionErroresTiny;
 import ast.*;
 import ast.tipos.*;
@@ -25,13 +26,14 @@ init with {:
 :};
 
 
-terminal  	 COMA, PAP,
-             PCL, CAP, CCL, BAP, BCL, PCOMA, DOSPUNTOS,
-             VERT, IF, ELSE, CASE, THEN, NULL,
-             REPEAT, INF, FUN, RETURN, STRUCT, TYPE, TINT, TBOOL,
-             TSTRING, TDEC, TRUE, FALSE;
+terminal  	 COMA,
+             PCL, CCL, BAP, BCL, PCOMA, DOSPUNTOS,
+             VERT, ELSE, THEN,
+             STRUCT, TINT, TBOOL,
+             TSTRING, TDEC;
 
-terminal String IDENVARFUN, IDENTIPO, ENT, DEC, STRING;
+terminal TokenValue IF, REPEAT, CASE, FUN, TYPE, RETURN, IDEN, ENT,
+					DEC, STRING, TRUE, FALSE, NULL, INF, PAP, CAP;
 terminal Operator	MAS, MENOS, POR, DIV, MOD, IGUAL, PUNTO, REF, CONCAT,
 					AND, OR, NOT, DEREF, MAYOR, MENOR, ES_IGUAL, MAYIG, MENIG;
 
@@ -89,13 +91,13 @@ BLOCK ::= BAP PROG: p BCL
 	{:	RESULT = new Block((Prog) p);	:};
 
 // Estructuras de control
-IF_BLOCK ::= IF EXP0: e BLOCK: b ELSE BLOCK: eb
-	{:	RESULT = new If((Exp) e, (Block) b, (Block) eb);	:};
-IF_BLOCK ::= IF EXP0: e BLOCK: b
-	{:	RESULT = new If((Exp) e, (Block) b);	:};
+IF_BLOCK ::= IF: i EXP0: e BLOCK: b ELSE BLOCK: eb
+	{:	RESULT = new If((Exp) e, (Block) b, (Block) eb, i.fila);	:};
+IF_BLOCK ::= IF: i EXP0: e BLOCK: b
+	{:	RESULT = new If((Exp) e, (Block) b, i.fila);	:};
 
-CASE_BLOCK ::= CASE EXP0: e BAP CASE_MATCH_LIST: l BCL
-	{:	RESULT = new Case((Exp) e, l);	:};
+CASE_BLOCK ::= CASE: c EXP0: e BAP CASE_MATCH_LIST: l BCL
+	{:	RESULT = new Case((Exp) e, l, c.fila);	:};
 CASE_MATCH_LIST ::= CASE_MATCH: cm CASE_MATCH_LIST: l
 	{:	l.add(0, (CaseMatch) cm); RESULT = l;	:};
 CASE_MATCH_LIST ::= CASE_MATCH: cm
@@ -105,32 +107,32 @@ CASE_MATCH ::= EXP0: e THEN BLOCK: b
 
 // repeat a -> repite a veces
 // repeat a | b -> repite mientas b sea cierto, un máximo de a veces
-REPEAT_BLOCK ::= REPEAT EXP0: e BLOCK: b
-	{:	RESULT = new Repeat((Exp) e, (Block) b);	:};
-REPEAT_BLOCK ::= REPEAT EXP0: e1 VERT EXP0: e2 BLOCK: b
-	{:	RESULT = new Repeat((Exp) e1, (Exp) e2, (Block) b);	:};
+REPEAT_BLOCK ::= REPEAT: r EXP0: e BLOCK: b
+	{:	RESULT = new Repeat((Exp) e, (Block) b, r.fila);	:};
+REPEAT_BLOCK ::= REPEAT: r EXP0: e1 VERT EXP0: e2 BLOCK: b
+	{:	RESULT = new Repeat((Exp) e1, (Exp) e2, (Block) b, r.fila);	:};
 
 // Definición de funciones
-FUN_DEF ::= FUN TIPO: t IDENVARFUN: id PAP ARGS: args PCL IGUAL BLOCK: b
-	{:	RESULT = new DefFun((Tipo) t, new Iden(id), (Block) b, args);	:};
-FUN_DEF ::= FUN TIPO: t IDENVARFUN: id PAP PCL IGUAL BLOCK: b
-	{:	RESULT = new DefFun((Tipo) t, new Iden(id), (Block) b);	:};
+FUN_DEF ::= FUN: f TIPO: t IDEN: id PAP ARGS: args PCL IGUAL BLOCK: b
+	{:	RESULT = new DefFun((Tipo) t, new Iden(id), (Block) b, args, f.fila);	:};
+FUN_DEF ::= FUN: f TIPO: t IDEN: id PAP PCL IGUAL BLOCK: b
+	{:	RESULT = new DefFun((Tipo) t, new Iden(id), (Block) b, f.fila);	:};
 
-ARGS ::= IDENVARFUN: id DOSPUNTOS TIPO: t COMA ARGS: args
+ARGS ::= IDEN: id DOSPUNTOS TIPO: t COMA ARGS: args
 	{:	args.add(0, new Argumento(new Iden(id), (Tipo) t)); RESULT = args;	:};
-ARGS ::= IDENVARFUN: id DOSPUNTOS TIPO: t
+ARGS ::= IDEN: id DOSPUNTOS TIPO: t
 	{:	RESULT = new ArrayList(Arrays.asList(
 				new Argumento[] {new Argumento(new Iden(id), (Tipo) t)}));	:};
 
 
-RETURN_VAL ::= RETURN EXP0: e
-	{:	RESULT = new Return((Exp) e);	:};
+RETURN_VAL ::= RETURN: r EXP0: e
+	{:	RESULT = new Return((Exp) e, r.fila);	:};
 
 
 // Llamada a funcion
-FUN_CALL ::= IDENVARFUN: id PAP PARAMS: par PCL
+FUN_CALL ::= IDEN: id PAP PARAMS: par PCL
 	{:	RESULT = new FunCall(new Iden(id), par);	:};
-FUN_CALL ::= IDENVARFUN: id PAP PCL
+FUN_CALL ::= IDEN: id PAP PCL
 	{:	RESULT = new FunCall(new Iden(id));	:};
 PARAMS ::= EXP0: e COMA PARAMS: par
 	{:	par.add(0, (Exp) e); RESULT = par;	:};
@@ -139,19 +141,19 @@ PARAMS ::= EXP0: e
 
 
 // Declaracion de variables
-DEC_VAR ::= TIPO: t IDENVARFUN: iden
-	{:	RESULT = new Dec((Tipo)t, new Iden(iden));	:};
+DEC_VAR ::= TIPO: t IDEN: id
+	{:	RESULT = new Dec((Tipo)t, new Iden(id));	:};
 DEC_VAR ::= TIPO: t ASIG: as
 	{:	RESULT = new Dec((Tipo)t, (Asig) as);	:};
 
 
 // Definición de tipos con nombre
-TIPO_DEF ::= TYPE IDENTIPO: id IGUAL TIPO: t
-	{:	RESULT = new DefTipo((Tipo) t, new Iden(id));	:};
+TIPO_DEF ::= TYPE: ty IDEN: id IGUAL TIPO: t
+	{:	RESULT = new DefTipo((Tipo) t, new Iden(id), ty.fila);	:};
 
 //======== Tipos =========================================================
 
-TIPO ::= IDENTIPO: id
+TIPO ::= IDEN: id
 	{:	RESULT = new TipoNombre(new Iden(id));	:};
 TIPO ::= TIPO_ARRAY: t
 	{:	RESULT = t;	:};
@@ -191,8 +193,8 @@ LISTA_STRUCT ::= CAMPO_STRUCT: cp COMA LISTA_STRUCT: ls
 	{:	ls.add(0, (CampoStruct) cp); RESULT = ls;	:};
 LISTA_STRUCT ::= CAMPO_STRUCT: cp
 	{:	RESULT = new ArrayList(Arrays.asList(new CampoStruct[] {(CampoStruct) cp}));	:};
-CAMPO_STRUCT ::= IDENVARFUN: iden DOSPUNTOS TIPO: t
-	{:	RESULT = new CampoStruct(new Iden(iden), (Tipo) t);	:};
+CAMPO_STRUCT ::= IDEN: id DOSPUNTOS TIPO: t
+	{:	RESULT = new CampoStruct(new Iden(id), (Tipo) t);	:};
 
 TIPO_PUNT ::= REF TIPO: t
 	{:	RESULT = new TipoPunt((Tipo) t);	:};
@@ -203,15 +205,15 @@ TIPO_PUNT ::= REF TIPO: t
 ASIG ::= ASIG0: as IGUAL EXP0: e
 	{:	RESULT = new Asig((Asignable) as, (Exp) e);	:};
 
-ASIG0 ::= ASIG0: as PUNTO IDENVARFUN: id  // Structs
+ASIG0 ::= ASIG0: as PUNTO IDEN: id  // Structs
 	{:	RESULT = new Asignable((Asignable) as, new Iden(id));	:};
 ASIG0 ::= ASIG0: as CAP EXP0: exp CCL // Arrays, diccionarios...
 	{:	RESULT = new Asignable((Exp) exp, (Asignable) as);	:};
 ASIG0 ::= DEREF ASIG1: as // Punteros
 	{:	RESULT = new Asignable((Asignable) as);	:};
-ASIG0 ::= IDENVARFUN: id
+ASIG0 ::= IDEN: id
 	{:	RESULT = new Asignable(new Iden(id));	:};
-ASIG1 ::= IDENVARFUN: id
+ASIG1 ::= IDEN: id
 	{:	RESULT = new Asignable(new Iden(id));	:};
 ASIG1 ::= PAP ASIG0: as PCL
 	{:	RESULT = as;	:};
@@ -273,30 +275,30 @@ EXP9 ::= ASIG0: e
 	{:	RESULT = new ExpAsig((Asignable) e);	:};
 
 //======== Constantes ====================================================
-CONST ::= TRUE
-	{:	RESULT = new ConstBool("true");	:};
-CONST ::= FALSE
-	{:	RESULT = new ConstBool("false");	:};
+CONST ::= TRUE: t
+	{:	RESULT = new ConstBool(t);	:};
+CONST ::= FALSE: f
+	{:	RESULT = new ConstBool(f);	:};
 CONST ::= ENT: e
 	{:	RESULT = new ConstInt(e);	:};
 CONST ::= DEC: d
 	{:	RESULT = new ConstDec(d);	:};
-CONST ::= INF
-	{:	RESULT = new ConstInt("inf");	:};
+CONST ::= INF: i
+	{:	RESULT = new ConstInt(i);	:};
 
-CONST ::= NULL
-	{:	RESULT = new ConstNull();	:};
+CONST ::= NULL: n
+	{:	RESULT = new ConstNull(n);	:};
 
 CONST ::= STRING: s
 	{:	RESULT = new ConstString(s);	:};
 
 // Constantes: listas, tuplas, diccionarios
-CONST ::= CAP LISTA: l CCL
-	{:	RESULT = new ConstArray(l);	:};
-CONST ::= PAP TUPLA: t PCL
-	{:	RESULT = new ConstTupla(t);	:};
-CONST ::= CAP DICT: d CCL
-	{:	RESULT = new ConstDict(d);	:};
+CONST ::= CAP: c LISTA: l CCL
+	{:	RESULT = new ConstArray(l, c.fila, c.col);	:};
+CONST ::= PAP: p TUPLA: t PCL
+	{:	RESULT = new ConstTupla(t, p.fila, p.col);	:};
+CONST ::= CAP: c DICT: d CCL
+	{:	RESULT = new ConstDict(d, c.fila, c.col);	:};
 
 
 LISTA ::= EXP0: e COMA LISTA: l

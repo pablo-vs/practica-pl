@@ -2,7 +2,7 @@ package ast;
 import ast.exp.Exp;
 import java.util.List;
 
-public class FunCall extends Exp implements NodoAst, Inst {
+public class FunCall extends Inst {
 	public EnumInst getInst() {return EnumInst.FUN_CALL;}
 	private Iden iden;
 	private Exp[] args;
@@ -20,7 +20,8 @@ public class FunCall extends Exp implements NodoAst, Inst {
 		this.args = args.toArray(this.args);
 	}
 
-	@Override
+
+
 	public String print() {
 		StringBuilder res = new StringBuilder();
 		res.append(iden.print());
