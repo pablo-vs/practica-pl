@@ -13,58 +13,59 @@ public class Asignable extends NodoAst {
 		public String getName() {return txt;}
 	}
 
-	public final TipoAs tipo;
+	public final TipoAs tipoAs;
 	private Iden iden;
 	private Asignable child;
 	private Exp exp;
 
 	private Dec declaracion;
+	private Tipo tipo;
 	private int prof;
 
 	// Variable
 	public Asignable(Iden id) {
 		iden = id;
-		tipo = TipoAs.VAR;
+		tipoAs = TipoAs.VAR;
 	}
 
 	// Dereferencia puntero;
 	public Asignable(Asignable as) {
 		child = as;
-		tipo = TipoAs.PUNT;	
+		tipoAs = TipoAs.PUNT;	
 	}
 
 	// Campo de un struct
 	public Asignable(Asignable struct, Iden campo) {
 		child = struct;
 		iden = campo;
-		tipo = TipoAs.CAMPO;
+		tipoAs = TipoAs.CAMPO;
 	}
 
 	// Elemento de un array/tupla/dict
 	public Asignable(Exp accesor, Asignable as) {
 		exp = accesor;
 		child = as;
-		tipo = TipoAs.ACCESOR;
+		tipoAs = TipoAs.ACCESOR;
 	}
 
 	@Override
 	public String getName() {
-		switch(tipo) {
+		switch(tipoAs) {
 			case VAR:
-				return "Asignable " + tipo.getName() + ": " + iden.print();
+				return "Asignable " + tipoAs.getName() + ": " + iden.print();
 			case PUNT:
-				return "Asignable " + tipo.getName();
+				return "Asignable " + tipoAs.getName();
 			case CAMPO:
-				return "Asignable " + tipo.getName();
+				return "Asignable " + tipoAs.getName();
 			case ACCESOR:
-				return "Asignable " + tipo.getName();
+				return "Asignable " + tipoAs.getName();
 			default:
 				return "Asignable";
 		}
 	}
 
 	public String print() {
-		switch(tipo) {
+		switch(tipoAs) {
 			case VAR:
 				return iden.print();
 			case PUNT:
@@ -80,7 +81,7 @@ public class Asignable extends NodoAst {
 
 	@Override
 	public NodoAst[] getChildren() {
-		switch(tipo) {
+		switch(tipoAs) {
 			case VAR:
 				return new NodoAst[0];
 			case PUNT:
@@ -103,20 +104,16 @@ public class Asignable extends NodoAst {
 
 	public Asignable getBottom() {
 		Asignable res;
-		if(tipo == TipoAs.VAR)
+		if(tipoAs == TipoAs.VAR)
 			return this;
 		else
 			return child.getBottom();
 	}
 
-	public void setDec(Dec d) {
-		declaracion = d;
-	}
-	
-	public Dec getDec() {
-		return declaracion;
-	}
-
+	public void setDec(Dec d) {declaracion = d;}
+	public Dec getDec() {return declaracion;}
 	public void setProf(int p) {prof = p;}
 	public int getProf() {return prof;}
+	public void setTipo(Tipo t) {tipo = t;}
+	public Tipo getTipo() {return tipo;}
 }

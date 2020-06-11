@@ -56,6 +56,9 @@ alex/ALexOperations.java
 alex/UnidadLexica.java
 alex/AnalizadorLexicoTiny.java
 errors/GestionErroresTiny.java
-stat/VincException.java
+stat/Comprobacion.java
 stat/Vinculacion.java
+stat/EquivalenciaTipos.java
 stat/Vinculo.java
+stat/CompException.java
+stat/VincException.java

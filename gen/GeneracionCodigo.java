@@ -116,7 +116,7 @@ public class GeneracionCodigo {
 
 	private Tipo generarAsignable(Asignable a) {
 		Tipo res = null;
-		switch(a.tipo) {
+		switch(a.tipoAs) {
 			case VAR: {
 				res = a.getDec().getTipo();
 				int dir = a.getDec().getDir();
@@ -369,7 +369,7 @@ public class GeneracionCodigo {
 
 	private int sizeAsignable(Asignable a) {
 		int size = 0;
-		switch(a.tipo) {
+		switch(a.tipoAs) {
 			case VAR:
 				size = 1;
 				break;
@@ -454,7 +454,7 @@ public class GeneracionCodigo {
 	
 	private int countAsignable(Asignable a) {
 		int count = 1;
-		switch(a.tipo) {
+		switch(a.tipoAs) {
 			case CAMPO: {
 				count += 1 + countAsignable(a.getStruct());
 				break;

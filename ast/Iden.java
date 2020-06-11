@@ -4,7 +4,7 @@ import alex.TokenValue;
 
 public class Iden extends HojaAst {
 	private String value;
-	public String getName() {return "Iden: " + value + " | " + fila + " " + col;}
+	public String getName() {return "Iden: " + value;}
 	public String print() {return value;}
 
 	public Iden(String val) {

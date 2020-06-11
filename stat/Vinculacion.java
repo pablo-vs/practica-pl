@@ -65,7 +65,11 @@ public class Vinculacion {
 		if (d.getAsig() == null) {
 			// Si la declaracion no tiene asignación, tomamos directamente el id
 			id = d.getIden().getName();
-			addDeclaracion(id, new Vinculo(Vinculo.Tipo.VAR, d));
+			try {
+				addDeclaracion(id, new Vinculo(Vinculo.Tipo.VAR, d));
+			} catch(VincException e) {
+				throw new VincException(e, d.fila, d.col);
+			}	
 		} else {
 			// Si la declaracion tiene asignación, tomamos el id de la asignación
 			id = d.getAsig().getAsignable().getIden().getName();
@@ -80,7 +84,7 @@ public class Vinculacion {
 	}
 
 	private void vincularAsignable(Asignable a) throws VincException{
-		switch(a.tipo) {
+		switch(a.tipoAs) {
 			case VAR:
 				Vinculo v = vincularIden(a.getIden(), Vinculo.Tipo.VAR);
 				a.setDec((Dec) v.declaracion);
@@ -117,7 +121,7 @@ public class Vinculacion {
 				HashMap<String, CampoStruct> mapa = new HashMap<>();
 				for(CampoStruct c: st.getCampos()) {
 					if (mapa.containsKey(c.getIden().print())) {
-						throw new VincException(c.getIden().print(), "Campo duplicado");
+						throw new VincException(c.getIden().print(), "Campo duplicado", c.getIden().fila, c.getIden().col);
 					} else {
 						mapa.put(c.getIden().print(), c);
 						c.setTipo(vincularTipo(c.getTipo()));
@@ -163,7 +167,11 @@ public class Vinculacion {
 	private void vincularDefTipo(DefTipo d) throws VincException {
 		vincularTipo(d.getTipo());
 		String id = d.getIden().getName();
-		addDeclaracion(id, new Vinculo(Vinculo.Tipo.TIPO, d));
+		try {
+			addDeclaracion(id, new Vinculo(Vinculo.Tipo.TIPO, d));
+		} catch (VincException e) {
+			throw new VincException(e, d.getIden().fila, d.getIden().col);
+		}
 	}
 
 	public void vincularIf(If i) throws VincException {
@@ -188,7 +196,7 @@ public class Vinculacion {
 		if (v == null ) {
 			if(parent == null) {
 				// Error no encontrado
-				throw new VincException(id.getName(), "Identificador no encontrado");
+				throw new VincException(id.getName(), "Identificador no encontrado", id.fila, id.col);
 			} else {
 				v = parent.vincularIden(id, contexto);
 			}
@@ -196,7 +204,7 @@ public class Vinculacion {
 		if (v.tipo != contexto) {
 			// Error clase inesperada
 			throw new VincException(id.getName(), "Se esperaba " + contexto.getVal()
-					+ ", pero se ha encontrado " + v.tipo.getVal());
+					+ ", pero se ha encontrado " + v.tipo.getVal(), id.fila, id.col);
 		}
 		return v;
 	}

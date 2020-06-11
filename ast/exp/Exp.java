@@ -45,7 +45,7 @@ public class Exp extends NodoAst {
 	}
 
 	public Exp(Operator op, List<Exp> ops) {
-		this(op, ops, -1, -1);
+		this(op, ops, ops.get(0).fila, ops.get(0).col);
 	}
 
 	public String print() {
