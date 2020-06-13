@@ -11,12 +11,14 @@ else
 		cp inputs/$file ../build/input.txt
 		cd ../build
 		java -cp '../cup.jar:../jlex.jar:' asint.Main -noast
+		cp programa.txt ../tests/pfiles/$file.p
 		cd ../tests
-		./pmachine ../build/programa.txt > outputs/$file.out
-		if [[ -n $(grep 'error' outputs/$file.out) ]]
+		./pmachine pfiles/$file.p > outputs/$file.out
+		if [[ -z $(grep 'successfully' outputs/$file.out) ]]
 		then
 			echo $file : Error de ejecución
 			output="Ha habido tests fallidos"
+			continue
 		fi
 		while IFS= read -r line
 		do

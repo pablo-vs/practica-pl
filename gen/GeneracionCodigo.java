@@ -410,15 +410,30 @@ public class GeneracionCodigo {
 	}
 	
 	private void generarRepeat(Repeat r) {
-		int ini = numInst;
-		Exp limit = r.getLimit();
-		Exp e = new Exp(Operator.MENOR, new ConstInt("0"), limit);
-		if (r.getCond() != null) e = new Exp(Operator.OR, e, r.getCond());
-		generarExp(e);
 		int count = countBlock(r.getBlock().getProg());
-		printInst("fjp " + numInst + count);
+
+		// Generamos el límite, que queda almacenado en la pila
+		generarExp(r.getLimit());
+
+		int ini = numInst; // El bucle volverá a esta instrucción
+
+		// Duplicamos el límite para hacer la comprobación
+		printInst("dpl");
+		// Comprobamos si el límite es >0
+		printInst("ldc 0");
+		printInst("grt");
+
+		if (r.getCond() != null) {
+			generarExp(r.getCond());
+			// Comprobamos que se cumple la condición
+			printInst("and");
+		}
+		// Si lo anterior no se cumple, saltamos
+		printInst("fjp " + (numInst + count + 5 + 2));
+
 		generarBlock(r.getBlock());
-		generarExp(new Exp(Operator.MENOS, limit, new ConstInt("1")));
+
+		printInst("dec 1"); //Decrementamos el valor almacenado del límite
 		printInst("ujp " + ini);
 	}
 		
@@ -463,7 +478,7 @@ public class GeneracionCodigo {
 					if (((If) i).getBlockElse() != null) count += countBlock(((If) i).getBlockElse().getProg()) + 5;
 					break;
 				case REPEAT:
-					count += 5 + 2*countExp(((Repeat) i).getLimit()) + countBlock(((Repeat) i).getBlock().getProg());
+					count += 6 + countExp(((Repeat) i).getLimit()) + 4 + countBlock(((Repeat) i).getBlock().getProg());
 					if (((Repeat) i).getCond() != null) count += 1 + countExp(((Repeat) i).getCond());
 					break;
 				case CASE:

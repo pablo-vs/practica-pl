@@ -1,0 +1,27 @@
+Int exp = 1;
+Int cont = 0;
+Int total = 1;
+
+repeat 4 {
+	exp = exp * 2;
+};
+
+# exp = 2^4 = 16
+
+repeat 100000 | cont < exp {
+	total = total * 2;
+	cont = cont + 1;
+};
+
+# total = 2^16 = 65536
+
+repeat 5 | cont > 0 {
+	repeat 1 {
+		cont = cont - 1;
+	};
+	repeat 1 | 5 > 0 {
+		cont = cont - 1;
+	};
+};
+
+# const = 6
