@@ -31,10 +31,10 @@ public class GeneracionCodigo {
 	public void generar(Prog p, boolean base) {
 		++profundidad;
 		int tamMarco = 5+ asignarMemoria(p);
-		if(!base) {
+		if(base) {
+			printInst("ssp " + tamMarco);
+			printInst("sep " + (extremePointer(p)));
 		}
-		printInst("ssp " + tamMarco);
-		printInst("sep " + (extremePointer(p)));
 		for(NodoAst n: p.getChildren()) {
 			Inst i = (Inst) n;
 			if(i.getInst() == null)
@@ -279,7 +279,7 @@ public class GeneracionCodigo {
 		printInst("cup 0 " + (numInst + 2));
 		int count = countBlock(prog);
 		printInst("ujp " + (count + numInst + 2));
-		generar(prog, false);
+		generar(prog, true);
 		printInst("retp");
 	}
 	
@@ -541,12 +541,12 @@ public class GeneracionCodigo {
 		return countAsignable(e.getAsignable())+1;
 	}
 	
-			
 	private void generarDefFun(DefFun d) {
 		d.setProf(profundidad + 1);
 		d.setDir(numInst + 5);
 		Prog prog = d.getBlock().getProg();
-		printInst("ssp 0");
+		int tamMarco = 5+ asignarMemoria(prog);
+		printInst("ssp " + tamMarco);
 		printInst("sep " + extremePointer(prog));
 		int count = countBlock(prog);
 		printInst("ujp " + (count + numInst + 2));
