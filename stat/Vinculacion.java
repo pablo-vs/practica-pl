@@ -1,11 +1,14 @@
 package stat;
 
 import java.util.HashMap;
+import java.util.TreeMap;
 
 import ast.*;
 import ast.exp.*;
 import ast.tipos.*;
 import errors.GestionErroresTiny;
+
+import gen.fun.FuncionesPredefinidas;
 
 public class Vinculacion {
 	
@@ -14,16 +17,20 @@ public class Vinculacion {
 	private final GestionErroresTiny err;
 	private final int profundidad;
 
-	public Vinculacion(GestionErroresTiny e) {
+	private FuncionesPredefinidas funPred;
+
+	public Vinculacion(GestionErroresTiny e, FuncionesPredefinidas fp) {
 		parent = null;
 		err = e;
 		profundidad = 0;
+		funPred = fp;
 	}
 
 	public Vinculacion(Vinculacion p) {
 		parent = p;
 		err = p.err;
 		profundidad = p.profundidad + 1;
+		funPred = p.funPred;
 	}
 
 	public void vincular(Prog p) {
@@ -73,7 +80,7 @@ public class Vinculacion {
 		String id;
 		if (d.getAsig() == null) {
 			// Si la declaracion no tiene asignación, tomamos directamente el id
-			id = d.getIden().getName();
+			id = d.getIden().print();
 			try {
 				addDeclaracion(id, new Vinculo(Vinculo.Tipo.VAR, d));
 			} catch(VincException e) {
@@ -81,7 +88,7 @@ public class Vinculacion {
 			}	
 		} else {
 			// Si la declaracion tiene asignación, tomamos el id de la asignación
-			id = d.getAsig().getAsignable().getIden().getName();
+			id = d.getAsig().getAsignable().getIden().print();
 			addDeclaracion(id, new Vinculo(Vinculo.Tipo.VAR, d));
 			vincularAsig(d.getAsig());
 		}
@@ -127,7 +134,7 @@ public class Vinculacion {
 			}
 			case STRUCT: {
 				TipoStruct st = (TipoStruct) t;
-				HashMap<String, CampoStruct> mapa = new HashMap<>();
+				TreeMap<String, CampoStruct> mapa = new TreeMap<>();
 				for(CampoStruct c: st.getCampos()) {
 					if (mapa.containsKey(c.getIden().print())) {
 						throw new VincException(c.getIden().print(), "Campo duplicado", c.getIden().fila, c.getIden().col);
@@ -147,6 +154,7 @@ public class Vinculacion {
 			case ARRAY: {
 				TipoArray ta = (TipoArray) t;
 				ta.setTipoElem(vincularTipo(ta.getTipoElem()));
+				vincularExp(ta.getSizeExp());
 				break;
 			}
 			default:
@@ -175,7 +183,7 @@ public class Vinculacion {
 	
 	private void vincularDefTipo(DefTipo d) throws VincException {
 		vincularTipo(d.getTipo());
-		String id = d.getIden().getName();
+		String id = d.getIden().print();
 		try {
 			addDeclaracion(id, new Vinculo(Vinculo.Tipo.TIPO, d));
 		} catch (VincException e) {
@@ -209,7 +217,7 @@ public class Vinculacion {
 	
 	public void vincularDefFun(DefFun d) throws VincException {
 		vincularTipo(d.getTipo());
-		String id = d.getIden().getName();
+		String id = d.getIden().print();
 		addDeclaracion(id, new Vinculo(Vinculo.Tipo.FUN, d));
 		Vinculacion v = new Vinculacion(this);
 		Argumento[] args = d.getArgs();
@@ -220,7 +228,7 @@ public class Vinculacion {
 	
 	private void vincularArg(Argumento a) throws VincException {
 		Tipo tipo = vincularTipo(a.getTipo());
-		String id = a.getIden().getName();
+		String id = a.getIden().print();
 		addDeclaracion(id, new Vinculo(Vinculo.Tipo.VAR, new Dec(tipo, a.getIden())));
 	}
 	
@@ -238,18 +246,25 @@ public class Vinculacion {
 	 * Devuelve la declaracion.
 	 */
 	private Vinculo vincularIden(Iden id, Vinculo.Tipo contexto) throws VincException {
-		Vinculo v = tablaSimbolos.get(id.getName());
+		Vinculo v = tablaSimbolos.get(id.print());
 		if (v == null ) {
 			if(parent == null) {
-				// Error no encontrado
-				throw new VincException(id.getName(), "Identificador no encontrado", id.fila, id.col);
+				if(contexto == Vinculo.Tipo.FUN
+						&& funPred.definidas.containsKey(id.print())) {
+					// Funcion predefinida
+					v = new Vinculo(Vinculo.Tipo.FUN, funPred.definidas.get(id.print()));
+					funPred.addInvocada(id.print());
+				} else {
+					// Error no encontrado
+					throw new VincException(id.print(), "Identificador no encontrado", id.fila, id.col);
+				}
 			} else {
 				v = parent.vincularIden(id, contexto);
 			}
 		}
 		if (v.tipo != contexto) {
 			// Error clase inesperada
-			throw new VincException(id.getName(), "Se esperaba " + contexto.getVal()
+			throw new VincException(id.print(), "Se esperaba " + contexto.getVal()
 					+ ", pero se ha encontrado " + v.tipo.getVal(), id.fila, id.col);
 		}
 		return v;

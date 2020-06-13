@@ -8,6 +8,7 @@ import ast.Prog;
 import stat.Vinculacion;
 import stat.Comprobacion;
 import gen.GeneracionCodigo;
+import gen.fun.FuncionesPredefinidas;
 import errors.GestionErroresTiny;
 import java.util.Arrays;
 
@@ -39,14 +40,16 @@ public class Main {
 			
 			GestionErroresTiny error = new GestionErroresTiny();
 
-			Vinculacion vinc = new Vinculacion(error);
+			FuncionesPredefinidas fp = new FuncionesPredefinidas();
+
+			Vinculacion vinc = new Vinculacion(error, fp);
 			vinc.vincular(p);
 
 			if(error.numErrores() > 0) {
 				System.out.println((error.numErrores() + syntErr) + " errores encontrados.");
 			} else {
 		
-				Comprobacion comp = new Comprobacion(error);
+				Comprobacion comp = new Comprobacion(error, fp);
 				comp.comprobar(p);
 
 				if(error.numErrores() > 0) {
@@ -55,13 +58,14 @@ public class Main {
 					System.out.println(syntErr + " errores encontrados.");
 				} else {
 				
-					GeneracionCodigo gen = new GeneracionCodigo("programa.txt");
+					GeneracionCodigo gen = new GeneracionCodigo("programa.txt", fp);
 					gen.generarCodigo(p);
 					
 				}
 			}
 		} catch(Exception e) {
 			System.err.println("Imposible recuperarse de los errores sintácticos");
+			e.printStackTrace();
 		}
 
 	}

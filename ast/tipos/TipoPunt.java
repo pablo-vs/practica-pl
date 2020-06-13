@@ -7,6 +7,8 @@ public class TipoPunt extends Tipo {
 	public TipoPunt(Tipo t) {
 		tipoRef = t;
 	}
+
+	public TipoPunt() {}
 	
 	public EnumTipo getTipo() {return EnumTipo.PUNT;}
 	public String getName() {return "TipoPunt";}

@@ -1,13 +1,13 @@
 package ast.tipos;
 import ast.NodoAst;
 import java.util.List;
-import java.util.HashMap;
+import java.util.TreeMap;
 import java.util.Map;
 
 public class TipoStruct extends  Tipo {
 	private CampoStruct[] campos;
 
-	private HashMap<String, CampoStruct> mapaCampos;
+	private TreeMap<String, CampoStruct> mapaCampos;
 
 	public TipoStruct(CampoStruct ... cps) {
 		campos = new CampoStruct[cps.length];
@@ -38,7 +38,7 @@ public class TipoStruct extends  Tipo {
 	}
 
 	public void setMapaCampos(Map<String, CampoStruct> m) {
-		mapaCampos = new HashMap<>(m);
+		mapaCampos = new TreeMap<>(m);
 	}
 	@Override
 	public String print() {

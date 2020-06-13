@@ -5,6 +5,8 @@ import ast.*;
 import ast.exp.*;
 import ast.tipos.*;
 
+import gen.fun.FuncionesPredefinidas;
+
 import java.util.HashMap;
 
 public class Comprobacion {
@@ -12,8 +14,11 @@ public class Comprobacion {
 
 	private GestionErroresTiny err;
 
-	public Comprobacion(GestionErroresTiny e) {
+	private FuncionesPredefinidas funPred;
+
+	public Comprobacion(GestionErroresTiny e, FuncionesPredefinidas fp) {
 		err = e;
+		funPred = fp;
 	}
 
 	public void comprobar(Prog p) {
@@ -55,11 +60,24 @@ public class Comprobacion {
 	}
 
 	private void comprobarDec(Dec d) throws CompException {
+		comprobarTipo(d.getTipo());
 		if (d.getAsig() != null) {
 			comprobarAsig(d.getAsig());
 		}
 	}
 
+	private void comprobarTipo(Tipo t) throws CompException {
+		if(t.getTipo() == EnumTipo.ARRAY) {
+			TipoArray ta = (TipoArray) t;
+			comprobarExp(ta.getSizeExp());
+			if(!ta.getSizeExp().getTipo().igual(new TipoInt())) {
+				throw new CompException("El tamaño de un array debe ser entero"
+						+ ", pero se ha encontrado "
+						+ ta.getSizeExp().getTipo().print(),
+						ta.getSizeExp().fila, ta.getSizeExp().col);
+			}
+		}
+	}
 
 	private void comprobarAsig(Asig a) throws CompException {
 		comprobarExp(a.getExp());
@@ -67,6 +85,8 @@ public class Comprobacion {
 		if (!a.getAsignable().getTipo().compatibleCon(a.getExp().getTipo())) {
 			throw new CompException("Se esperaba " + a.getAsignable().getTipo().print() + " pero se ha encontrado " + a.getExp().getTipo().print(), a.fila, a.col);
 		}
+		if(a.getAsignable().getTipo().getSize() > 1)
+			funPred.addInvocada(funPred.COPY);
 	}
 
 

@@ -174,8 +174,8 @@ TIPO ::= TSTRING
 TIPO ::= TDEC
 	{:	RESULT = new TipoDec();	:};
 
-TIPO_ARRAY ::= CAP TIPO: t CCL 
-	{:	RESULT = new TipoArray((Tipo) t);	:};
+TIPO_ARRAY ::= CAP TIPO: t COMA EXP0: e CCL
+	{:	RESULT = new TipoArray((Tipo) t, (Exp) e);	:};
 
 TIPO_TUPLA ::= PAP TIPO_TUPLA_LISTA: ls PCL
 	{:	RESULT = new TipoTupla(ls);	:};

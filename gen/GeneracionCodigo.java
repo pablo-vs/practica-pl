@@ -7,14 +7,22 @@ import ast.*;
 import ast.tipos.*;
 import ast.exp.*;
 
+import gen.fun.FuncionesPredefinidas;
+import gen.fun.FunPred;
+
 public class GeneracionCodigo {
+
+	public static final int TAM_MARCO_BASE = 6;
 
 	private String file;
 	private PrintWriter output;
 	private int numInst = 0, profundidad = -1;
 
-	public GeneracionCodigo(String file) {
+	private FuncionesPredefinidas funPred;
+
+	public GeneracionCodigo(String file, FuncionesPredefinidas fp) {
 		this.file = file;
+		funPred = fp;
 		try {
 			output = new PrintWriter(file);
 		} catch(FileNotFoundException e) {
@@ -30,11 +38,18 @@ public class GeneracionCodigo {
 
 	public void generar(Prog p, boolean base) {
 		++profundidad;
-		int tamMarco = 5+ asignarMemoria(p);
-		if(!base) {
-		}
+		int tamMarco = TAM_MARCO_BASE + asignarMemoria(p);
 		printInst("ssp " + tamMarco);
 		printInst("sep " + (extremePointer(p)));
+		if(base) {
+			generarFunPred();
+		}
+
+		// Guarda el tamaño del marco estático
+		printInst("ldc 5");
+		printInst("ldc " + tamMarco);
+		printInst("sto");
+
 		for(NodoAst n: p.getChildren()) {
 			Inst i = (Inst) n;
 			if(i.getInst() == null)
@@ -90,8 +105,7 @@ public class GeneracionCodigo {
 			Tipo t = d.getTipo();
 			asignarTipo(t);
 		}
-		d.setDir(tamAct + 5);
-		// TODO Determinar el nivel
+		d.setDir(tamAct + TAM_MARCO_BASE);
 		return tamAct + size;
 	}
 
@@ -117,10 +131,25 @@ public class GeneracionCodigo {
 			generarAsig(d.getAsig());
 	}
 
+
 	private void generarAsig(Asig a) {
+		if(a.getAsignable().getTipo().getSize() > 1) {
+			generarAsigMulti(a);
+		} else {
+			generarAsignable(a.getAsignable());
+			generarExp(a.getExp());
+			printInst("sto");
+		}
+	}
+
+	private void generarAsigMulti(Asig a) {
+		// Llamar a copy()
+		printInst("mst " + profundidad);
+		printInst("dpl");
 		generarAsignable(a.getAsignable());
 		generarExp(a.getExp());
-		printInst("sto");
+		printInst("ldc " + a.getExp().getTipo().getSize());
+		printInst("cup 4 " + funPred.definidas.get("copy").getDir());
 	}
 
 	private Tipo generarAsignable(Asignable a) {
@@ -141,6 +170,9 @@ public class GeneracionCodigo {
 				printInst("add");
 				res = t.getMapaCampos().get(idcampo).getTipo();
 				break;
+			}
+			case ACCESOR: {
+				
 			}
 		}
 		return res;
@@ -270,7 +302,8 @@ public class GeneracionCodigo {
 
 	private void generarExpAsignable(ExpAsig e) {
 		generarAsignable(e.getAsignable());
-		printInst("ind");
+		if(e.getAsignable().getTipo().getSize() == 1)
+			printInst("ind");
 	}
 	
 	private void generarBlock(Block b) {
@@ -455,7 +488,7 @@ public class GeneracionCodigo {
 	}
 	
 	public int countBlock(Prog p) {
-		int count = 2;
+		int count = 5;
 		for(NodoAst n: p.getChildren()) {
 			Inst i = (Inst) n;
 			if(i.getInst() == null)
@@ -555,17 +588,59 @@ public class GeneracionCodigo {
 	}
 	
 	private void generarFunCall(FunCall f) {
+		if(funPred.invocadas.contains(f.getDef()))
+			generarFunPredCall(f);
+
 		int difProf = profundidad + 1 - f.getDef().getProf();
 		printInst("mst " + difProf);
+		printInst("dpl");
 		Exp[] args = f.getArgs();
 		int ini = numInst;
-		for(int i = 0; i < args.length; ++i)
+		int paramSize = 0;
+		for(int i = 0; i < args.length; ++i) {
 			generarExp(args[i]);
-		printInst("cup " + (numInst - ini) + " " + f.getDef().getDir());
+			paramSize += args[i].getTipo().getSize();
+		}	
+		printInst("cup " + (paramSize+1) + " " + f.getDef().getDir());
+	}
+
+	private void generarFunPredCall(FunCall f) {
+		FunPred fp = (FunPred) f.getDef();
+		printInst("mst " + profundidad);
+		printInst("dpl");
+		Exp[] args = f.getArgs();
+		int paramSize = 0;
+		for(int i = 0; i < args.length; ++i) {
+			generarExp(args[i]);
+			paramSize += args[i].getTipo().getSize();
+		}
+		printAll(fp.preCall(f, this));
+		printInst("cup " + (paramSize+1) + " " + f.getDef().getDir());
+		printAll(fp.postCall(f, this));
+	}
+
+	private void generarFunPred() {
+		int tamTotal = 0;
+		for(FunPred f: funPred.invocadas)
+			tamTotal += f.code(this).length;
+		printInst("ujp " + (numInst + tamTotal + 1));
+		for(FunPred f: funPred.invocadas) {
+			f.setDir(numInst);
+			f.setProf(1);
+			printAll(f.code(this));
+		}
+		
 	}
 	
 	private void printInst(String inst) {
 		output.format("{%s}  \t\t%s;\n", numInst, inst);
 		++numInst;
 	}
+
+	private void printAll(String[] inst) {
+		for(String i: inst)
+			printInst(i);
+	}
+
+	public int getNumInst() {return numInst;}
 }

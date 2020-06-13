@@ -5,12 +5,14 @@ then
 	echo "No se ha encontrado el ejecutable pmachine"
 	echo "Puede compilarse mediante ghc a partir del codigo fuente de la maquina-P"
 else
+	output="Todos los tests completados con éxito"
 	for file in $(ls inputs/)
 	do
-		output="Todos los tests completados con éxito"
+		echo $file
 		cp inputs/$file ../build/input.txt
 		cd ../build
 		java -cp '../cup.jar:../jlex.jar:' asint.Main -noast
+		echo Compilado
 		cp programa.txt ../tests/pfiles/$file.p
 		cd ../tests
 		./pmachine pfiles/$file.p > outputs/$file.out

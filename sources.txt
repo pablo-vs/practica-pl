@@ -62,4 +62,8 @@
 ./ast/Inst.java
 ./ast/CaseMatch.java
 ./ast/NodoAst.java
+./gen/fun/FuncionesPredefinidas.java
+./gen/fun/Copy.java
+./gen/fun/FunPred.java
+./gen/fun/AsignarArray.java
 ./gen/GeneracionCodigo.java

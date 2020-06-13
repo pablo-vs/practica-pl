@@ -50,6 +50,8 @@ public class EquivalenciaTipos {
 				case ARRAY: {
 					TipoArray t1 = (TipoArray) ti1;
 					TipoArray t2 = (TipoArray) ti2;
+					if(t1.getTipoElem() == null || t2.getTipoElem() == null)
+						return true;
 					return equivalentes(t1.getTipoElem(), t2.getTipoElem(), equiv);
 				}
 				case TUPLA: {
@@ -86,6 +88,8 @@ public class EquivalenciaTipos {
 					break;
 				}
 				case PUNT: {
+					if(equiv == ClaseEquiv.COMPATIBLES)
+						return true;
 					TipoPunt t1 = (TipoPunt) ti1;
 					TipoPunt t2 = (TipoPunt) ti2;
 					return equivalentes(t1.getTipoRef(), t2.getTipoRef(), equiv);
