@@ -28,6 +28,7 @@ public class GestionErroresTiny {
 	public void errorComprob(CompException e) {
 		// TODO mejorar esto
 		System.out.println("ERROR fila " + e.fila + ", columna " + e.col + ": " + "Error de tipo: " + e.getMessage());
+		e.printStackTrace();
 		++numErrores;
 	}
 

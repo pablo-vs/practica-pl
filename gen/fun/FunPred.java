@@ -29,6 +29,12 @@ public abstract class FunPred extends DefFun {
 		return null;
 	}
 
+	public String[] call(FunCall f, GeneracionCodigo g) {
+		return new String[] {
+			"cup " + getArgs().length  + " " + getDir()
+		};
+	}
+
 	public String[] postCall(FunCall f, GeneracionCodigo g) {
 		return null;
 	}

@@ -24,18 +24,21 @@ public class Asignable extends NodoAst {
 
 	// Variable
 	public Asignable(Iden id) {
+		super(id.fila, id.col);
 		iden = id;
 		tipoAs = TipoAs.VAR;
 	}
 
 	// Dereferencia puntero;
 	public Asignable(Asignable as) {
+		super(as.fila, as.col);
 		child = as;
 		tipoAs = TipoAs.PUNT;	
 	}
 
 	// Campo de un struct
 	public Asignable(Asignable struct, Iden campo) {
+		super(campo.fila, campo.col);
 		child = struct;
 		iden = campo;
 		tipoAs = TipoAs.CAMPO;
@@ -43,6 +46,7 @@ public class Asignable extends NodoAst {
 
 	// Elemento de un array/tupla/dict
 	public Asignable(Exp accesor, Asignable as) {
+		super(as.fila, as.col);
 		exp = accesor;
 		child = as;
 		tipoAs = TipoAs.ACCESOR;

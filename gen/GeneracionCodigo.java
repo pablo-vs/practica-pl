@@ -145,37 +145,37 @@ public class GeneracionCodigo {
 	private void generarAsigMulti(Asig a) {
 		// Llamar a copy()
 		printInst("mst " + profundidad);
-		printInst("dpl");
+		printInst("ldc 0");
 		generarAsignable(a.getAsignable());
 		generarExp(a.getExp());
 		printInst("ldc " + a.getExp().getTipo().getSize());
 		printInst("cup 4 " + funPred.definidas.get("copy").getDir());
 	}
 
-	private Tipo generarAsignable(Asignable a) {
-		Tipo res = null;
+	private void generarAsignable(Asignable a) {
 		switch(a.tipoAs) {
 			case VAR: {
-				res = a.getTipo();
 				int dir = a.getDec().getDir();
 				int difProf = profundidad + 1 - a.getDec().getProf();
 				printInst("lda " + difProf  + " " + dir);
 				break;
 			}
 			case CAMPO: {
-				TipoStruct t = (TipoStruct) generarAsignable(a.getChild());
+				generarAsignable(a.getChild());
+				TipoStruct t = (TipoStruct) a.getChild().getTipo();
 				String idcampo = a.getIden().print();
 				int offset = t.getMapaCampos().get(idcampo).getOffset();
 				printInst("ldc " + offset);
 				printInst("add");
-				res = t.getMapaCampos().get(idcampo).getTipo();
 				break;
 			}
 			case ACCESOR: {
-				
+				generarAsignable(a.getChild());
+				printInst("ind");
+				generarExp(a.getExp());
+				printInst("ixa " + a.getTipo().getSize());
 			}
 		}
-		return res;
 	}
 
 	private void generarExp(Exp e) {
@@ -314,7 +314,8 @@ public class GeneracionCodigo {
 	private void generarBlock(Block b) {
 		Prog prog = b.getProg();
 		printInst("mst 0");
-		printInst("cup 0 " + (numInst + 2));
+		printInst("ldc 0");
+		printInst("cup 1 " + (numInst + 2));
 		int count = countBlock(prog);
 		printInst("ujp " + (count + numInst + 2));
 		generar(prog, false);
@@ -437,13 +438,13 @@ public class GeneracionCodigo {
 		generarExp(i.getCond());
 		int count = countBlock(i.getBlock().getProg());
 		if(i.getBlockElse() == null) {
-			printInst("fjp " + (numInst + count + 5));
-			generarBlock(i.getBlock());
-		} else {
 			printInst("fjp " + (numInst + count + 6));
 			generarBlock(i.getBlock());
+		} else {
+			printInst("fjp " + (numInst + count + 7));
+			generarBlock(i.getBlock());
 			count = countBlock(i.getBlockElse().getProg());
-			printInst("ujp " + (numInst + count + 5));
+			printInst("ujp " + (numInst + count + 6));
 			generarBlock(i.getBlockElse());
 		}
 	}
@@ -468,7 +469,7 @@ public class GeneracionCodigo {
 			printInst("and");
 		}
 		// Si lo anterior no se cumple, saltamos
-		printInst("fjp " + (numInst + count + 5 + 2));
+		printInst("fjp " + (numInst + count + 6 + 2));
 
 		generarBlock(r.getBlock());
 
@@ -503,22 +504,33 @@ public class GeneracionCodigo {
 				case DEC:
 					Asig a = ((Dec) i).getAsig();
 					if (a != null){
-						count += 1 + countAsignable(a.getAsignable()) + countExp(a.getExp());
+						count += 1 + countAsignable(a.getAsignable())
+								+ countExp(a.getExp());
 					}
 					break;
 				case ASIG:
-					count += 1 + countAsignable(((Asig) i).getAsignable()) + countExp(((Asig) i).getExp());
+					if(((Asig)i).getExp().getTipo().getSize() == 1) 
+						count += 1 + countAsignable(((Asig) i).getAsignable())
+								+ countExp(((Asig) i).getExp());
+					else
+						count += 4 + countAsignable(((Asig) i).getAsignable())
+								+ countExp(((Asig) i).getExp());
+
 					break;
 				case BLOCK:
-					count += countBlock(((Block) i).getProg()) + 4;
+					count += countBlock(((Block) i).getProg()) + 5;
 					break;
 				case IF:
-					count += countExp(((If) i).getCond()) + countBlock(((If) i).getBlock().getProg()) + 5;
-					if (((If) i).getBlockElse() != null) count += countBlock(((If) i).getBlockElse().getProg()) + 5;
+					count += countExp(((If) i).getCond())
+							+ countBlock(((If) i).getBlock().getProg()) + 6;
+					if (((If) i).getBlockElse() != null)
+						count += countBlock(((If) i).getBlockElse().getProg()) + 6;
 					break;
 				case REPEAT:
-					count += 6 + countExp(((Repeat) i).getLimit()) + 4 + countBlock(((Repeat) i).getBlock().getProg());
-					if (((Repeat) i).getCond() != null) count += 1 + countExp(((Repeat) i).getCond());
+					count += 6 + countExp(((Repeat) i).getLimit()) + 5
+							+ countBlock(((Repeat) i).getBlock().getProg());
+					if (((Repeat) i).getCond() != null)
+						count += 1 + countExp(((Repeat) i).getCond());
 					break;
 				case CASE:
 					CaseMatch[] branches = ((Case) i).getBranches();
@@ -549,6 +561,11 @@ public class GeneracionCodigo {
 				count += 1 + countAsignable(a.getChild());
 				break;
 			}
+			case ACCESOR:{
+				count += 1 + countAsignable(a.getChild()) + countExp(a.getExp());
+				break;
+			}
+
 		}
 		return count;
 	}
@@ -564,6 +581,7 @@ public class GeneracionCodigo {
 					count += 2 + 2*countExp(ops[0]) + 2*countExp(ops[1]);		
 					break;
 				}
+				case REF:
 				case NOT: {
 					count += countExp(ops[0]);
 					break;
@@ -577,7 +595,9 @@ public class GeneracionCodigo {
 	}
 	
 	private int countExpAsignable(ExpAsig e){
-		return countAsignable(e.getAsignable())+1;
+		int count = countAsignable(e.getAsignable());
+		if(e.getTipo().getSize() == 1) ++count;
+		return count;
 	}
 	
 			
@@ -596,24 +616,25 @@ public class GeneracionCodigo {
 	private void generarFunCall(FunCall f) {
 		if(funPred.invocadas.contains(f.getDef()))
 			generarFunPredCall(f);
-
-		int difProf = profundidad + 1 - f.getDef().getProf();
-		printInst("mst " + difProf);
-		printInst("dpl");
-		Exp[] args = f.getArgs();
-		int ini = numInst;
-		int paramSize = 0;
-		for(int i = 0; i < args.length; ++i) {
-			generarExp(args[i]);
-			paramSize += args[i].getTipo().getSize();
-		}	
-		printInst("cup " + (paramSize+1) + " " + f.getDef().getDir());
+		else {
+			int difProf = profundidad + 1 - f.getDef().getProf();
+			printInst("mst " + difProf);
+			printInst("ldc 0");
+			Exp[] args = f.getArgs();
+			int ini = numInst;
+			int paramSize = 0;
+			for(int i = 0; i < args.length; ++i) {
+				generarExp(args[i]);
+				paramSize += args[i].getTipo().getSize();
+			}	
+			printInst("cup " + (paramSize+1) + " " + f.getDef().getDir());
+		}
 	}
 
 	private void generarFunPredCall(FunCall f) {
 		FunPred fp = (FunPred) f.getDef();
 		printInst("mst " + profundidad);
-		printInst("dpl");
+		printInst("ldc 0");
 		Exp[] args = f.getArgs();
 		int paramSize = 0;
 		for(int i = 0; i < args.length; ++i) {
@@ -621,7 +642,7 @@ public class GeneracionCodigo {
 			paramSize += args[i].getTipo().getSize();
 		}
 		printAll(fp.preCall(f, this));
-		printInst("cup " + (paramSize+1) + " " + f.getDef().getDir());
+		printAll(fp.call(f, this));
 		printAll(fp.postCall(f, this));
 	}
 

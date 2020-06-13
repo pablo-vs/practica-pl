@@ -60,12 +60,12 @@ public class Comprobacion {
 	}
 
 	private void comprobarDec(Dec d) throws CompException {
-		comprobarTipo(d.getTipo());
+	//	comprobarTipo(d.getTipo());
 		if (d.getAsig() != null) {
 			comprobarAsig(d.getAsig());
 		}
 	}
-
+/*
 	private void comprobarTipo(Tipo t) throws CompException {
 		if(t.getTipo() == EnumTipo.ARRAY) {
 			TipoArray ta = (TipoArray) t;
@@ -78,7 +78,7 @@ public class Comprobacion {
 			}
 		}
 	}
-
+*/
 	private void comprobarAsig(Asig a) throws CompException {
 		comprobarExp(a.getExp());
 		comprobarAsignable(a.getAsignable());
@@ -144,6 +144,7 @@ public class Comprobacion {
 					throw new CompException(a.getChild().getIden().print()
 							+ " no es un struct", a.fila, a.col);
 				}
+				break;
 			}
 			case PUNT: {
 				comprobarAsignable(a.getChild());

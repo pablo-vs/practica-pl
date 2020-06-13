@@ -33,8 +33,8 @@ public class NewArray extends FunPred {
 
 	private static final String[] CODE = new String[]
 	{
-		"ssp " + (5+TMB),
-		"ent 3 ",
+		"ssp " + (5+TMB) + "	{newArray}",
+		"sep 3",
 
 		// 1. Escribimos en el descriptor el número de elementos
 		"lod 0 " + TMB, // Cargamos la dir del tamaño en el descriptor
@@ -44,8 +44,9 @@ public class NewArray extends FunPred {
 		
 		// 2. Almacenaremos los datos al final del marco actual
 		// Cargamos esa dirección en el descriptor
-		"lda 0 " + TMB,
+		"lod 0 " + TMB,
 		"lod 0 " + (TMB+4),
+		"ind",
 		"sto",
 
 		// 3. Aumentamos el tamaño del marco
@@ -68,7 +69,7 @@ public class NewArray extends FunPred {
 		"add",
 		"sto",
 
-		"retp"
+		"retf		{end newArray}"
 	};
 
 
@@ -87,20 +88,27 @@ public class NewArray extends FunPred {
 			"ldc " + ((TipoArray)((TipoPunt)f.getArgs()[0].getTipo())
 					.getTipoRef()).getTipoElem().getSize(),
 			"lda 0 0",
-			"ldo 0 " + (TMB-1),
+			"lod 0 " + (TMB-1),
 			"add",
 			"lda 0 " + (TMB-1),
 		};
 	}
 
 	@Override
+	public String[] call(FunCall f, GeneracionCodigo g) {
+		return new String[] {
+			"cup 6 " + getDir()
+		};
+	}
+
+	@Override
 	public String[] postCall(FunCall f, GeneracionCodigo g) {
-		int ini = g.getNumInst() + 1;
+		int ini = g.getNumInst();
 		return new String[] {
 			"dpl",
 			"ldc 1",
 			"grt",
-			"fjp " + (ini + 5 + 2),
+			"fjp " + (ini + 5 + 3),
 			"dpl",
 			"dec 1",
 			"dpl",

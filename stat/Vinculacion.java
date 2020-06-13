@@ -154,7 +154,7 @@ public class Vinculacion {
 			case ARRAY: {
 				TipoArray ta = (TipoArray) t;
 				ta.setTipoElem(vincularTipo(ta.getTipoElem()));
-				vincularExp(ta.getSizeExp());
+				//vincularExp(ta.getSizeExp());
 				break;
 			}
 			default:

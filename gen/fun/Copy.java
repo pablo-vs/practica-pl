@@ -35,7 +35,7 @@ public class Copy extends FunPred {
 	public String[] code(GeneracionCodigo g) {
 		int ini = g.getNumInst()+2;
 		return new String[] {
-			"ssp " + (TMB+3),
+			"ssp " + (TMB+3) + "	{copy}",
 			"sep 2",
 			"lod 0 " + TMB,
 			"lod 0 " + (TMB+1),
@@ -57,7 +57,7 @@ public class Copy extends FunPred {
 			"ldc 0",
 			"leq",
 			"fjp " + ini,
-			"retp"
+			"retp		{end copy}"
 		};
 	}
 }

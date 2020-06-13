@@ -6,7 +6,7 @@ public class ExpAsig extends Exp  {
 	private Asignable asig;
 
 	public ExpAsig(Asignable a) {
-		super(Operator.NONE);
+		super(a.fila, a.col);
 		asig = a;
 	}
 
