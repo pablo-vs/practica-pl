@@ -1,0 +1,3 @@
+Int var1 = 0;
+&Int punt1 = &var1;
+^punt1 = 7;

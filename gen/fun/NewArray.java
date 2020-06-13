@@ -13,9 +13,9 @@ import ast.Iden;
 import gen.GeneracionCodigo;
 
 
-public class AsignarArray extends FunPred {
+public class NewArray extends FunPred {
 
-	public static final String ID = "array";
+	public static final String ID = "newArray";
 
 	private static final Tipo TIPO = new TipoNull();
 
@@ -72,7 +72,7 @@ public class AsignarArray extends FunPred {
 	};
 
 
-	public AsignarArray() {
+	public NewArray() {
 		super(ID, TIPO, ARGS);
 	}
 

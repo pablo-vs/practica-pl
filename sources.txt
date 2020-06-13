@@ -65,5 +65,5 @@
 ./gen/fun/FuncionesPredefinidas.java
 ./gen/fun/Copy.java
 ./gen/fun/FunPred.java
-./gen/fun/AsignarArray.java
+./gen/fun/NewArray.java
 ./gen/GeneracionCodigo.java

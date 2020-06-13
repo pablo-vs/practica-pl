@@ -16,8 +16,8 @@ public class FuncionesPredefinidas {
 		definidas = new HashMap<>();
 		invocadas = new HashSet<>();
 
-		AsignarArray asArr = new AsignarArray();
-		definidas.put(asArr.id, asArr);
+		NewArray newArr = new NewArray();
+		definidas.put(newArr.id, newArr);
 		Copy cp = new Copy();
 		definidas.put(cp.id, cp);
 	}
@@ -26,6 +26,6 @@ public class FuncionesPredefinidas {
 		invocadas.add(definidas.get(id));
 	}
 
-	public static final String ASIGNAR_ARRAY = AsignarArray.ID;
+	public static final String NEW_ARRAY = NewArray.ID;
 	public static final String COPY = Copy.ID;
 }

@@ -318,7 +318,7 @@ public class Comprobacion {
 			case CONCAT:
 				tipoOp = operands[0].getTipo();
 				if(!(tipoOp.getTipo() == EnumTipo.ARRAY))
-						throw new CompException("+: Tipo incompatible " + tipoOp.print()
+						throw new CompException("++: Tipo incompatible " + tipoOp.print()
 								, operands[0].fila, operands[0].col);
 				result = tipoOp;
 				for (Exp e: operands)

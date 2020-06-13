@@ -296,6 +296,11 @@ public class GeneracionCodigo {
 					printInst("geq");
 					break;
 				}
+				case REF: {
+					ExpAsig as = (ExpAsig) e.getOperands()[0];
+					generarAsignable(as.getAsignable());
+					break;
+				}
 			}
 		}
 	}
@@ -398,6 +403,7 @@ public class GeneracionCodigo {
 					size += 2*sizeExp(ops[0]) + 2*sizeExp(ops[1]);
 					break;
 				}
+				case REF:
 				case NOT: {
 					size += sizeExp(ops[0]);
 					break;
