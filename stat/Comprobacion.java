@@ -51,6 +51,10 @@ public class Comprobacion {
 						break;
 					case FUN_CALL:
 						comprobarFunCall((FunCall) i);
+						break;
+					case RETURN:
+						comprobarReturn((Return) i);
+						break;
 					default:
 				}
 			} catch (CompException e) {
@@ -95,7 +99,10 @@ public class Comprobacion {
 		Tipo res = null;
 		switch(a.tipoAs) {
 			case VAR: {
-				res = a.getDec().getTipo();
+				if(a.getDec() != null)
+					res = a.getDec().getTipo();
+				else
+					res = a.getArg().getTipo();
 				break;
 			}
 			case CAMPO: {
@@ -165,6 +172,9 @@ public class Comprobacion {
 		if(e instanceof ExpAsig) {
 			comprobarAsignable(((ExpAsig)e).getAsignable());
 			res = ((ExpAsig)e).getAsignable().getTipo();
+		} else if(e instanceof ExpFun) {
+			comprobarFunCall(((ExpFun)e).getCall());
+			res = ((ExpFun)e).getCall().getDef().getTipo();
 		}
 		else if(e.getOp() == Operator.NONE) {
 			if(e instanceof Const) {
@@ -353,7 +363,7 @@ public class Comprobacion {
 
 	private void comprobarIf(If i) throws CompException {
 		comprobarExp(i.getCond());
-		if(i.getCond().getTipo().getTipo() != EnumTipo.TBOOL)
+		if(!i.getCond().getTipo().igual(new TipoBool()))
 			throw new CompException("If requiere una condición booleana, pero se obtuvo " + i.getCond().getTipo().print(), i.getCond().fila, i.getCond().col);
 		comprobarBlock(i.getBlock());
 		if(i.getBlockElse() != null)
@@ -362,11 +372,11 @@ public class Comprobacion {
 
 	private void comprobarRepeat(Repeat r) throws CompException {
 		comprobarExp(r.getLimit());
-		if(r.getLimit().getTipo().getTipo() != EnumTipo.TINT)
+		if(!r.getLimit().getTipo().igual(new TipoInt()))
 			throw new CompException("Repeat requiere un límite booleano, pero se obtuvo " + r.getLimit().getTipo().print(), r.getLimit().fila, r.getLimit().col);
 		if(r.getCond() != null) {
 			comprobarExp(r.getCond());
-			if(r.getCond().getTipo().getTipo() != EnumTipo.TBOOL)
+			if(!r.getCond().getTipo().igual(new TipoBool()))
 				throw new CompException("Repeat requiere una condición booleana, pero se obtuvo " + r.getCond().getTipo().print(), r.getCond().fila, r.getCond().col);
 		}
 		comprobarBlock(r.getBlock());
@@ -393,5 +403,13 @@ public class Comprobacion {
 			if(!args[i].getTipo().compatibleCon(argsTipos[i].getTipo()))
 				throw new CompException("El argumento " + i + "de la función debería ser " + argsTipos[i].getTipo().print() + ", pero se obtuvo " + args[i].getTipo().print(), args[i].fila, args[i].col);
 		}
+	}
+
+	private void comprobarReturn(Return r) throws CompException {
+		comprobarExp(r.getVal());
+		if(!r.getVal().getTipo().compatibleCon(r.getDef().getTipo()))
+			throw new CompException("El valor devuelto es de tipo "
+					+ r.getVal().getTipo().print() + " pero la función es de tipo "
+					+ r.getDef().getTipo().print(), r.getVal().fila, r.getVal().col);
 	}
 }

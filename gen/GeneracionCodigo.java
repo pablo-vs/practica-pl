@@ -36,17 +36,38 @@ public class GeneracionCodigo {
 		output.close();
 	}
 
-	public void generar(Prog p, boolean base) {
+	public void generar(Prog p, boolean base, Argumento ... args) {
 		++profundidad;
-		int tamMarco = TAM_MARCO_BASE + asignarMemoria(p);
+
+		int tamMarco = TAM_MARCO_BASE + asignarMemoria(p, args);
 		printInst("ssp " + tamMarco);
 		printInst("sep " + (extremePointer(p)));
 		if(base) {
 			generarFunPred();
 		}
 
+		int count = 0;
+		// Genera las funciones anidadas
+		for(NodoAst n: p.getChildren()) {
+			Inst i = (Inst) n;
+			if(i.getInst() == null)
+				continue;
+			if(i.getInst() == EnumInst.FUN_DEF)
+				count += countBlock(((DefFun)i).getBlock().getProg()) + 1;
+		}
+		if(count > 0) {
+			printInst("ujp " + (numInst + count + 1));
+			for(NodoAst n: p.getChildren()) {
+				Inst i = (Inst) n;
+				if(i.getInst() == null)
+					continue;
+				if(i.getInst() == EnumInst.FUN_DEF)
+					generarDefFun((DefFun)i);
+			}
+		}
+
 		// Guarda el tamaño del marco estático
-		printInst("ldc 5");
+		printInst("lda 0 5");
 		printInst("ldc " + tamMarco);
 		printInst("sto");
 
@@ -74,10 +95,12 @@ public class GeneracionCodigo {
 					generarCase((Case) i);
 					break;
 				case FUN_DEF:
-					generarDefFun((DefFun) i);
 					break;
 				case FUN_CALL:
 					generarFunCall((FunCall) i);
+					break;
+				case RETURN:
+					generarReturn((Return) i);
 					break;
 				case TIPO_DEF:
 					break;
@@ -88,8 +111,11 @@ public class GeneracionCodigo {
 	}
 
 	// Devuelve el tamaño ocupado por las variables locales
-	private int asignarMemoria(Prog p) {
+	private int asignarMemoria(Prog p, Argumento ... args) {
 		int tamAct = 0;
+		for(Argumento a: args) 
+			tamAct = asignarArg(a, tamAct);
+
 		for(NodoAst n: p.getChildren()) {
 			Inst i = (Inst) n;
 			if(i.getInst() == EnumInst.DEC) {
@@ -97,6 +123,16 @@ public class GeneracionCodigo {
 			}
 		}
 		return tamAct;
+	}
+
+	private int asignarArg(Argumento a, int tamAct) {
+		int size = a.getTipo().getSize();
+		if(size > 1) {
+			Tipo t = a.getTipo();
+			asignarTipo(t);
+		}
+		a.setDir(tamAct + TAM_MARCO_BASE);
+		return tamAct + size;
 	}
 
 	private int asignarDec(Dec d, int tamAct) {
@@ -155,8 +191,14 @@ public class GeneracionCodigo {
 	private void generarAsignable(Asignable a) {
 		switch(a.tipoAs) {
 			case VAR: {
-				int dir = a.getDec().getDir();
-				int difProf = profundidad + 1 - a.getDec().getProf();
+				int dir, difProf;
+				if(a.getDec() != null) {
+					dir = a.getDec().getDir();
+					difProf = profundidad + 1 - a.getDec().getProf();
+				} else {
+					dir = a.getArg().getDir();
+					difProf = 0;
+				}
 				printInst("lda " + difProf  + " " + dir);
 				break;
 			}
@@ -181,6 +223,8 @@ public class GeneracionCodigo {
 	private void generarExp(Exp e) {
 		if(e instanceof ExpAsig) {
 			generarExpAsignable((ExpAsig)e);
+		} else if(e instanceof ExpFun) {
+			generarFunCall(((ExpFun)e).getCall());
 		} else if(e.getOp() == Operator.NONE) {
 			if(e instanceof Const) {
 				if(e instanceof ConstInt) {
@@ -318,7 +362,7 @@ public class GeneracionCodigo {
 		printInst("cup 1 " + (numInst + 2));
 		int count = countBlock(prog);
 		printInst("ujp " + (count + numInst + 2));
-		generar(prog, false);
+		generar(prog, true);
 		printInst("retp");
 	}
 	
@@ -541,12 +585,15 @@ public class GeneracionCodigo {
 					count -= 3;
 					break;
 				case FUN_DEF:
-					count += countBlock(((DefFun) i).getBlock().getProg()) + 4;
+					count += countBlock(((DefFun) i).getBlock().getProg()) + 1;
 					break;
 				case FUN_CALL:
 					Exp[] args = ((FunCall) i).getArgs();
 					for(int j = 0; j < args.length; ++j)
 						count += countExp(args[j]);
+					break;
+				case RETURN:
+					count += 2 + countExp(((Return)i).getVal());
 					break;
 				default:
 			}
@@ -600,17 +647,12 @@ public class GeneracionCodigo {
 		return count;
 	}
 	
-			
 	private void generarDefFun(DefFun d) {
 		d.setProf(profundidad + 1);
-		d.setDir(numInst + 5);
+		d.setDir(numInst);
 		Prog prog = d.getBlock().getProg();
-		printInst("ssp 0");
-		printInst("sep " + extremePointer(prog));
-		int count = countBlock(prog);
-		printInst("ujp " + (count + numInst + 2));
-		generar(prog, false);
-		printInst("retp");
+		generar(prog, false, d.getArgs());
+		printInst("retf");
 	}
 	
 	private void generarFunCall(FunCall f) {
@@ -647,16 +689,25 @@ public class GeneracionCodigo {
 	}
 
 	private void generarFunPred() {
-		int tamTotal = 0;
-		for(FunPred f: funPred.invocadas)
-			tamTotal += f.code(this).length;
-		printInst("ujp " + (numInst + tamTotal + 1));
-		for(FunPred f: funPred.invocadas) {
-			f.setDir(numInst);
-			f.setProf(1);
-			printAll(f.code(this));
+		if(funPred.invocadas.size() > 0) {
+			int tamTotal = 0;
+			for(FunPred f: funPred.invocadas)
+				tamTotal += f.code(this).length;
+			printInst("ujp " + (numInst + tamTotal + 1));
+			for(FunPred f: funPred.invocadas) {
+				f.setDir(numInst);
+				f.setProf(1);
+				printAll(f.code(this));
+			}
 		}
-		
+	}
+
+	private void generarReturn(Return r) {
+		if(r.getVal() != null) {
+			generarExp(((Return)r).getVal());
+			printInst("str 0 0");
+		}
+		printInst("retf");
 	}
 	
 	private void printInst(String inst) {

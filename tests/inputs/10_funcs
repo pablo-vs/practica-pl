@@ -1,0 +1,5 @@
+fun Int suma(n1: Int, n2: Int) = {
+	return n1 + n2;
+};
+
+Int var1 = suma(7,8);

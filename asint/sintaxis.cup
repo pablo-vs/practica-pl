@@ -263,7 +263,7 @@ EXP8 ::= CONST: c
 	{:	RESULT = c;	:};
 
 EXP8 ::= FUN_CALL: fc
-	{:	RESULT = fc;	:};
+	{:	RESULT = new ExpFun((FunCall)fc);	:};
 
 EXP8 ::= PAP EXP0: e PCL
 	{:	RESULT = e;	:};

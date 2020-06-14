@@ -18,7 +18,11 @@ public class Asignable extends NodoAst {
 	private Asignable child;
 	private Exp exp;
 
-	private Dec declaracion;
+
+	// Solo uno de los dos se utiliza
+	private Dec declaracion = null;
+	private Argumento argumento = null;
+
 	private Tipo tipo;
 	private int prof;
 
@@ -116,6 +120,8 @@ public class Asignable extends NodoAst {
 
 	public void setDec(Dec d) {declaracion = d;}
 	public Dec getDec() {return declaracion;}
+	public void setArg(Argumento a) {argumento = a;}
+	public Argumento getArg() {return argumento;}
 	public void setProf(int p) {prof = p;}
 	public int getProf() {return prof;}
 	public void setTipo(Tipo t) {tipo = t;}

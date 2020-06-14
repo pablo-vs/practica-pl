@@ -16,6 +16,7 @@ public class Vinculacion {
 	private final Vinculacion parent;
 	private final GestionErroresTiny err;
 	private final int profundidad;
+	private DefFun funActual = null;
 
 	private FuncionesPredefinidas funPred;
 
@@ -31,6 +32,11 @@ public class Vinculacion {
 		err = p.err;
 		profundidad = p.profundidad + 1;
 		funPred = p.funPred;
+	}
+
+	public Vinculacion(Vinculacion p, DefFun f) {
+		this(p);
+		funActual = f;
 	}
 
 	public void vincular(Prog p) {
@@ -66,6 +72,9 @@ public class Vinculacion {
 						break;
 					case FUN_CALL:
 						vincularFunCall((FunCall) i);
+						break;
+					case RETURN:
+						vincularRet((Return) i);
 						break;
 					default:
 				}
@@ -103,7 +112,10 @@ public class Vinculacion {
 		switch(a.tipoAs) {
 			case VAR:
 				Vinculo v = vincularIden(a.getIden(), Vinculo.Tipo.VAR);
-				a.setDec((Dec) v.declaracion);
+				if(v.declaracion instanceof Dec)
+					a.setDec((Dec) v.declaracion);
+				else
+					a.setArg((Argumento) v.declaracion);
 				break;
 			case CAMPO: {
 				vincularAsignable(a.getChild());
@@ -165,6 +177,8 @@ public class Vinculacion {
 	private void vincularExp(Exp e) throws VincException {
 		if (e instanceof ExpAsig) {
 			vincularAsignable(((ExpAsig)e).getAsignable());
+		} else if (e instanceof ExpFun) {
+			vincularFunCall(((ExpFun)e).getCall());
 		} else {
 			if (e.getOp() == Operator.NONE) {
 				// TODO Constantes compuestas como listas
@@ -219,17 +233,23 @@ public class Vinculacion {
 		vincularTipo(d.getTipo());
 		String id = d.getIden().print();
 		addDeclaracion(id, new Vinculo(Vinculo.Tipo.FUN, d));
-		Vinculacion v = new Vinculacion(this);
+
+		// Abre bloque
+		Vinculacion v = new Vinculacion(this, d);
 		Argumento[] args = d.getArgs();
+
+		// Vincula el procedimiento en su propio bloque y los argumentos
+		v.addDeclaracion(id, new Vinculo(Vinculo.Tipo.FUN, d));
 		for(int i = 0; i < args.length; ++i)
 			v.vincularArg(args[i]); 
+
 		v.vincular(d.getBlock().getProg());
 	}
 	
 	private void vincularArg(Argumento a) throws VincException {
 		Tipo tipo = vincularTipo(a.getTipo());
 		String id = a.getIden().print();
-		addDeclaracion(id, new Vinculo(Vinculo.Tipo.VAR, new Dec(tipo, a.getIden())));
+		addDeclaracion(id, new Vinculo(Vinculo.Tipo.VAR, a));
 	}
 	
 	public void vincularFunCall(FunCall f) throws VincException {
@@ -238,6 +258,14 @@ public class Vinculacion {
 		Exp[] args = f.getArgs();
 		for(int i = 0; i < args.length; ++i)
 			vincularExp(args[i]); 
+	}
+
+	public void vincularRet(Return r) throws VincException {
+		if(funActual == null) {
+			throw new VincException("return", "Return llamado fuera de una función");
+		}
+		vincularExp(r.getVal());
+		r.setDef(funActual);				
 	}
 	
 	/* Intenta vincular un identificador, el parámetro contexto es
