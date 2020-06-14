@@ -17,6 +17,7 @@ public class GeneracionCodigo {
 	private String file;
 	private PrintWriter output;
 	private int numInst = 0, profundidad = -1;
+	private boolean comments = true;
 
 	private FuncionesPredefinidas funPred;
 
@@ -40,7 +41,7 @@ public class GeneracionCodigo {
 		++profundidad;
 
 		int tamMarco = TAM_MARCO_BASE + asignarMemoria(p, args);
-		printInst("ssp " + tamMarco);
+		printInst("ssp " + tamMarco, "Inicio bloque");
 		printInst("sep " + (extremePointer(p)));
 		if(base) {
 			generarFunPred();
@@ -53,10 +54,10 @@ public class GeneracionCodigo {
 			if(i.getInst() == null)
 				continue;
 			if(i.getInst() == EnumInst.FUN_DEF)
-				count += countBlock(((DefFun)i).getBlock().getProg()) + 1;
+				count += countInnerBlock(((DefFun)i).getBlock().getProg()) + 1;
 		}
 		if(count > 0) {
-			printInst("ujp " + (numInst + count + 1));
+			printInst("ujp " + (numInst + count + 1), "Funciones anidadas");
 			for(NodoAst n: p.getChildren()) {
 				Inst i = (Inst) n;
 				if(i.getInst() == null)
@@ -69,7 +70,7 @@ public class GeneracionCodigo {
 		// Guarda el tamaño del marco estático
 		printInst("lda 0 5");
 		printInst("ldc " + tamMarco);
-		printInst("sto");
+		printInst("sto", "Inicio código");
 
 		for(NodoAst n: p.getChildren()) {
 			Inst i = (Inst) n;
@@ -360,10 +361,14 @@ public class GeneracionCodigo {
 		printInst("mst 0");
 		printInst("ldc 0");
 		printInst("cup 1 " + (numInst + 2));
-		int count = countBlock(prog);
+		int count = countInnerBlock(prog);
 		printInst("ujp " + (count + numInst + 2));
 		generar(prog, true);
 		printInst("retp");
+	}
+
+	public int countOuterBlock(Block b) {
+		return 5 + countInnerBlock(b.getProg());
 	}
 	
 	private int extremePointer(Prog p) {
@@ -480,21 +485,21 @@ public class GeneracionCodigo {
 	
 	private void generarIf(If i) {
 		generarExp(i.getCond());
-		int count = countBlock(i.getBlock().getProg());
+		int count = countInnerBlock(i.getBlock().getProg());
 		if(i.getBlockElse() == null) {
-			printInst("fjp " + (numInst + count + 6));
+			printInst("fjp " + (numInst + count + 6), "if");
 			generarBlock(i.getBlock());
 		} else {
-			printInst("fjp " + (numInst + count + 7));
+			printInst("fjp " + (numInst + count + 7), "if");
 			generarBlock(i.getBlock());
-			count = countBlock(i.getBlockElse().getProg());
-			printInst("ujp " + (numInst + count + 6));
+			count = countInnerBlock(i.getBlockElse().getProg());
+			printInst("ujp " + (numInst + count + 6), "else");
 			generarBlock(i.getBlockElse());
 		}
 	}
 	
 	private void generarRepeat(Repeat r) {
-		int count = countBlock(r.getBlock().getProg());
+		int count = countInnerBlock(r.getBlock().getProg());
 
 		// Generamos el límite, que queda almacenado en la pila
 		generarExp(r.getLimit());
@@ -502,7 +507,7 @@ public class GeneracionCodigo {
 		int ini = numInst; // El bucle volverá a esta instrucción
 
 		// Duplicamos el límite para hacer la comprobación
-		printInst("dpl");
+		printInst("dpl", "repeat");
 		// Comprobamos si el límite es >0
 		printInst("ldc 0");
 		printInst("grt");
@@ -522,23 +527,30 @@ public class GeneracionCodigo {
 	}
 		
 	private void generarCase(Case c) {
-		int countBloque[], count = 0, countExpIni = countExp(c.getCond());
+		int count = 0, countCond = countExp(c.getCond());
 		CaseMatch[] branches = c.getBranches();
+
+		for(int i = 0; i < branches.length-1; ++i)
+			count += countOuterBlock(branches[i].getBlock())
+					+ countExp(branches[i].getValue())
+					+ countCond + 3;
+
+		int fin = numInst + count + 1;
+
 		for(int i = 0; i < branches.length; ++i){
 			Exp igual = new Exp(Operator.ES_IGUAL, c.getCond(), branches[i].getValue());
 			generarExp(igual);
-			printInst("fjp " + (numInst + count + branches.length - i + 1));
-			count += countBlock(branches[i].getBlock().getProg());
-		}
-		int fin = numInst + count;
-		for(int i = 0; i < branches.length-1; ++i){
+			count = countOuterBlock(branches[i].getBlock());
+			printInst("fjp " + (numInst + count + 2),
+					"case " + branches[i].getValue().print());
 			generarBlock(branches[i].getBlock());
 			printInst("ujp " + fin);
 		}
-		generarBlock(branches[branches.length-1].getBlock());
 	}
 	
-	public int countBlock(Prog p) {
+
+
+	public int countInnerBlock(Prog p) {
 		int count = 5;
 		for(NodoAst n: p.getChildren()) {
 			Inst i = (Inst) n;
@@ -562,17 +574,17 @@ public class GeneracionCodigo {
 
 					break;
 				case BLOCK:
-					count += countBlock(((Block) i).getProg()) + 5;
+					count += countInnerBlock(((Block) i).getProg()) + 5;
 					break;
 				case IF:
 					count += countExp(((If) i).getCond())
-							+ countBlock(((If) i).getBlock().getProg()) + 6;
+							+ countInnerBlock(((If) i).getBlock().getProg()) + 6;
 					if (((If) i).getBlockElse() != null)
-						count += countBlock(((If) i).getBlockElse().getProg()) + 6;
+						count += countInnerBlock(((If) i).getBlockElse().getProg()) + 6;
 					break;
 				case REPEAT:
 					count += 6 + countExp(((Repeat) i).getLimit()) + 5
-							+ countBlock(((Repeat) i).getBlock().getProg());
+							+ countInnerBlock(((Repeat) i).getBlock().getProg());
 					if (((Repeat) i).getCond() != null)
 						count += 1 + countExp(((Repeat) i).getCond());
 					break;
@@ -580,12 +592,12 @@ public class GeneracionCodigo {
 					CaseMatch[] branches = ((Case) i).getBranches();
 					int condIni = countExp(((Case) i).getCond());
 					for(int j = 0; j < branches.length; ++j){
-						count += 3 + condIni + countExp(branches[j].getValue()) + countBlock(branches[j].getBlock().getProg());
+						count += 3 + condIni + countExp(branches[j].getValue()) + countInnerBlock(branches[j].getBlock().getProg());
 					}
 					count -= 3;
 					break;
 				case FUN_DEF:
-					count += countBlock(((DefFun) i).getBlock().getProg()) + 1;
+					count += countInnerBlock(((DefFun) i).getBlock().getProg()) + 1;
 					break;
 				case FUN_CALL:
 					Exp[] args = ((FunCall) i).getArgs();
@@ -660,7 +672,7 @@ public class GeneracionCodigo {
 			generarFunPredCall(f);
 		else {
 			int difProf = profundidad + 1 - f.getDef().getProf();
-			printInst("mst " + difProf);
+			printInst("mst " + difProf, "call " + f.getIden().print());
 			printInst("ldc 0");
 			Exp[] args = f.getArgs();
 			int ini = numInst;
@@ -675,7 +687,7 @@ public class GeneracionCodigo {
 
 	private void generarFunPredCall(FunCall f) {
 		FunPred fp = (FunPred) f.getDef();
-		printInst("mst " + profundidad);
+		printInst("mst " + profundidad, "call " + fp.id);
 		printInst("ldc 0");
 		Exp[] args = f.getArgs();
 		int paramSize = 0;
@@ -693,7 +705,7 @@ public class GeneracionCodigo {
 			int tamTotal = 0;
 			for(FunPred f: funPred.invocadas)
 				tamTotal += f.code(this).length;
-			printInst("ujp " + (numInst + tamTotal + 1));
+			printInst("ujp " + (numInst + tamTotal + 1), "funciones predefinidas");
 			for(FunPred f: funPred.invocadas) {
 				f.setDir(numInst);
 				f.setProf(1);
@@ -713,6 +725,15 @@ public class GeneracionCodigo {
 	private void printInst(String inst) {
 		output.format("{%s}  \t\t%s;\n", numInst, inst);
 		++numInst;
+	}
+
+	private void printInst(String inst, String cmt) {
+		if(comments) {
+			output.format("{%s}  \t\t%s;\t\\\\%s\n", numInst, inst, cmt);
+			++numInst;
+		} else {
+			printInst(inst);
+		}
 	}
 
 	private void printAll(String[] inst) {
