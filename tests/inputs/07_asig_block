@@ -1,7 +1,12 @@
-type St = struct [c1: Int, c2: Int, c3: Bool];
+type St = struct [c1: Int, c2: Int, c3: struct [i: Int, b: Bool]];
 St st1;
 st1.c1 = 1;
 st1.c2 = 5;
-st1.c3 = false;
+
+struct [i: Int, b: Bool] aux;
+aux.i = 100;
+aux.b = false;
+
+st1.c3 = aux;
 
 St st2 = st1;

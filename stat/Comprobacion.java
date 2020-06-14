@@ -387,6 +387,7 @@ public class Comprobacion {
 		Tipo tipo = c.getCond().getTipo();
 		CaseMatch[] branches = c.getBranches();
 		for(int i = 0; i < branches.length; ++i){
+			comprobarExp(branches[i].getValue());
 			if(!branches[i].getValue().getTipo().compatibleCon(tipo))
 				throw new CompException("Los valores de cada rama de Case deben ser " + tipo.print() + ", pero se obtuvo " + branches[i].getValue().getTipo().print(), branches[i].fila, branches[i].col);
 			comprobarBlock(branches[i].getBlock());

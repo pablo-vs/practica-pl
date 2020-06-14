@@ -217,6 +217,12 @@ public class GeneracionCodigo {
 				printInst("ind");
 				generarExp(a.getExp());
 				printInst("ixa " + a.getTipo().getSize());
+				break;
+			}
+			case PUNT: {
+				generarAsignable(a.getChild());
+				printInst("ind");
+				break;
 			}
 		}
 	}
@@ -363,7 +369,7 @@ public class GeneracionCodigo {
 		printInst("cup 1 " + (numInst + 2));
 		int count = countInnerBlock(prog);
 		printInst("ujp " + (count + numInst + 2));
-		generar(prog, true);
+		generar(prog, false);
 		printInst("retp");
 	}
 
@@ -530,21 +536,24 @@ public class GeneracionCodigo {
 		int count = 0, countCond = countExp(c.getCond());
 		CaseMatch[] branches = c.getBranches();
 
-		for(int i = 0; i < branches.length-1; ++i)
+		for(int i = 0; i < branches.length; ++i)
 			count += countOuterBlock(branches[i].getBlock())
 					+ countExp(branches[i].getValue())
 					+ countCond + 3;
 
-		int fin = numInst + count + 1;
+		int fin = numInst + count - 1;
 
 		for(int i = 0; i < branches.length; ++i){
 			Exp igual = new Exp(Operator.ES_IGUAL, c.getCond(), branches[i].getValue());
 			generarExp(igual);
 			count = countOuterBlock(branches[i].getBlock());
+			if(i == branches.length - 1)
+				--count;
 			printInst("fjp " + (numInst + count + 2),
 					"case " + branches[i].getValue().print());
 			generarBlock(branches[i].getBlock());
-			printInst("ujp " + fin);
+			if(i < branches.length - 1)
+				printInst("ujp " + fin);
 		}
 	}
 	
@@ -574,17 +583,17 @@ public class GeneracionCodigo {
 
 					break;
 				case BLOCK:
-					count += countInnerBlock(((Block) i).getProg()) + 5;
+					count += countOuterBlock(((Block) i));
 					break;
 				case IF:
 					count += countExp(((If) i).getCond())
-							+ countInnerBlock(((If) i).getBlock().getProg()) + 6;
+							+ countOuterBlock(((If) i).getBlock()) + 1;
 					if (((If) i).getBlockElse() != null)
-						count += countInnerBlock(((If) i).getBlockElse().getProg()) + 6;
+						count += countOuterBlock(((If) i).getBlockElse()) + 1;
 					break;
 				case REPEAT:
-					count += 6 + countExp(((Repeat) i).getLimit()) + 5
-							+ countInnerBlock(((Repeat) i).getBlock().getProg());
+					count += 6 + countExp(((Repeat) i).getLimit())
+							+ countOuterBlock(((Repeat) i).getBlock());
 					if (((Repeat) i).getCond() != null)
 						count += 1 + countExp(((Repeat) i).getCond());
 					break;
@@ -592,9 +601,9 @@ public class GeneracionCodigo {
 					CaseMatch[] branches = ((Case) i).getBranches();
 					int condIni = countExp(((Case) i).getCond());
 					for(int j = 0; j < branches.length; ++j){
-						count += 3 + condIni + countExp(branches[j].getValue()) + countInnerBlock(branches[j].getBlock().getProg());
+						count += 3 + condIni + countExp(branches[j].getValue()) + countOuterBlock(branches[j].getBlock());
 					}
-					count -= 3;
+					count -= 1;
 					break;
 				case FUN_DEF:
 					count += countInnerBlock(((DefFun) i).getBlock().getProg()) + 1;

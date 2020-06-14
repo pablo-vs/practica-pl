@@ -5,4 +5,4 @@ Int varI4 = (0 - 12)*(-12);
 Bool varB1 = false and false or true;
 Bool varB2 = false and (false or true);
 Bool varB3 = not false and not (varI1 == varI2 or true);
-
+Bool varB4 = varI1 > varI2 and not varI3 == varI4;

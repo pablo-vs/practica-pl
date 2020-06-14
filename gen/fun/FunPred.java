@@ -38,4 +38,18 @@ public abstract class FunPred extends DefFun {
 	public String[] postCall(FunCall f, GeneracionCodigo g) {
 		return null;
 	}
+
+	@Override
+	public boolean equals(Object o) {
+		if(o == this)
+			return true;
+		if(!(o instanceof FunPred))
+			return false;
+		return id.equals(((FunPred)o).id);
+	}
+	
+	@Override
+	public int hashCode() {
+		return id.hashCode();
+	}
 }

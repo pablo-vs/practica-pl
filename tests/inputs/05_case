@@ -1,9 +1,22 @@
 Int var1 = 4;
 Int res;
+Int var2 = 7;
 
 case var1 {
 	1 -> {res = 1;}
-	2 -> {res = 1;}
+	2 -> {
+		if true {
+			res = 1;
+		};
+	}
 	3 -> {res = 2;}
-	4 -> {res = 3;}
+	4 -> {
+		{
+			{
+				case 7 {
+					var2 -> {res = 3;}
+				};
+			};
+		};
+	}
 };
