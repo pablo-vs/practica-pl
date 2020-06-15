@@ -497,7 +497,7 @@ public class GeneracionCodigo {
 				}
 				case RETURN: {
 					if(((Return)r).getVal() != null) {
-						e = ((Return)r).getVal()
+						e = ((Return)r).getVal();
 						size = sizeExp(e);
 					}
 					break;
@@ -518,7 +518,7 @@ public class GeneracionCodigo {
 					size += 1;
 				}
 				else if(e instanceof ConstArray) {
-					Exp[] values = ((ConstArray)e).getValues()
+					Exp[] values = ((ConstArray)e).getValues();
 					for (int i = 0; i < values.length; ++i)
 						size += sizeExp(values[i]);
 				}
@@ -703,7 +703,9 @@ public class GeneracionCodigo {
 					}
 					break;
 				case RETURN:
-					count += 2 + countExp(((Return)i).getVal());
+					if (((Return)i).getVal() != null)
+						count += 2 + countExp(((Return)i).getVal());
+					else count += 1;
 					break;
 				default:
 			}
