@@ -488,16 +488,17 @@ public class GeneracionCodigo {
 					size += sizeIni;
 					break;
 				}
-				case BLOCK:
-					size = extremePointer(((Block)i).getProg());
-					break;
-				case FUN_DEF:
-					size = extremePointer(((DefFun)i).getBlock().getProg());
-					break;
 				case FUN_CALL: {
 					Exp[] args = ((FunCall)i).getArgs();
 					for(int j = 0; j < args.length; ++j){
 						size = Math.max(size, sizeExp(args[j]));
+					}
+					break;
+				}
+				case RETURN: {
+					if(((Return)r).getVal() != null) {
+						e = ((Return)r).getVal()
+						size = sizeExp(e);
 					}
 					break;
 				}
@@ -510,18 +511,25 @@ public class GeneracionCodigo {
 	private int sizeExp (Exp e){
 		int size = 0;
 		if(e instanceof ExpAsig) {
-			sizeExpAsignable((ExpAsig)e);
+			size = sizeExpAsignable((ExpAsig)e);
 		} else if(e.getOp() == Operator.NONE) {
 			if(e instanceof Const) {
-				if(e instanceof ConstInt) {
+				if((e instanceof ConstInt) || (e instanceof ConstBool) || (e instanceof ConstDec)) {
 					size += 1;
 				}
-				else if(e instanceof ConstBool) {
-					size += 1;
+				else if(e instanceof ConstArray) {
+					Exp[] values = ((ConstArray)e).getValues()
+					for (int i = 0; i < values.length; ++i)
+						size += sizeExp(values[i]);
 				}
-				else if(e instanceof ConstDec) {
-					// TODO
-					//throw new RuntimeException("Decimales no soportados");
+				else if(e instanceof ConstTupla) {
+					throw new RuntimeException("Tuplas no soportadas");
+				}
+				else if(e instanceof ConstDict) {
+					throw new RuntimeException("Diccionarios no soportados");
+				} 
+				else if(e instanceof ConstString) {
+					throw new RuntimeException("Strings no soportados");
 				}
 			}
 		}
@@ -532,7 +540,9 @@ public class GeneracionCodigo {
 					size += 2*sizeExp(ops[0]) + 2*sizeExp(ops[1]);
 					break;
 				}
-				case REF:
+				case REF: {
+					size += sizeAsignable((ExpAsig)ops[0]);
+				}
 				case NOT: {
 					size += sizeExp(ops[0]);
 					break;
