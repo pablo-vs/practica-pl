@@ -496,8 +496,8 @@ public class GeneracionCodigo {
 					break;
 				}
 				case RETURN: {
-					if(((Return)r).getVal() != null) {
-						e = ((Return)r).getVal();
+					if(((Return)i).getVal() != null) {
+						e = ((Return)i).getVal();
 						size = sizeExp(e);
 					}
 					break;
@@ -541,7 +541,7 @@ public class GeneracionCodigo {
 					break;
 				}
 				case REF: {
-					size += sizeAsignable((ExpAsig)ops[0]);
+					size += sizeAsignable(((ExpAsig)ops[0]).getAsignable());
 				}
 				case NOT: {
 					size += sizeExp(ops[0]);

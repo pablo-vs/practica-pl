@@ -56,6 +56,8 @@ El paquete gen contiene la generación de código, incluyendo funciones predefin
 
 - Los decimales se redondean y se tratan como enteros
 - La compilación prosigue hasta la fase de vinculación intentando ignorar los errores anteriores. Si hay fallos durante la fase de vinculación o comprobación, no se pasa a la siguiente fase.
+- Los arrays de varias dimensiones fallan
+- La función length también falla
 
 ## Modificaciones respecto a la entrega 2
 
