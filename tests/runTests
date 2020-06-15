@@ -26,7 +26,7 @@ else
 		fi
 		while IFS= read -r line
 		do
-			line=$(echo $line | grep -o '([0-9]+,.*)')
+			line=$(echo $line | grep -o '([0-9]*,.*)')
 			if [[ -z $(grep "$line" outputs/$file.out) ]]
 			then
 				echo $file : Error, salida incorrecta

@@ -21,57 +21,14 @@ public class NewArray extends FunPred {
 
 	private static final Argumento[] ARGS = new Argumento[]
 	{
-		// Puntero al array
+		// puntero al array
 		new Argumento(new Iden("arr"), new TipoPunt(new TipoArray())),
-		new Argumento(new Iden("tam"), new TipoInt()),		// Num elementos
+		new Argumento(new Iden("dim"), new TipoArray(new TipoInt())),	// dimensiones
 		// Int Tamaño del tipo
-		// Addr Dirección de los datos
-		// Addr Dirección del tamaño de marco
+		// Int dimension actual
 	};
 
 	private static final int TMB = GeneracionCodigo.TAM_MARCO_BASE;
-
-	private static final String[] CODE = new String[]
-	{
-		"ssp " + (5+TMB) + "	{newArray}",
-		"sep 3",
-
-		// 1. Escribimos en el descriptor el número de elementos
-		"lod 0 " + TMB, // Cargamos la dir del tamaño en el descriptor
-		"inc 1",
-		"lod 0 " + (TMB+1), // Cargamos el num de elementos
-		"sto",				// Almacenamos
-		
-		// 2. Almacenaremos los datos al final del marco actual
-		// Cargamos esa dirección en el descriptor
-		"lod 0 " + TMB,
-		"lod 0 " + (TMB+4),
-		"ind",
-		"sto",
-
-		// 3. Aumentamos el tamaño del marco
-
-		// Multiplicamos el num de elems por el tamaño de cada elem
-		"lod 0 " + (TMB+1),
-		"lod 0 " + (TMB+2),
-		"mul",
-
-		// Ese es el valor que devolvemos
-		"str 0 0",
-
-		// Cargamos el tam marco actual
-		"lod 0 " + (TMB+4),
-		"dpl",
-		"ind",
-
-		// Sumamos el tam total de los datos y guardamos
-		"lod 0 0",
-		"add",
-		"sto",
-
-		"retf		{end newArray}"
-	};
-
 
 	public NewArray() {
 		super(ID, TIPO, ARGS);
@@ -79,18 +36,114 @@ public class NewArray extends FunPred {
 
 	@Override
 	public String[] code(GeneracionCodigo g) {
-		return CODE;
+		int ini = g.getNumInst();
+		return new String[]
+		{
+
+			// Segunda parte, asignar internamente
+			"ssp " + (9+TMB) + "	{newArray}",
+			"sep 11",
+
+			// El tamaño actual de los datos se guarda en TMB+6
+			// Para el bucle interno
+			// El contador del bucle se guarda en TMB+7
+			// La posición actual en el array en TMB+8
+
+			// 1. Escribimos en el descriptor el número de elementos
+			"lod 0 " + (TMB), // Cargamos la dir del tamaño en el descriptor
+			"inc 1",
+			"lod 0 " + (TMB+1),   // Cargamos el num de elementos
+			"lod 0 " + (TMB+4),
+			"add",
+			"ind",
+			"sto",				// Almacenamos
+			
+
+			// 2. Calculamos el tamaño
+
+			// Multiplicamos el num de elems por el tamaño de cada elem
+			// el tamaño es 2 salvo que estemos en la última dimensión
+			"lod 0 " + (TMB+2),
+			"dec 1",
+			"lod 0 " + (TMB+4),
+			"grt",
+			"fjp " + (ini+16),
+			"ldc 2",
+			"ujp " + (ini+17),
+			"lod 0 " + (TMB+3), // ini+16
+			"lod 0 " + (TMB), // ini+17
+			"inc 1",
+			"ind",
+			"mul",
+			"str 0 " + (TMB+6), // Almacenamos
+
+			// 3. Reservamos memoria y cargamos la dirección de los datos en el descriptor
+			"lod 0 " + (TMB),
+			"lod 0 " + (TMB+6),
+			"new",
+
+			// Si estamos en la última dimensión, paramos
+			"lod 0 " + (TMB+2),
+			"dec 1",
+			"lod 0 " + (TMB+4),
+			"grt",
+			"fjp " + (ini+57),
+
+			// Cargamos la dirección de los datos en posicion actual
+			"lod 0 " + (TMB),
+			"ind",
+			"str 0 " + (TMB+8),
+
+			// Inicializamos a 0 el contador
+			"ldc 0",
+			"str 0 " + (TMB+7),
+	
+			// 4. Iteramos para cada elemento del nuevo array
+
+			"lod 0 " + (TMB+7), 		//ini+35
+			"dpl",
+			"lod 0 " + (TMB+1),
+			"lod 0 " + (TMB+4),
+			"add",
+			"ind",
+			"les",
+			"fjp " + (ini+57),
+			"inc 1",
+			"str 0 " + (TMB+7),
+			
+			// Cargamos los parámetros
+			"mst 1",
+
+			"lod 0 " + (TMB+8), // dir descriptor
+			"lda 0 " + (TMB+1),   //dimensiones
+			"movs 2",
+			"lod 0 " + (TMB+3),	  //tam datos
+			"lod 0 " + (TMB+4),	  //dim act +1
+			"inc 1",
+			"cup 7 " + getDir(),
+			
+			// Aumentamos la posicion del descriptor en 2
+			"lod 0 " + (TMB+8),
+			"inc 2",
+			"str 0 " + (TMB+8),
+
+			"ujp " + (ini+35),
+
+			"retp		{end newArray}"  //57
+		};
+
 	}
 	
 	@Override
 	public String[] preCall(FunCall f, GeneracionCodigo g) {
+		TipoArray ta = (TipoArray)((TipoPunt)f.getArgs()[0].getTipo()).getTipoRef();
+		while(ta.getTipoElem() instanceof TipoArray)
+			ta = (TipoArray) ta.getTipoElem();
 		return new String[] {
-			"ldc " + ((TipoArray)((TipoPunt)f.getArgs()[0].getTipo())
-					.getTipoRef()).getTipoElem().getSize(),
-			"lda 0 0",
-			"lod 0 " + (TMB-1),
-			"add",
-			"lda 0 " + (TMB-1),
+			//Tam datos
+			"ldc " + ta.getTipoElem().getSize(),
+			//Dim actual
+			"ldc 0",
 		};
 	}
 
@@ -98,21 +151,6 @@ public class NewArray extends FunPred {
 	public String[] call(FunCall f, GeneracionCodigo g) {
 		return new String[] {
 			"cup 6 " + getDir()
-		};
-	}
-
-	@Override
-	public String[] postCall(FunCall f, GeneracionCodigo g) {
-		int ini = g.getNumInst();
-		return new String[] {
-			"dpl",
-			"ldc 1",
-			"grt",
-			"fjp " + (ini + 5 + 3),
-			"dpl",
-			"dec 1",
-			"dpl",
-			"ujp " + (ini + 1)
 		};
 	}
 }

@@ -1,5 +1,5 @@
 [Int] arr;
-newArray(&arr, 10);
+newArray(&arr, [10]);
 
 arr[0] = 30;
 Int i = 1;
