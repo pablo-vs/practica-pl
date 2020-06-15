@@ -17,6 +17,7 @@ public class Vinculacion {
 	private final GestionErroresTiny err;
 	private final int profundidad;
 	private DefFun funActual = null;
+	public boolean hasReturn = false;
 
 	private FuncionesPredefinidas funPred;
 
@@ -181,7 +182,15 @@ public class Vinculacion {
 			vincularFunCall(((ExpFun)e).getCall());
 		} else {
 			if (e.getOp() == Operator.NONE) {
-				// TODO Constantes compuestas como listas
+				// Constantes compuestas
+				if (e instanceof ConstArray) {
+					for(Exp v: ((ConstArray)e).getValues())
+						vincularExp(v);
+				} else if (e instanceof ConstDict) {
+					throw new VincException(e.print(), "Diccionarios no soportados", e.fila, e.col);
+				} else if (e instanceof ConstTupla) {
+					throw new VincException(e.print(), "Tuplas no soportadas", e.fila, e.col);
+				}
 			}
 			for(Exp op : e.getOperands()) {
 				vincularExp(op);
@@ -244,6 +253,8 @@ public class Vinculacion {
 			v.vincularArg(args[i]); 
 
 		v.vincular(d.getBlock().getProg());
+		if(!v.hasReturn && d.getTipo().getTipo() != EnumTipo.TNULL)
+			throw new VincException(d.getIden().print(), "La función no es de tipo Null y no tiene ningún return", d.fila, d.col);
 	}
 	
 	private void vincularArg(Argumento a) throws VincException {
@@ -261,6 +272,7 @@ public class Vinculacion {
 	}
 
 	public void vincularRet(Return r) throws VincException {
+		hasReturn = true;
 		if(funActual == null) {
 			throw new VincException("return", "Return llamado fuera de una función");
 		}
@@ -275,6 +287,14 @@ public class Vinculacion {
 	 */
 	private Vinculo vincularIden(Iden id, Vinculo.Tipo contexto) throws VincException {
 		Vinculo v = tablaSimbolos.get(id.print());
+		if(Character.isUpperCase(id.print().charAt(0))) {
+			if(contexto != Vinculo.Tipo.TIPO)
+				throw new VincException(id.print(), "Se esperaba un identificador de variable o función (empezando en minúscula)", id.fila, id.col);
+		} else {
+			if(contexto == Vinculo.Tipo.TIPO)
+				throw new VincException(id.print(), "Se esperaba un identificador de tipo (empezando en mayúscula)", id.fila, id.col);
+		}
+
 		if (v == null ) {
 			if(parent == null) {
 				if(contexto == Vinculo.Tipo.FUN
