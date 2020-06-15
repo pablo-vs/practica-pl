@@ -1,0 +1,12 @@
+fun Int fibonacci(n: Int) = {
+	if n <= 0 {
+		return 1;
+	};
+	if n == 1 {
+		return 1;
+	};
+	return fibonacci(n-1) + fibonacci(n-2);
+};
+
+Int f3 = fibonacci(3);
+Int f5 = fibonacci(5);
