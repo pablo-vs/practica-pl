@@ -64,6 +64,7 @@
 ./ast/NodoAst.java
 ./gen/fun/FuncionesPredefinidas.java
 ./gen/fun/Copy.java
+./gen/fun/Malloc.java
 ./gen/fun/FunPred.java
 ./gen/fun/NewArray.java
 ./gen/GeneracionCodigo.java

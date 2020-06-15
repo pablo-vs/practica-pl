@@ -20,6 +20,8 @@ public class FuncionesPredefinidas {
 		definidas.put(newArr.id, newArr);
 		Copy cp = new Copy();
 		definidas.put(cp.id, cp);
+		Malloc ma = new Malloc();
+		definidas.put(ma.id, ma);
 	}
 
 	public void addInvocada(String id) {
@@ -28,4 +30,5 @@ public class FuncionesPredefinidas {
 
 	public static final String NEW_ARRAY = NewArray.ID;
 	public static final String COPY = Copy.ID;
+	public static final String MALLOC = Malloc.ID;
 }

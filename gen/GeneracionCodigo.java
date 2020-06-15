@@ -119,12 +119,40 @@ public class GeneracionCodigo {
 
 		for(NodoAst n: p.getChildren()) {
 			Inst i = (Inst) n;
-			if(i.getInst() == EnumInst.DEC) {
-				tamAct = asignarDec((Dec) i, tamAct);
+			if(i.getInst() == null)
+				continue;
+			switch(i.getInst()) {
+				case DEC:
+					tamAct = asignarDec((Dec) i, tamAct);
+					break;
+				case ASIG:
+					tamAct = asignarExp(((Asig) i).getExp(), tamAct);
+					break;
+				case IF:
+					tamAct = asignarExp(((If)i).getCond(), tamAct);
+					break;
+				case REPEAT:
+					Repeat r = (Repeat) i;
+					tamAct = asignarExp(r.getLimit(), tamAct);
+					if(r.getCond() != null)
+						tamAct = asignarExp(r.getCond(), tamAct);
+					break;
+				case CASE:
+					tamAct = asignarExp(((Case) i).getCond(), tamAct);
+					break;
+				case FUN_CALL:
+					for(Exp e: ((FunCall)i).getArgs())
+						tamAct = asignarExp(e, tamAct);
+					break;
+				case RETURN:
+					tamAct = asignarExp(((Return)i).getVal(), tamAct);
+					break;
+				default:
 			}
 		}
 		return tamAct;
 	}
+
 
 	private int asignarArg(Argumento a, int tamAct) {
 		int size = a.getTipo().getSize();
@@ -138,12 +166,15 @@ public class GeneracionCodigo {
 
 	private int asignarDec(Dec d, int tamAct) {
 		int size = d.getTipo().getSize();
+		int res = tamAct;
 		if(size > 1) {
 			Tipo t = d.getTipo();
 			asignarTipo(t);
 		}
-		d.setDir(tamAct + TAM_MARCO_BASE);
-		return tamAct + size;
+		if(d.getAsig() != null)
+			res = asignarExp(d.getAsig().getExp(), tamAct);
+		d.setDir(res + TAM_MARCO_BASE);
+		return res + size;
 	}
 
 	private void asignarTipo(Tipo t) {
@@ -160,6 +191,23 @@ public class GeneracionCodigo {
 			}
 			default:
 		}
+	}
+
+	private int asignarExp(Exp e, int tamAct) {
+		int res = tamAct;
+		if (e instanceof ConstArray) {
+			ConstArray ca = (ConstArray)e;
+			for(Exp v: ca.getValues())
+				res = asignarExp(v, res);
+			ca.setDir(res + TAM_MARCO_BASE);
+			TipoArray ta = (TipoArray) ca.getTipo();
+			res += 2 + ta.getTipoElem().getSize()*ca.getValues().length;
+		} else if (e instanceof ExpFun) {
+			res = tamAct;
+			for(Exp arg: ((ExpFun)e).getCall().getArgs())
+				res = asignarExp(arg, res);
+		}
+		return res;
 	}
 
 	private void generarDec(Dec d) {
@@ -242,8 +290,32 @@ public class GeneracionCodigo {
 					printInst("ldc " + val);
 				}
 				else if(e instanceof ConstDec) {
-					// TODO fix this
-					throw new RuntimeException("Decimales no soportados");
+					printInst("ldc " + Math.round(((ConstDec) e).value));
+				}
+				else if(e instanceof ConstArray) {
+					ConstArray ca = (ConstArray) e;
+					printInst("ldc " + (2+ca.getDir())); //Dir
+					printInst("str 0 " + ca.getDir());
+					printInst("ldc " + ca.getValues().length); //Tam
+					printInst("str 0 " + (1+ca.getDir()));
+					//Valores
+					int offset = 2 + ca.getDir();
+					for(Exp v: ca.getValues()) {
+						if(v.getTipo().getSize() == 1) {
+							generarExp(v);
+							printInst("str 0 " + offset);
+						} else {
+							// Llamar a copy()
+							printInst("mst " + profundidad);
+							printInst("ldc 0");
+							printInst("lda 0 " + offset);
+							generarExp(v);
+							printInst("ldc " + v.getTipo().getSize());
+							printInst("cup 4 " + funPred.definidas.get("copy").getDir());
+						}
+						offset += v.getTipo().getSize();
+					}
+					printInst("lda 0 " + ca.getDir());
 				}
 			}
 			

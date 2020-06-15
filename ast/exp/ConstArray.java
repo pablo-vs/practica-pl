@@ -6,6 +6,8 @@ public class ConstArray extends Const {
 
 	private Exp [] values;
 
+	private int dir;
+
 	public ConstArray(Exp ... vls) {
 		values = new Exp[vls.length];
 		for(int i = 0; i < vls.length; ++i) {
@@ -18,6 +20,11 @@ public class ConstArray extends Const {
 		values = new Exp[0];
 		values = vls.toArray(values);
 	}
+
+	public Exp[] getValues() {return values;}
+
+	public int getDir() {return dir;}
+	public void setDir(int d) {dir = d;}
 
 	@Override
 	public String print() {

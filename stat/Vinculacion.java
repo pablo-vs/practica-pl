@@ -181,7 +181,15 @@ public class Vinculacion {
 			vincularFunCall(((ExpFun)e).getCall());
 		} else {
 			if (e.getOp() == Operator.NONE) {
-				// TODO Constantes compuestas como listas
+				// Constantes compuestas
+				if (e instanceof ConstArray) {
+					for(Exp v: ((ConstArray)e).getValues())
+						vincularExp(v);
+				} else if (e instanceof ConstDict) {
+					throw new VincException(e.print(), "Diccionarios no soportados", e.fila, e.col);
+				} else if (e instanceof ConstTupla) {
+					throw new VincException(e.print(), "Tuplas no soportadas", e.fila, e.col);
+				}
 			}
 			for(Exp op : e.getOperands()) {
 				vincularExp(op);

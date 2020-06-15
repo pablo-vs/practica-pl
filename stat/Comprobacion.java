@@ -178,6 +178,29 @@ public class Comprobacion {
 		}
 		else if(e.getOp() == Operator.NONE) {
 			if(e instanceof Const) {
+				// Constantes compuestas
+				if (e instanceof ConstArray) {
+					ConstArray ca = (ConstArray)e;
+					boolean first = true;
+					for(Exp v: ca.getValues()) {
+						comprobarExp(v);
+						if(first) {
+							first = false;
+							if(v.getTipo().getSize() > 1)
+								funPred.addInvocada(funPred.COPY);
+							ca.setTipo(new TipoArray(v.getTipo()));
+						} else {
+							if(!((TipoArray)ca.getTipo()).getTipoElem().igual(v.getTipo()))
+								throw new CompException("Elemento de tipo "
+										+ v.getTipo().print() + " en array de tipo "
+										+ ca.getTipo().print(), e.fila, e.col);
+						}
+					}
+				} else if (e instanceof ConstDict) {
+					throw new CompException("Diccionarios no soportados", e.fila, e.col);
+				} else if (e instanceof ConstTupla) {
+					throw new CompException("Tuplas no soportadas", e.fila, e.col);
+				}
 				res = e.getTipo();
 			}
 		} else {

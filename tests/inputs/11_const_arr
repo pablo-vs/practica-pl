@@ -1,0 +1,11 @@
+Int i1 = 1;
+Int i2 = 7;
+Int i3;
+Int i4;
+[[Int]] arr = [[i1,2,3,4],
+               [5,6,i2,8]];
+
+[Int] arr2 = arr[1];
+
+i3 = arr[0][3]; # i3 = 4
+i4 = arr2[2];   # i4 = 7

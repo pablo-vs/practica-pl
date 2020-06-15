@@ -6,13 +6,14 @@ import alex.TokenValue;
 public class ConstDec extends ConstHoja {
 
 	private boolean inf;
-	private double value;
+	public final double value;
 
 	public ConstDec(String txt, int fila, int col) {
 		super(txt, fila, col);
 		setTipo(new TipoDec());
 		if (txt.equals("inf")) {
 			inf = true;
+			value = 0;
 		} else {
 			inf = false;
 			value = Double.parseDouble(txt);

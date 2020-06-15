@@ -1,0 +1,15 @@
+[[[Int]]] matriz3;
+
+newArray(&matriz3, 4);
+
+Int i = 0;
+
+repeat 4 {
+	newArray(&matriz3[i], 3);
+	i = i + 1;
+	Int j = 0;
+	repeat 3 {
+		newArray(&matriz3[i][j]);
+		j = j + 1;
+	}
+};
