@@ -5,8 +5,8 @@ Int var1 = 0;
 Bool b;
 &Bool bp = &b;
 &&Bool bpp = &bp;
-&&&Bool Bppp = &bpp;
+&&&Bool bppp = &bpp;
 
-^(^(^Bppp)) = false;
+^(^(^bppp)) = false;
 
-Bppp = punt1;
+bppp = punt1;

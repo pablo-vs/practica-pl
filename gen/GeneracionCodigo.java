@@ -161,6 +161,7 @@ public class GeneracionCodigo {
 			asignarTipo(t);
 		}
 		a.setDir(tamAct + TAM_MARCO_BASE);
+		a.setProf(profundidad+1);
 		return tamAct + size;
 	}
 
@@ -246,7 +247,7 @@ public class GeneracionCodigo {
 					difProf = profundidad + 1 - a.getDec().getProf();
 				} else {
 					dir = a.getArg().getDir();
-					difProf = 0;
+					difProf = profundidad + 1 - a.getArg().getProf();
 				}
 				printInst("lda " + difProf  + " " + dir);
 				break;
@@ -633,6 +634,7 @@ public class GeneracionCodigo {
 
 	public int countInnerBlock(Prog p) {
 		int count = 5;
+		boolean funcionesAnidadas = false;
 		for(NodoAst n: p.getChildren()) {
 			Inst i = (Inst) n;
 			if(i.getInst() == null)
@@ -678,12 +680,17 @@ public class GeneracionCodigo {
 					count -= 1;
 					break;
 				case FUN_DEF:
+					funcionesAnidadas = true;
 					count += countInnerBlock(((DefFun) i).getBlock().getProg()) + 1;
 					break;
 				case FUN_CALL:
+					count += 3;
 					Exp[] args = ((FunCall) i).getArgs();
-					for(int j = 0; j < args.length; ++j)
+					for(int j = 0; j < args.length; ++j) {
 						count += countExp(args[j]);
+						if(args[j].getTipo().getSize() > 1)
+							count += 1;
+					}
 					break;
 				case RETURN:
 					count += 2 + countExp(((Return)i).getVal());
@@ -691,6 +698,7 @@ public class GeneracionCodigo {
 				default:
 			}
 		}
+		if (funcionesAnidadas) ++count;
 		return count;
 	}
 	
@@ -705,7 +713,10 @@ public class GeneracionCodigo {
 				count += 1 + countAsignable(a.getChild()) + countExp(a.getExp());
 				break;
 			}
-
+			case PUNT:{
+				count += countAsignable(a.getChild());
+				break;
+			}
 		}
 		return count;
 	}
@@ -714,6 +725,14 @@ public class GeneracionCodigo {
 		int count = 1;
 		if(e instanceof ExpAsig) {
 			count = countExpAsignable((ExpAsig)e);
+		} else if(e instanceof ExpFun) {
+			count = 3;
+			Exp[] args = ((ExpFun) e).getCall().getArgs();
+			for(int j = 0; j < args.length; ++j) {
+				count += countExp(args[j]);
+				if(args[j].getTipo().getSize() > 1)
+					count += 1;
+			}
 		} else if(e.getOp() != Operator.NONE) {
 			Exp[] ops = e.getOperands();
 			switch(e.getOp()) {
@@ -760,7 +779,10 @@ public class GeneracionCodigo {
 			int paramSize = 0;
 			for(int i = 0; i < args.length; ++i) {
 				generarExp(args[i]);
-				paramSize += args[i].getTipo().getSize();
+				int size = args[i].getTipo().getSize();
+				if(size > 1)
+					printInst("movs " + size);
+				paramSize += size;
 			}	
 			printInst("cup " + (paramSize+1) + " " + f.getDef().getDir());
 		}
@@ -774,7 +796,10 @@ public class GeneracionCodigo {
 		int paramSize = 0;
 		for(int i = 0; i < args.length; ++i) {
 			generarExp(args[i]);
-			paramSize += args[i].getTipo().getSize();
+			int size = args[i].getTipo().getSize();
+			if(size > 1)
+				printInst("movs " + size);
+			paramSize += size;
 		}
 		printAll(fp.preCall(f, this));
 		printAll(fp.call(f, this));
@@ -818,8 +843,9 @@ public class GeneracionCodigo {
 	}
 
 	private void printAll(String[] inst) {
-		for(String i: inst)
-			printInst(i);
+		if(inst != null)
+			for(String i: inst)
+				printInst(i);
 	}
 
 	public int getNumInst() {return numInst;}

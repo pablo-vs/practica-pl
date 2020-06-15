@@ -17,11 +17,13 @@ public class NewArray extends FunPred {
 
 	public static final String ID = "newArray";
 
-	private static final Tipo TIPO = new TipoArray();
+	private static final Tipo TIPO = new TipoNull();
 
 	private static final Argumento[] ARGS = new Argumento[]
 	{
-		new Argumento(new Iden("dim"), new TipoArray(new TipoInt())),	// dimensiones
+		// Puntero al array
+		new Argumento(new Iden("arr"), new TipoPunt(new TipoArray())),
+		new Argumento(new Iden("tam"), new TipoInt()),		// Num elementos
 		// Int Tamaño del tipo
 		// Addr Dirección de los datos
 		// Addr Dirección del tamaño de marco
@@ -31,7 +33,7 @@ public class NewArray extends FunPred {
 
 	private static final String[] CODE = new String[]
 	{
-		"ssp " + (4+TMB) + "	{newArray}",
+		"ssp " + (5+TMB) + "	{newArray}",
 		"sep 3",
 
 		// 1. Escribimos en el descriptor el número de elementos

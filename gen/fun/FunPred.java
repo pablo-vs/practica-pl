@@ -31,7 +31,7 @@ public abstract class FunPred extends DefFun {
 
 	public String[] call(FunCall f, GeneracionCodigo g) {
 		return new String[] {
-			"cup " + getArgs().length  + " " + getDir()
+			"cup " + (getArgs().length+1)  + " " + getDir()
 		};
 	}
 

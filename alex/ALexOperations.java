@@ -146,7 +146,10 @@ public class ALexOperations {
      return new UnidadLexica(alex.fila(),alex.col(),ClaseLexica.TSTRING,"String"); 
   } 
   public UnidadLexica unidadTipoDec() {
-     return new UnidadLexica(alex.fila(),alex.col(),ClaseLexica.TDEC,"Dev"); 
+     return new UnidadLexica(alex.fila(),alex.col(),ClaseLexica.TDEC,"Dec"); 
+  } 
+  public UnidadLexica unidadTipoNull() {
+     return new UnidadLexica(alex.fila(),alex.col(),ClaseLexica.TNULL,"Null"); 
   } 
   public UnidadLexica unidadString() {
      return new UnidadLexica(alex.fila(),alex.col(),ClaseLexica.STRING,alex.lexema()); 

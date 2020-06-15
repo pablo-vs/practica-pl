@@ -33,7 +33,6 @@ public class EquivalenciaTipos {
 					return t2.getTipo() == EnumTipo.TINT
 						|| t2.getTipo() == EnumTipo.TDEC;
 				}
-
 			// Tipos compuestos
 			default:
 				return equivComp(t1, t2, equiv);

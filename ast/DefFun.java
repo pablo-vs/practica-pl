@@ -46,6 +46,7 @@ public class DefFun extends Inst {
 	}
 
 	public Tipo getTipo() {return tipo;}
+	public void setTipo(Tipo t) {tipo = t;}
 	public Iden getIden() {return iden;}
 	public Argumento[] getArgs() {return args;}
 	public Block getBlock() {return block;}

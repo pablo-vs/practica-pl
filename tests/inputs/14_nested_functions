@@ -1,0 +1,19 @@
+type Result = struct [i1: Int, i2: Int];
+Result res;
+
+fun Null main(r: &Result) = {
+	fun Int fibonacci(n: Int) = {
+		Int res;
+		if n <= 1 {
+			res = 1;
+		} else {
+			res = fibonacci(n - 1) + fibonacci(n - 2);
+		};
+		return res;
+	};
+
+	^r.i1 = fibonacci(3);
+	^r.i2 = fibonacci(4);
+};
+
+main(&res);

@@ -30,7 +30,7 @@ terminal  	 COMA,
              PCL, CCL, BAP, BCL, PCOMA, DOSPUNTOS,
              VERT, ELSE, THEN,
              STRUCT, TINT, TBOOL,
-             TSTRING, TDEC;
+             TSTRING, TDEC, TNULL;
 
 terminal TokenValue IF, REPEAT, CASE, FUN, TYPE, RETURN, IDEN, ENT,
 					DEC, STRING, TRUE, FALSE, NULL, INF, PAP, CAP;
@@ -173,6 +173,8 @@ TIPO ::= TSTRING
 	{:	RESULT = new TipoString();	:};
 TIPO ::= TDEC
 	{:	RESULT = new TipoDec();	:};
+TIPO ::= TNULL
+	{:	RESULT = new TipoNull();	:};
 
 TIPO_ARRAY ::= CAP TIPO: t CCL
 	{:	RESULT = new TipoArray((Tipo) t);	:};

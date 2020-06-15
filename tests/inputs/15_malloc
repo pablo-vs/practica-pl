@@ -1,0 +1,10 @@
+&Int punt1;
+
+fun Null allocate(p: &&Int) = {
+	^p = malloc(1);
+	{
+		^(^p) = 7;
+	};
+};
+
+allocate(&punt1);

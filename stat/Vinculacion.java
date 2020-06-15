@@ -239,7 +239,7 @@ public class Vinculacion {
 	}
 	
 	public void vincularDefFun(DefFun d) throws VincException {
-		vincularTipo(d.getTipo());
+		d.setTipo(vincularTipo(d.getTipo()));
 		String id = d.getIden().print();
 		addDeclaracion(id, new Vinculo(Vinculo.Tipo.FUN, d));
 
@@ -258,7 +258,7 @@ public class Vinculacion {
 	}
 	
 	private void vincularArg(Argumento a) throws VincException {
-		Tipo tipo = vincularTipo(a.getTipo());
+		a.setTipo(vincularTipo(a.getTipo()));
 		String id = a.getIden().print();
 		addDeclaracion(id, new Vinculo(Vinculo.Tipo.VAR, a));
 	}
@@ -274,7 +274,10 @@ public class Vinculacion {
 	public void vincularRet(Return r) throws VincException {
 		hasReturn = true;
 		if(funActual == null) {
-			throw new VincException("return", "Return llamado fuera de una función");
+			if(profundidad > 0)
+				throw new VincException("return", "No se puede retornar de una función desde dentro de un bloque", r.fila, r.col);
+
+			throw new VincException("return", "Return llamado fuera de una función", r.fila, r.col);
 		}
 		vincularExp(r.getVal());
 		r.setDef(funActual);				

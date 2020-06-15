@@ -19,7 +19,6 @@ public class Malloc extends FunPred {
 	private static final Argumento[] ARGS = new Argumento[]
 	{
 		new Argumento(new Iden("size"), new TipoInt()),
-		// Addr Dirección del tamaño de marco
 	};
 
 	private static final int TMB = GeneracionCodigo.TAM_MARCO_BASE;
@@ -31,25 +30,13 @@ public class Malloc extends FunPred {
 	@Override
 	public String[] code(GeneracionCodigo g) {
 		return new String[] {
-			"ssp " + (TMB+2) + "	{malloc}",
-			"sep 1",
+			"ssp " + (TMB+1) + "	{malloc}",
+			"sep 2",
 			
+			"lda 0 0",
 			"lod 0 " + TMB,
-			"lod 0 " + (TMB+1),
-			"ind",
-			"sto",
-			
-			"lod 0 " + TMB,
-			"str 0 0",
-			
-			"lod 0 " + (TMB+1),
-			"dpl",
-			"ind",
-			
-			"lod 0 0",
-			"add",
-			"sto",
-			
+			"new",
+
 			"retf		{end malloc}"
 		};
 	}

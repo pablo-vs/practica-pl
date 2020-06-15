@@ -96,6 +96,7 @@ tipoInt = Int
 tipoBool = Bool
 tipoString = String
 tipoDec = Dec
+tipoNull = Null
 string = (\"[^\"]*\")|('[^']*')
 
 
@@ -153,6 +154,7 @@ iden = {letra}({letra}|{digito})*
 {tipoBool}				{return ops.unidadTipoBool();}
 {tipoString}			{return ops.unidadTipoString();}
 {tipoDec}				{return ops.unidadTipoDec();}
+{tipoNull}				{return ops.unidadTipoNull();}
 {string}				{return ops.unidadString();}
 {iden}					{return ops.unidadIden();}
 
