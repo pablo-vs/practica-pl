@@ -8,6 +8,7 @@ else
 	output="Todos los tests completados con éxito"
 	for file in $(ls inputs/)
 	do
+		curOutput="Completado"
 		echo $file
 		cp inputs/$file ../build/input.txt
 		cd ../build
@@ -19,20 +20,24 @@ else
 		if [[ -z $(grep 'successfully' outputs/$file.out) ]]
 		then
 			echo $file : Error de ejecución
+			curOutput="Test fallido"
 			output="Ha habido tests fallidos"
 			continue
 		fi
 		while IFS= read -r line
 		do
+			line=$(echo $line | grep -o '([0-9]+,.*)')
 			if [[ -z $(grep "$line" outputs/$file.out) ]]
 			then
 				echo $file : Error, salida incorrecta
 				echo Se esperaba $line
 				store=$(echo $line | grep -o '(.*,')
 				echo Se ha obtenido $(grep "$store"  outputs/$file.out)
+				curOutput="Test fallido"
 				output="Ha habido tests fallidos"
 			fi
 		done < outputs/$file
+		echo $curOutput
 	done
 	echo $output
 fi

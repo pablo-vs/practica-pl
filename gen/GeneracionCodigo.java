@@ -521,7 +521,7 @@ public class GeneracionCodigo {
 				}
 				else if(e instanceof ConstDec) {
 					// TODO
-					throw new RuntimeException("Decimales no soportados");
+					//throw new RuntimeException("Decimales no soportados");
 				}
 			}
 		}

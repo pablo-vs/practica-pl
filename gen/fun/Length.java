@@ -4,6 +4,7 @@ import ast.tipos.Tipo;
 import ast.tipos.TipoPunt;
 import ast.tipos.TipoInt;
 import ast.tipos.TipoNull;
+import ast.tipos.TipoArray;
 
 import ast.Argumento;
 import ast.Iden;
@@ -11,6 +12,7 @@ import ast.Iden;
 import gen.GeneracionCodigo;
 
 
+// Devuelve el número de elementos de un array
 public class Length extends FunPred {
 
 	public static final String ID = "length";
@@ -20,7 +22,6 @@ public class Length extends FunPred {
 	private static final Argumento[] ARGS = new Argumento[]
 	{
 		new Argumento(new Iden("array"), new TipoArray()),
-		// Int Tamaño
 	};
 
 	private static final int TMB = GeneracionCodigo.TAM_MARCO_BASE;
@@ -38,7 +39,7 @@ public class Length extends FunPred {
 			"inc 1",
 			
 			"lod 0 " + (TMB+1),
-			"str 0 0";
+			"str 0 0",
 			
 			"retf		{end length}"
 		};
