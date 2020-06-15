@@ -1,15 +1,36 @@
 [[[Int]]] matriz3;
 
-newArray(&matriz3, 4);
+newArray(&matriz3, [2,2,2]);
 
 Int i = 0;
+Int c = 0;
 
-repeat 4 {
-	newArray(&matriz3[i], 3);
-	i = i + 1;
+repeat 2 {
 	Int j = 0;
-	repeat 3 {
-		newArray(&matriz3[i][j]);
+	repeat 2 {
+		Int k = 0;
+		repeat 2 {
+			matriz3[i][j][k] = c;
+			c = c + 1;
+			k = k + 1;
+		};
 		j = j + 1;
-	}
+	};
+	i = i + 1;
 };
+
+[[Int]] matriz2;
+newArray(&matriz2, [2,2]);
+
+i = 0;
+repeat 2 {
+	Int j = 0;
+	repeat 2 {
+		matriz2[i][j] = c;
+		c = c + 1;
+		j = j + 1;
+	};
+	i = i + 1;
+};
+
+matriz3[0] = matriz2;
