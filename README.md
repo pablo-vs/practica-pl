@@ -3,9 +3,7 @@
 Marcos Brian Leiva y Pablo Villalobos
 
 El programa lee del fichero "input.txt" que se encuentre
-en el directorio de ejecución. Proveemos dos ficheros
-de prueba que demuestran las características del lenguaje:
-"input.txt" e "input2.txt".
+en el directorio de ejecución, y produce un fichero "programa.txt".
 
 El archivo "sources.txt" contiene los nombres de todas las
 fuentes .java para facilitar la compilacion.
@@ -56,8 +54,8 @@ El paquete gen contiene la generación de código, incluyendo funciones predefin
 
 - Los decimales se redondean y se tratan como enteros
 - La compilación prosigue hasta la fase de vinculación intentando ignorar los errores anteriores. Si hay fallos durante la fase de vinculación o comprobación, no se pasa a la siguiente fase.
-- Los arrays de varias dimensiones fallan
-- La función length también falla
+- Los arrays son descriptores que contienen un puntero y un número de elementos
+- Los arrays dinámicos se almacenan en el montón
 
 ## Modificaciones respecto a la entrega 2
 

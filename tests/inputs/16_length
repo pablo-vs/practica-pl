@@ -1,3 +1,5 @@
 Int len;
+Int len2;
 [Int] arr = [1,2,3,4,5];
 len = length(arr);
+len2 = length([6,7,8,9,10]);

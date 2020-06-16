@@ -1,0 +1,23 @@
+Modificaciones realizadas el día 16 durante la extensión de la entrega
+
+
+- Eliminado el fichero Planificacion.md que no debía formar parte
+	de la entrega.
+
+- Modifcada la clase gen/fun/Length y gen/fun/FunPred para corregir un error
+	de calculo del tamaño de los argumentos que causaba un fallo en la
+	funcion length().
+
+- Modificada la clase gen/fun/NewArray para corregir un error similar en la
+	funcion newArray().
+
+- Modificada la entrada y salida del test 16_length añadiendo una
+	instrucción más.
+
+- Modificada la salida del test 12_matrices, que contenía errores.
+
+- Modificado el archivo README.md para añadir una aclaración sobre
+	la implementación de los arrays.
+
+- Modificado el archivo Makefile para que 'make clean' elimine también
+	los resultados de los tests.

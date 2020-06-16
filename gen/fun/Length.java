@@ -35,9 +35,6 @@ public class Length extends FunPred {
 		return new String[] {
 			"ssp " + (TMB+2) + "	{length}",
 			"sep 1",
-			"lod 0 " + TMB,
-			"inc 1",
-			
 			"lod 0 " + (TMB+1),
 			"str 0 0",
 			

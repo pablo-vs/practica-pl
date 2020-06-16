@@ -21,3 +21,5 @@ test:
 clean:
 	rm -r build/
 	find . -iname 'javac*' -delete
+	find tests/pfiles/ -delete
+	find tests/outputs/ -iname '*.out' -delete

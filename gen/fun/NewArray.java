@@ -87,7 +87,7 @@ public class NewArray extends FunPred {
 			"dec 1",
 			"lod 0 " + (TMB+4),
 			"grt",
-			"fjp " + (ini+57),
+			"fjp " + (ini+58),
 
 			// Cargamos la dirección de los datos en posicion actual
 			"lod 0 " + (TMB),
@@ -107,12 +107,14 @@ public class NewArray extends FunPred {
 			"add",
 			"ind",
 			"les",
-			"fjp " + (ini+57),
+			"fjp " + (ini+58),
 			"inc 1",
 			"str 0 " + (TMB+7),
 			
 			// Cargamos los parámetros
 			"mst 1",
+
+			"ldc 0",
 
 			"lod 0 " + (TMB+8), // dir descriptor
 			"lda 0 " + (TMB+1),   //dimensiones
@@ -120,7 +122,7 @@ public class NewArray extends FunPred {
 			"lod 0 " + (TMB+3),	  //tam datos
 			"lod 0 " + (TMB+4),	  //dim act +1
 			"inc 1",
-			"cup 7 " + getDir(),
+			"cup 6 " + getDir(),
 			
 			// Aumentamos la posicion del descriptor en 2
 			"lod 0 " + (TMB+8),
@@ -129,7 +131,7 @@ public class NewArray extends FunPred {
 
 			"ujp " + (ini+35),
 
-			"retp		{end newArray}"  //57
+			"retp		{end newArray}"  //58
 		};
 
 	}

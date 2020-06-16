@@ -3,6 +3,7 @@ package gen.fun;
 import ast.DefFun;
 import ast.FunCall;
 import ast.Iden;
+import ast.exp.Exp;
 import ast.Argumento;
 import ast.tipos.Tipo;
 
@@ -30,8 +31,11 @@ public abstract class FunPred extends DefFun {
 	}
 
 	public String[] call(FunCall f, GeneracionCodigo g) {
+		int count = 0;
+		for(Exp e: f.getArgs())
+			count += e.getTipo().getSize();
 		return new String[] {
-			"cup " + (getArgs().length+1)  + " " + getDir()
+			"cup " + (count+1)  + " " + getDir()
 		};
 	}
 

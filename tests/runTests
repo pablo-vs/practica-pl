@@ -5,6 +5,10 @@ then
 	echo "No se ha encontrado el ejecutable pmachine"
 	echo "Puede compilarse mediante ghc a partir del codigo fuente de la maquina-P"
 else
+	if [[ ! -d ./pfiles ]]
+	then
+		mkdir pfiles
+	fi
 	output="Todos los tests completados con éxito"
 	for file in $(ls inputs/)
 	do
